@@ -1,0 +1,5 @@
+module.exports = {
+  USER_CONNECTED: 'USER_CONNECTED',
+  VERIFY_USER: 'VERIFY_USER',
+  LOGOUT: 'LOGOUT',
+};
