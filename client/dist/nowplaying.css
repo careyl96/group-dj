@@ -1,0 +1,95 @@
+.player-controls {
+  border: 1px solid white;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  width: 224px;
+}
+
+.control-button {
+  border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+}
+
+/* .shuffle {
+  
+}
+
+.back {
+  
+}
+.play {
+  
+}
+.skip {
+  
+}
+.loop {
+  
+} */
+
+.progress-bar-container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  border: 1px solid white;
+}
+
+/* html {
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+}
+
+.login-page {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-image: url(welcome.jpg);
+  background-size:cover;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  box-shadow: inset 0 0 0 1000px rgba(0,0,0,.5);
+}
+
+.login-center-content {
+  display: table;
+  text-align: center;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.login-welcome {
+  position: relative;
+  display: block;
+  vertical-align: middle;
+  font-size: 4rem;
+  font-weight: 700;
+  color: white;
+  animation-name: fadeIn;
+  animation-duration: 3s; 
+  animation-timing-function: ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.login-btn {
+  position: relative;
+  display: block;
+} */

@@ -1,0 +1,15 @@
+.search-container {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.search-bar {
+  width: 75%;
+  background: transparent;
+  border: 1px solid gray;
+}
+
+.search-button {
+  padding: 10px 10px;
+}
