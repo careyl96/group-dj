@@ -1,5 +1,5 @@
 module.exports = {
   USER_CONNECTED: 'USER_CONNECTED',
-  VERIFY_USER: 'VERIFY_USER',
+  ADD_USER: 'ADD_USER',
   LOGOUT: 'LOGOUT',
 };

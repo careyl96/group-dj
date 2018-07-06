@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-import { VERIFY_USER } from '../events';
+import socket from '../socket';
+import { ADD_USER } from '../events';
 
 class LoginForm extends Component {
   constructor() {
     super();
     this.state = {
       nickname: '',
+      // error: '',
     };
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const { socket } = this.props;
     const { nickname } = this.state;
-    socket.emit(VERIFY_USER, nickname, )
+    socket.emit(ADD_USER, nickname);
   }
 
   handleChange = (e) => {
@@ -22,19 +23,10 @@ class LoginForm extends Component {
     this.setState({ nickname });
   }
 
-  setUser = () => {
-    
-  }
-
   render() {
-    const { nickname } = this.state;
+    // const { nickname, error } = this.state;
     return (
-      <div className="login">
-        <form onSubmit={this.handleSubmit} className="login-form">
-          <label htmlFor="nickname">NICKNAME?</label>
-          <input type="text" className="nickname" value={nickname} onChange={this.handleChange} />
-        </form>
-      </div>
+      <div className="login" />
     );
   }
 }

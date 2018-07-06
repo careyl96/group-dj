@@ -1,3 +1,59 @@
+.now-playing-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 90px;
+  padding: 0 16px;
+}
+
+/* NOW PLAYING BAR LEFT SIDE - ALBUM ART/TRACK INFO */
+.now-playing-left {
+  border: 1px solid white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 180px;
+  width: 30%;
+}
+
+.album-art-container {
+  flex-shrink: 0;
+  border: 1px solid white;
+  width: 56px;
+  height: 56px;
+  margin-right: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
+}
+
+#album-art-thumbnail {
+  width: 100%;
+  height: 100%
+}
+
+.track-info {
+  border: 1px solid white;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  white-space: nowrap;
+  overflow: auto;
+  margin-right: 10px;
+}
+
+/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */
+.now-playing-center {
+  border: 1px solid white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 228px;
+  max-width: 722px;
+  width: 40%;
+}
+
 .player-controls {
   border: 1px solid white;
   display: flex;
@@ -36,10 +92,44 @@
 } */
 
 .progress-bar-container {
+  font-size: 11px;
+  letter-spacing: .015em;
+  line-height: 16px;
+  color: white;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  align-items: center;
   border: 1px solid white;
+  width: 100%;
+}
+
+.progress-time {
+  min-width: 40px;
+  text-align: center;
+}
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background-color: #404040;
+  border-radius: 2px;
+}
+
+.progress-bar-progress {
+  height: 100%;
+  width: 0%;
+  background-color: lightgray;
+  border-radius: 2px;
+}
+
+/* NOW PLAYING BAR RIGHT */
+
+.now-playing-right {
+  border: 1px solid white;
+  min-width: 180px;
+  width: 30%;
 }
 
 /* html {
