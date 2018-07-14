@@ -1,5 +1,6 @@
 .now-playing-container {
   display: flex;
+  font-family: 'Helvetica Neue';
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -9,7 +10,7 @@
 
 /* NOW PLAYING BAR LEFT SIDE - ALBUM ART/TRACK INFO */
 .now-playing-left {
-  border: 1px solid white;
+  /* border: 1px solid white; */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -20,7 +21,7 @@
 
 .album-art-container {
   flex-shrink: 0;
-  border: 1px solid white;
+  /* border: 1px solid white; */
   width: 56px;
   height: 56px;
   margin-right: 15px;
@@ -33,13 +34,27 @@
 }
 
 .track-info {
-  border: 1px solid white;
+  /* border: 1px solid white; */
   display: flex;
   flex-direction: column;
   color: white;
   white-space: nowrap;
   overflow: auto;
   margin-right: 10px;
+}
+
+.track-name {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: .015em;
+}
+
+.track-artist {
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 16px;
+  letter-spacing: .015em;
+  color: hsla(0,0%,100%,.6);
 }
 
 /* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */
@@ -104,13 +119,18 @@
   width: 100%;
 }
 
-.progress-time {
-  min-width: 40px;
-  text-align: center;
+.progress-bar-clickable {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 12px;
+  width: 100%;
 }
 
 .progress-bar {
   position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 4px;
   background-color: #404040;
@@ -122,6 +142,38 @@
   width: 0%;
   background-color: lightgray;
   border-radius: 2px;
+}
+
+.progress-time {
+  min-width: 40px;
+  text-align: center;
+}
+
+.progress-bar-clickable:hover
+.progress-bar-progress {
+  background-color: #1db954;
+}
+
+.progress-bar-clickable:hover
+.progress-bar-slider {
+  transition-property: transform;
+  transition-duration: .1s;
+  transition-timing-function: cubic-bezier(.3,0,0,1);
+  transform: scale(1);
+}
+
+.progress-bar-slider {
+  position: absolute;
+  pointer-events: none;
+  margin-left: -6px;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  transition-property: transform;
+  transition-duration: .1s;
+  transition-timing-function: cubic-bezier(1,0,.7,1);
+  transform: scale(0);
 }
 
 /* NOW PLAYING BAR RIGHT */
