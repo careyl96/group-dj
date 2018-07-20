@@ -2,10 +2,13 @@ import axios from 'axios';
 import store from '../store/store';
 import * as types from './types';
 
-
 export const fetchTrackSuccess = trackData => ({
   type: types.FETCH_TRACK_DATA_SUCCESS,
   trackData,
+});
+export const fetchTrackProgressSuccess = trackProgress => ({
+  type: types.FETCH_TRACK_PROGRESS_SUCCESS,
+  trackProgress,
 });
 export const getPreviousTrackSuccess = () => ({ type: types.PREVIOUS_TRACK_SUCCESS });
 export const playTrackSuccess = () => ({ type: types.RESUME_PLAYBACK_SUCCESS });
@@ -16,6 +19,8 @@ export const seekTrackSuccess = newTrackPosition => ({
 });
 export const skipTrackSuccess = () => ({ type: types.SKIP_TRACK_SUCCESS });
 
+// ---------------------------- PLAYBACK ----------------------------
+
 export const fetchTrackData = () => (dispatch) => {
   // console.log('fetching track data');
   const { accessToken } = store.getState().session;
@@ -25,7 +30,7 @@ export const fetchTrackData = () => (dispatch) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   };
 
-  axios(params)
+  return axios(params)
     .then((response) => {
       const currentlyPlaying = response.data.is_playing;
       const trackName = response.data.item.name;
@@ -51,6 +56,23 @@ export const fetchTrackData = () => (dispatch) => {
       console.log(error);
     });
 };
+export const fetchTrackProgress = () => (dispatch) => {
+  const { accessToken } = store.getState().session;
+  const params = {
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/me/player/currently-playing/',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  };
+
+  return axios(params)
+    .then((response) => {
+      const trackProgress = response.data.progress_ms;
+      dispatch(fetchTrackProgressSuccess(trackProgress));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 export const resumePlayback = () => (dispatch) => {
   const { accessToken } = store.getState().session;
   const params = {
@@ -58,7 +80,7 @@ export const resumePlayback = () => (dispatch) => {
     url: 'https://api.spotify.com/v1/me/player/play',
     headers: { Authorization: `Bearer ${accessToken}` },
   };
-  axios(params)
+  return axios(params)
     .then(() => {
       dispatch(playTrackSuccess());
     })
@@ -73,9 +95,9 @@ export const pausePlayback = () => (dispatch) => {
     url: 'https://api.spotify.com/v1/me/player/pause',
     headers: { Authorization: `Bearer ${accessToken}` },
   };
-  axios(params)
+  return axios(params)
     .then(() => {
-      dispatch(pauseTrackSuccess());
+      dispatch(pauseTrackSuccess())
     })
     .catch((error) => {
       console.log(error);
@@ -90,7 +112,7 @@ export const seekTrack = newTrackPosition => (dispatch) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   };
 
-  axios(params)
+  return axios(params)
     .then(() => {
       dispatch(seekTrackSuccess(newTrackPosition));
     })
@@ -107,7 +129,7 @@ export const skipTrack = () => (dispatch) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   };
 
-  axios(params)
+  return axios(params)
     .then(() => {
       dispatch(fetchTrackData());
     })
@@ -115,3 +137,5 @@ export const skipTrack = () => (dispatch) => {
       console.log(error);
     });
 };
+
+// ----------------------------- QUEUE -----------------------------
