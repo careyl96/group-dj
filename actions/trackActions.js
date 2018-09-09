@@ -1,5 +1,4 @@
 import axios from 'axios';
-import store from '../store/store';
 import * as types from './types';
 
 export const fetchTrackSuccess = trackData => ({
@@ -21,9 +20,9 @@ export const skipTrackSuccess = () => ({ type: types.SKIP_TRACK_SUCCESS });
 
 // ---------------------------- PLAYBACK ----------------------------
 
-export const fetchTrackData = () => (dispatch) => {
+export const fetchTrackData = () => (dispatch, getState) => {
   // console.log('fetching track data');
-  const { accessToken } = store.getState().session;
+  const { accessToken } = getState().session;
   const params = {
     method: 'GET',
     url: 'https://api.spotify.com/v1/me/player/currently-playing/',
@@ -32,6 +31,7 @@ export const fetchTrackData = () => (dispatch) => {
 
   return axios(params)
     .then((response) => {
+      console.log(response);
       const currentlyPlaying = response.data.is_playing;
       const trackName = response.data.item.name;
       const artists = response.data.item.artists.map(artist => artist.name).join(', ');
@@ -56,8 +56,8 @@ export const fetchTrackData = () => (dispatch) => {
       console.log(error);
     });
 };
-export const fetchTrackProgress = () => (dispatch) => {
-  const { accessToken } = store.getState().session;
+export const fetchTrackProgress = () => (dispatch, getState) => {
+  const { accessToken } = getState().session;
   const params = {
     method: 'GET',
     url: 'https://api.spotify.com/v1/me/player/currently-playing/',
@@ -73,8 +73,8 @@ export const fetchTrackProgress = () => (dispatch) => {
       console.log(error);
     });
 };
-export const resumePlayback = () => (dispatch) => {
-  const { accessToken } = store.getState().session;
+export const resumePlayback = () => (dispatch, getState) => {
+  const { accessToken } = getState().session;
   const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/play',
@@ -88,8 +88,8 @@ export const resumePlayback = () => (dispatch) => {
       console.log(error);
     });
 };
-export const pausePlayback = () => (dispatch) => {
-  const { accessToken } = store.getState().session;
+export const pausePlayback = () => (dispatch, getState) => {
+  const { accessToken } = getState().session;
   const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/pause',
@@ -103,8 +103,8 @@ export const pausePlayback = () => (dispatch) => {
       console.log(error);
     });
 };
-export const seekTrack = newTrackPosition => (dispatch) => {
-  const { accessToken } = store.getState().session;
+export const seekTrack = newTrackPosition => (dispatch, getState) => {
+  const { accessToken } = getState().session;
   const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/seek',
@@ -120,8 +120,8 @@ export const seekTrack = newTrackPosition => (dispatch) => {
       console.log(error);
     });
 };
-export const skipTrack = () => (dispatch) => {
-  const { accessToken } = store.getState().session;
+export const skipTrack = () => (dispatch, getState) => {
+  const { accessToken } = getState().session;
   const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/seek',

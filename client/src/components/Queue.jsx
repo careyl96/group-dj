@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 
-class Search extends Component {
+class Queue extends Component {
   constructor() {
     super();
     this.state = {
@@ -22,14 +23,15 @@ class Search extends Component {
       url: 'https://api.spotify.com/v1/search',
       params: {
         q: searchQuery,
-        type: 'artist',
+        type: 'track',
+        limit: 10,
       },
       headers: { Authorization: `Bearer ${accessToken}` },
     };
 
     axios(params)
       .then((response) => {
-        console.log(response);
+        console.log(response.data.tracks.items);
       })
       .catch((error) => {
         console.log(error);
@@ -46,4 +48,12 @@ class Search extends Component {
   }
 }
 
-export default Search;
+const mapStateToProps = state => ({
+  accessToken: state.session.accessToken,
+});
+
+// const mapDispatchToProps = dispatch => ({
+// fetchUsers: () => dispatch(fetchUsers()),
+// });
+
+export default connect(mapStateToProps, null)(Queue);

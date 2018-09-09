@@ -34,6 +34,11 @@ const trackReducer = (state = initState, action) => {
         ...state,
         currentlyPlaying: true,
       };
+    case types.FETCH_TRACK_PROGRESS_SUCCESS:
+      return {
+        ...state,
+        trackProgress: action.trackProgress,
+      };
 
     default:
       return state;

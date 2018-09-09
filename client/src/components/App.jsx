@@ -1,26 +1,18 @@
 import React, { Component } from 'react';
+// import axios from 'axios';
 import { connect } from 'react-redux';
 import Login from './Login';
 import Layout from './Layout';
-import { validateAccount } from '../../../actions/sessionActions';
-
-import styled, { injectGlobal } from 'styled-components';
-
-injectGlobal`
-  body {
-    height: 100vh;
-    background-color: lightgray;
-    margin: 0;
-  }
-`;
+import { load } from '../../../actions/sessionActions';
+// import config from '../../../auth/config';
 
 class App extends Component {
   componentDidMount() {
-    this.props.validateAccount();
+    this.props.load();
   }
 
   renderView() {
-    const { accessToken, user } = this.props;
+    const { accessToken } = this.props;
     if (!accessToken) {
       return <Login />;
     }
@@ -29,20 +21,18 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
-        {this.renderView()}
-      </div>
+      this.renderView()
     );
   }
 }
 
 const mapStateToProps = state => ({
   accessToken: state.session.accessToken,
-  user: state.session.user,
+  // user: state.session.user,
 });
 
 const mapDispatchToProps = dispatch => ({
-  validateAccount: () => dispatch(validateAccount()),
+  load: () => dispatch(load()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

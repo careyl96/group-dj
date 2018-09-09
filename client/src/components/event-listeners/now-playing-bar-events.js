@@ -23,43 +23,51 @@ function draggable(element, context) {
   const progressBarSlider = document.querySelector('.progress-bar-slider');
 
   let isMouseDown = false;
-  let widthPercentage;
+  let startingWidthPercentage;
   let mousePositionStart;
   let percentBuffered;
 
   function onMouseDown(e) {
     isMouseDown = true;
-    widthPercentage = e.offsetX / progressBar.offsetWidth * 100;
     mousePositionStart = e.clientX;
-    progressBarProgress.style.width = `${widthPercentage}%`;
-    progressBarSlider.style.left = `${widthPercentage}%`;
+    startingWidthPercentage = e.offsetX / progressBar.offsetWidth * 100;
+    progressBarProgress.style.width = `${startingWidthPercentage}%`;
+    progressBarSlider.style.left = `${startingWidthPercentage}%`;
   }
-
 
   function onMouseMove(e) {
     if (!isMouseDown) return;
+
     const { trackLength } = store.getState().trackData;
     const mousePositionCurrent = e.clientX;
 
-    const percentageDifference = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
-    percentBuffered = widthPercentage + percentageDifference;
-
+    const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
+    percentBuffered = startingWidthPercentage + deltaXPercentage;
     if (percentBuffered < 0) percentBuffered = 0;
     if (percentBuffered > 100) percentBuffered = 100;
 
-    const trackProgress = Math.floor(trackLength * percentBuffered / 100);
-    context.setState({ trackProgress });
+    const newTrackPosition = Math.floor(trackLength * percentBuffered / 100);
+    context.setState({ trackProgress: newTrackPosition });
 
     progressBarProgress.style.width = `${percentBuffered}%`;
     progressBarSlider.style.left = `${percentBuffered}%`;
   }
 
-  function onMouseUp() {
-    if (isMouseDown) {
-      const { trackLength } = store.getState().trackData;
-      const newTrackPosition = Math.floor(trackLength * percentBuffered / 100);
-      store.dispatch(seekTrack(newTrackPosition));
-    }
+  function onMouseUp(e) {
+    if (!isMouseDown) return;
+
+    const { trackLength } = store.getState().trackData;
+    const mousePositionCurrent = e.clientX;
+
+    const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
+    percentBuffered = startingWidthPercentage + deltaXPercentage;
+    if (percentBuffered < 0) percentBuffered = 0;
+    if (percentBuffered > 100) percentBuffered = 100;
+
+    const newTrackPosition = Math.floor(trackLength * percentBuffered / 100);
+    context.setState({ trackProgress: newTrackPosition });
+
+    store.dispatch(seekTrack(newTrackPosition));
     isMouseDown = false;
   }
 
@@ -74,4 +82,3 @@ const addEventListeners = (context) => {
 };
 
 module.exports = addEventListeners;
-

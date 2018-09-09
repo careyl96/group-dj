@@ -10,7 +10,7 @@ import {
   skipTrack,
 } from '../../../actions/trackActions';
 
-const Footer = styled.footer`
+const Footer = styled.div`
   position: fixed;
   background-color: #282828;
   width: 100%;
@@ -41,10 +41,12 @@ const parseMs = (ms) => {
 };
 
 class NowPlayingBar extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      trackProgress: this.props.trackProgress,
+      trackProgress: 0,
+      trackLength: 0,
+      progressPercentage: 0,
     };
 
     this.interval = null;
@@ -53,27 +55,46 @@ class NowPlayingBar extends Component {
   componentDidMount() {
     this.props.fetchTrackData();
     addEventListeners(this);
-
-    this.interval = setInterval(this.incrementProgressBar, 500);
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(this.props.trackName);
-    console.log(newProps.trackName);
-    this.updateProgressBar(newProps);
-  }
-
-  updateProgressBar = (newProps = this.state) => {
-    const progressBar = document.querySelector('.progress-bar-progress');
-    const progressBarSlider = document.querySelector('.progress-bar-slider');
     const { trackProgress, trackLength } = newProps;
     const progressPercentage = trackProgress / trackLength * 100;
-    
-    progressBar.style.width = (`${progressPercentage}%`);
-    progressBarSlider.style.left = (`${progressPercentage}%`);
+    this.setState({
+      trackProgress,
+      trackLength,
+      progressPercentage,
+    });
+    if (!this.interval) this.interval = setInterval(this.updateProgressBar, 300);
+  }
 
-    this.setState({ trackProgress });
-  };
+  updateProgressBar = () => {
+    const progressBar = document.querySelector('.progress-bar-progress');
+    const progressBarSlider = document.querySelector('.progress-bar-slider');
+
+    const { trackProgress, trackLength, progressPercentage } = this.state;
+
+    if (progressPercentage <= 100) {
+      progressBar.style.width = (`${progressPercentage}%`);
+      progressBarSlider.style.left = (`${progressPercentage}%`);
+
+      if (this.props.currentlyPlaying) {
+        const incrementedTrackProgress = trackProgress + 300;
+        const newTrackPercentage = incrementedTrackProgress / trackLength * 100;
+
+        this.setState({
+          trackProgress: incrementedTrackProgress,
+          trackLength,
+          progressPercentage: newTrackPercentage,
+        });
+      }
+    } else {
+      this.props.fetchTrackData();
+      console.log('fetching data');
+    }
+  }
+
+  // 
 
   render() {
     return (
@@ -89,6 +110,7 @@ class NowPlayingBar extends Component {
               <div className="track-name"> {this.props.trackName} </div>
               <div className="track-artist"> {this.props.artists} </div>
             </div>
+            <button className="control-button add-song">+</button>
           </div>
 
           {/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */}
@@ -96,7 +118,7 @@ class NowPlayingBar extends Component {
             <div className="player-controls">
               <button className="control-button shuffle">shfl</button>
               <button className="control-button back">back</button>
-              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'Pause' : 'Play'}</button>
+              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
               <button className="control-button skip" onClick={this.props.skipTrack}>next</button>
               <button className="control-button loop">loop</button>
             </div>
@@ -108,7 +130,7 @@ class NowPlayingBar extends Component {
                   <div className="progress-bar-slider" />
                 </div>
               </div>
-              <div className="progress-time">{parseMs(this.props.trackLength)}</div>
+              <div className="progress-time">{parseMs(this.state.trackLength)}</div>
             </div>
           </div>
 
@@ -136,6 +158,7 @@ const mapDispatchToProps = dispatch => ({
   pausePlayback: () => dispatch(pausePlayback()),
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
   skipTrack: () => dispatch(skipTrack()),
+  incrementTrackProgress: newTrackProgress => dispatch(incrementTrackProgress(newTrackProgress)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NowPlayingBar);

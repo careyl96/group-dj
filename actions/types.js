@@ -1,9 +1,9 @@
 // session events
 export const LOGIN = 'LOGIN';
 export const LOAD = 'LOAD';
+export const UPDATE_TOKEN_SUCCESS = 'UPDATE_TOKEN_SUCCESS';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
-export const REFRESH_TOKEN = 'REFRESH_TOKEN_SUCCESS';
 
 // playback events
 export const FETCH_TRACK_DATA_SUCCESS = 'FETCH_TRACK_DATA_SUCCESS';
@@ -17,3 +17,6 @@ export const SEEK_TRACK_SUCCESS = 'SEEK_TRACK_SUCCESS';
 // search events
 export const SEARCH_TRACK = 'SEARCH_TRACK';
 export const SEARCH_TRACK_SUCCESS = 'SEARCH_TRACK_SUCCESS';
+
+export const UPDATE_USERS = 'UPDATE_USERS';
+export const ADD_USER = 'ADD_USER';

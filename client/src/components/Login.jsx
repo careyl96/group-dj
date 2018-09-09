@@ -1,17 +1,18 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import { connect } from 'react-redux';
+import { login } from '../../../actions/sessionActions';
 
-const redirect = () => {
-  window.location = 'http://localhost:3006/login';
-};
-
-const Login = () => (
+const Login = props => (
   <div className="login-page">
     <div className="login-wrapper">
       <div className="welcome-message">Welcome to Group DJ</div>
-      <div className="login-button" onClick={redirect}> Log in with Spotify </div>
+      <div className="login-button" onClick={props.login}> Log in with Spotify </div>
     </div>
   </div>
 );
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  login: () => dispatch(login()),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
