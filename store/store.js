@@ -6,6 +6,7 @@ import sessionMiddleware from '../middlewares/sessionMiddleware';
 import socketMiddleware from '../middlewares/socketMiddleware';
 import searchMiddleware from '../middlewares/searchMiddleware';
 import trackMiddleware from '../middlewares/trackMiddleware';
+import viewMiddleware from '../middlewares/viewMiddleware';
 
 const middleware = applyMiddleware(
   sessionMiddleware,
@@ -14,6 +15,7 @@ const middleware = applyMiddleware(
   // devicesMiddleware,
   // loggerMiddleware,
   searchMiddleware,
+  viewMiddleware,
   thunk,
 );
 

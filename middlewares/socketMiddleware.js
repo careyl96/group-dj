@@ -20,7 +20,6 @@ const initSocket = (store) => {
   });
   socket.on('update users', (data) => {
     console.log('~~~~~Updating User List~~~~~');
-    console.log(data);
     store.dispatch(updateUsers(data));
   });
   socket.on('fetch now playing', () => {
@@ -41,6 +40,9 @@ export default store => next => (action) => {
       break;
     case types.RESUME_PLAYBACK:
       socket.emit('resume playback');
+      break;
+    case types.SEEK_TRACK:
+      socket.emit('seek track', action.newTrackPosition);
       break;
     case types.OVERRIDE_PLAYING_CONTEXT:
       socket.emit('override playing context', action.track);

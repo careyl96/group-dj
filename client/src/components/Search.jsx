@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { searchTracks } from '../../../actions/searchActions';
-import { updateView } from '../../../actions/sessionActions';
+import { updateView } from '../../../actions/viewActions';
 
 class Search extends Component {
   constructor() {

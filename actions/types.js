@@ -25,6 +25,7 @@ export const PAUSE_PLAYBACK_SUCCESS = 'PAUSE_PLAYBACK_SUCCESS';
 export const SKIP_TRACK = 'SKIP_TRACK';
 export const SKIP_TRACK_SUCCESS = 'SKIP_TRACK_SUCCESS';
 
+export const SEEK_TRACK = 'SEEK_TRACK';
 export const SEEK_TRACK_SUCCESS = 'SEEK_TRACK_SUCCESS';
 
 // search events

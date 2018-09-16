@@ -59,7 +59,7 @@ function draggable(element, context) {
       trackProgress: newTrackPosition,
       mouseDown: false,
     });
-    // store.dispatch(seekTrack(deltaXPercentage));
+    store.dispatch(seekTrack(newTrackPosition));
 
     isMouseDown = false;
   }
@@ -83,7 +83,10 @@ const updateProgressBar = (context) => {
   if (progressPercentage <= 100 && !context.state.mouseDown) {
     progressBar.style.width = (`${progressPercentage}%`);
     progressBarSlider.style.left = (`${progressPercentage}%`);
-    const trackProgress = length * progressPercentage / 100;
+    const trackProgress = (length * progressPercentage) / 100;
+    context.setState({ trackProgress });
+  } else if (progressPercentage >= 100 && !context.state.mouseDown) {
+    const trackProgress = length;
     context.setState({ trackProgress });
   }
 };

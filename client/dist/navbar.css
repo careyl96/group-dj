@@ -1,6 +1,6 @@
 .navbar {
-  box-sizing: border-box;
   width: 200px;
+  min-width: 150px;
 }
 
 .navbar-items {

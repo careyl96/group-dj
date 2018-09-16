@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { fetchUsers } from '../../../actions/usersActions';
 
 const Users = ({ users }) => {
   return (
@@ -28,9 +27,5 @@ const Users = ({ users }) => {
 const mapStateToProps = state => ({
   users: state.users,
 });
-
-// const mapDispatchToProps = dispatch => ({
-// fetchUsers: () => dispatch(fetchUsers()),
-// });
 
 export default connect(mapStateToProps, null)(Users);

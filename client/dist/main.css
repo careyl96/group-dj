@@ -13,6 +13,7 @@
 }
 
 .main-content-spacing {
+  min-width: 300px;
   padding: 0px 24px 91px 24px;
 }
 

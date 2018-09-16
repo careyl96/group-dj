@@ -49,19 +49,25 @@ const queueManager = new QueueManager({
   updatePlayingContextPause: () => {
     queueManager.playingContext.currentlyPlaying = false;
     queueManager.playingContext.lastPausedAt = Date.now();
-    queueManager.playingContext.trackProgress = (queueManager.playingContext.lastPausedAt - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused);
+    queueManager.playingContext.trackProgress = (queueManager.playingContext.lastPausedAt - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance);
     globalSocket.emit('fetch now playing');
     globalSocket.broadcast.emit('fetch now playing');
-    console.log(`Track Progress: ${parseMs(queueManager.playingContext.trackProgress)}`);
-    console.log(`Total Time Paused: ${parseMs(queueManager.playingContext.totalTimePaused)}`);
+    console.log('pausing track');
+    // console.log(`Track Progress: ${parseMs(queueManager.playingContext.trackProgress)}`);
+    // console.log(`Total Time Paused: ${parseMs(queueManager.playingContext.totalTimePaused)}`);
   },
   updatePlayingContextResume: () => {
     queueManager.playingContext.currentlyPlaying = true;
     queueManager.playingContext.totalTimePaused += (Date.now() - queueManager.playingContext.lastPausedAt);
     globalSocket.emit('fetch now playing');
     globalSocket.broadcast.emit('fetch now playing');
-    console.log(`Track Progress: ${parseMs(queueManager.playingContext.trackProgress)}`);
-    console.log(`Total Time Paused: ${parseMs(queueManager.playingContext.totalTimePaused)}`);
+    console.log('resuming track');
+  },
+  updatePlayingContextSeek: (newTrackPosition) => {
+    queueManager.playingContext.seekDistance += (newTrackPosition - (Date.now() - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance));
+    globalSocket.emit('fetch now playing');
+    globalSocket.broadcast.emit('fetch now playing');
+    console.log('seeking track');
   },
 });
 
@@ -106,6 +112,9 @@ const socketApi = (io) => {
     });
     client.on('resume playback', () => {
       queueManager.updatePlayingContextResume();
+    });
+    client.on('seek track', (newTrackPosition) => {
+      queueManager.updatePlayingContextSeek(newTrackPosition);
     });
     client.on('disconnect', () => {
       console.log(`client ${client.id} disconnected`);

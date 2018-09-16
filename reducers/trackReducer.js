@@ -18,7 +18,7 @@ const initState = {
 const trackReducer = (state = initState, action) => {
   switch (action.type) {
     case types.FETCH_TRACK_DATA_SUCCESS:
-      return action.trackData;
+      return action.trackData || state;
     // case types.RESUME_PLAYBACK_SUCCESS:
     //   return state;
     // case types.PAUSE_PLAYBACK_SUCCESS:

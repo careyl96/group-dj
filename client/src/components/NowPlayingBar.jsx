@@ -110,7 +110,8 @@ class NowPlayingBar extends Component {
 
           <div className="now-playing-right">
             Right
-            <div className="state-tracker">{this.state.length}</div>
+            <div className="state-tracker">{`Track Length: ${this.state.length}`}</div>
+            <div className="state-tracker">{`Track Progress: ${Math.floor(this.state.trackProgress)}`}</div>
           </div>
         </div>
       </div>

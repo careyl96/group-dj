@@ -2,6 +2,7 @@ import axios from 'axios';
 import config from '../auth/config';
 import * as types from '../actions/types';
 import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
+
 const parseMs = (ms) => {
   let result = '';
   let minutes = 0;

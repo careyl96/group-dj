@@ -4,20 +4,29 @@
   right: 0;
 }
 
+@media screen and (max-width: 745px) {
+  .users-container {
+    display: none !important;
+  }
+  .main-view-container {
+    padding: 0px 0px 90px 200px !important;
+  }
+}
+
 .sidebar {
   position: fixed;
   box-sizing: border-box;
   font-size: 14px;
   height: 100vh;
   padding: 24px 24px 91px 24px;
-  background-color: rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, .4);
   user-select: none;
   color: white;
 }
 
 .online {
   padding-bottom: 1em;
-  border-bottom: 1px solid hsla(0,0%,100%,.6);
+  border-bottom: 1px solid hsla(0, 0%, 100%, .6);
   text-transform: uppercase;
 }
 
@@ -34,7 +43,9 @@
   line-height: 1.15em;
   padding-bottom: 1em;
 }
-.username { 
+
+.username {
+  overflow: hidden;
   /* color: white; */
 }
 
