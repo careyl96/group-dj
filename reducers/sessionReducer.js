@@ -31,11 +31,6 @@ const sessionReducer = (state = initState, action) => {
         user: action.user,
         userImg: action.userImg,
       };
-    case types.UPDATE_VIEW:
-      return {
-        ...state,
-        view: action.view,
-      };
     default:
       return state;
   }

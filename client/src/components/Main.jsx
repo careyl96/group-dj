@@ -34,7 +34,7 @@ class Main extends Component {
 }
 
 const mapStateToProps = state => ({
-  view: state.session.view,
+  view: state.view.view,
 });
 
 export default connect(mapStateToProps, null)(Main);
