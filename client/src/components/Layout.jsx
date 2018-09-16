@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Queue from './Queue';
-import Header from './Header';
+import Main from './Main';
+import Navbar from './Navbar';
 import Users from './Users';
 import NowPlayingBar from './NowPlayingBar';
 
@@ -10,12 +10,9 @@ class Layout extends Component {
     return (
       <div className="layout">
         {/* <Header /> */}
+        <Navbar />
         <Users />
-        <Queue />
-        {/* <Navbar /> */}
-        {/* <SideBar /> */}
-        {/* <MusicHistory /> */}
-        {/* <Queue /> */}
+        <Main />
         <NowPlayingBar />
       </div>
     );

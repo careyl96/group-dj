@@ -2,11 +2,27 @@ import axios from 'axios';
 import config from '../auth/config';
 import * as types from '../actions/types';
 import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
+const parseMs = (ms) => {
+  let result = '';
+  let minutes = 0;
+  let seconds = 0;
+
+  minutes = Math.floor(ms / 1000 / 60);
+  seconds = Math.floor((ms / 1000) % 60);
+
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
+  }
+
+  result += `${minutes}:${seconds}`;
+  return result;
+};
 
 const updateToken = () => (dispatch) => {
   return axios.get(`${config.HOST}/auth/token`)
     .then((res) => {
       if (!res.data) return;
+      console.log(`access token expires in ${parseMs(res.data.expires_in - Date.now())}`);
       const { access_token, refresh_token, expires_in } = res.data;
       dispatch(updateTokenSuccess(access_token, refresh_token, expires_in));
     });

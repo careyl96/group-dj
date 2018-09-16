@@ -1,3 +1,11 @@
+.now-playing-wrapper {
+  position: fixed;
+  background-color: #282828;
+  width: 100%;
+  border-top: 1px solid black;
+  bottom: 0;
+}
+
 .now-playing-container {
   display: flex;
   user-select: none;
@@ -68,7 +76,7 @@
   justify-content: center;
   min-width: 228px;
   max-width: 722px;
-  width: 40%;
+  width: 70%;
 }
 
 .player-controls {

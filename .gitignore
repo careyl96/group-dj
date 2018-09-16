@@ -55,3 +55,4 @@ Thumbs.db
 !.editorconfig
 
 /auth
+client/dist/bundle.js

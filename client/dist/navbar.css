@@ -1,0 +1,31 @@
+.navbar {
+  box-sizing: border-box;
+  width: 200px;
+}
+
+.navbar-items {
+  list-style-type: none;
+  padding: 0;
+}
+
+.navbar-item {
+  padding: 10px 20px 10px 0px;
+}
+
+.nav-button {
+  font-size: 16px;
+  font-weight: 500;
+  background-color: transparent;
+  color: hsla(0, 0%, 100%, .6);
+  padding: 0px;
+  outline: none;
+  border: none;
+}
+
+.navbar-item:hover
+.nav-button {
+  transition: none 33ms cubic-bezier(.3,0,0,1);
+  transition-property: all;
+  transform: scale(1.06);
+  color: #fff;
+}

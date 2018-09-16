@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 // import { fetchUsers } from '../../../actions/usersActions';
 
 const Users = ({ users }) => {
-  console.log(users);
   return (
     <div className="users-container sidebar">
       <div className="online">online users</div>

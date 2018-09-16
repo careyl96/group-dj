@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
-import addEventListeners from './event-listeners/now-playing-bar-events';
+import { addEventListeners } from './event-listeners/now-playing-bar-events';
+import { updateProgressBar } from './event-listeners/now-playing-bar-events';
+
 import {
   fetchTrackData,
   resumePlayback,
@@ -9,20 +10,6 @@ import {
   seekTrack,
   skipTrack,
 } from '../../../actions/trackActions';
-
-const Footer = styled.div`
-  position: fixed;
-  background-color: #282828;
-  width: 100%;
-  border-top: 1px solid black;
-  bottom: 0;
-`;
-
-const NowPlayingRight = styled.div`
-  border: 1px solid white;
-  min-width: 180px;
-  width: 30%;
-`;
 
 const parseMs = (ms) => {
   let result = '';
@@ -44,61 +31,48 @@ class NowPlayingBar extends Component {
   constructor() {
     super();
     this.state = {
+      // currentlyPlaying: false,
+      // startTimestamp: 0,
+      // lastPausedAt: 0,
+      // totalTimePaused: 0,
       trackProgress: 0,
-      trackLength: 0,
-      progressPercentage: 0,
+      length: 0,
+      mouseDown: false,
     };
-
     this.interval = null;
   }
 
   componentDidMount() {
-    this.props.fetchTrackData();
     addEventListeners(this);
   }
 
   componentWillReceiveProps(newProps) {
-    const { trackProgress, trackLength } = newProps;
-    const progressPercentage = trackProgress / trackLength * 100;
+    clearInterval(this.interval);
+    const {
+      // currentlyPlaying,
+      // startTimestamp,
+      // lastPausedAt,
+      // totalTimePaused,
+      // seekDistance,
+      length,
+    } = newProps;
     this.setState({
-      trackProgress,
-      trackLength,
-      progressPercentage,
+      // currentlyPlaying,
+      // startTimestamp,
+      // lastPausedAt,
+      // totalTimePaused,
+      // seekDistance,
+      length,
     });
-    if (!this.interval) this.interval = setInterval(this.updateProgressBar, 300);
-  }
 
-  updateProgressBar = () => {
-    const progressBar = document.querySelector('.progress-bar-progress');
-    const progressBarSlider = document.querySelector('.progress-bar-slider');
-
-    const { trackProgress, trackLength, progressPercentage } = this.state;
-
-    if (progressPercentage <= 100) {
-      progressBar.style.width = (`${progressPercentage}%`);
-      progressBarSlider.style.left = (`${progressPercentage}%`);
-
-      if (this.props.currentlyPlaying) {
-        const incrementedTrackProgress = trackProgress + 300;
-        const newTrackPercentage = incrementedTrackProgress / trackLength * 100;
-
-        this.setState({
-          trackProgress: incrementedTrackProgress,
-          trackLength,
-          progressPercentage: newTrackPercentage,
-        });
-      }
-    } else {
-      this.props.fetchTrackData();
-      console.log('fetching data');
+    if (newProps.currentlyPlaying) {
+      this.interval = setInterval(() => updateProgressBar(this), 300);
     }
   }
 
-  // 
-
   render() {
     return (
-      <Footer>
+      <div className="now-playing-wrapper">
         <div className="now-playing-container">
 
           {/* NOW PLAYING BAR LEFT SIDE - ALBUM ART/TRACK INFO */}
@@ -107,7 +81,7 @@ class NowPlayingBar extends Component {
               <img id="album-art-thumbnail" src={this.props.albumArt} />
             </div>
             <div className="track-info">
-              <div className="track-name"> {this.props.trackName} </div>
+              <div className="track-name"> {this.props.name} </div>
               <div className="track-artist"> {this.props.artists} </div>
             </div>
             <button className="control-button add-song">+</button>
@@ -120,7 +94,7 @@ class NowPlayingBar extends Component {
               <button className="control-button back">back</button>
               <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
               <button className="control-button skip" onClick={this.props.skipTrack}>next</button>
-              <button className="control-button loop">loop</button>
+              <button className="control-button resync" onClick={this.props.fetchTrackData}>resync</button>
             </div>
             <div className="progress-bar-container">
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
@@ -130,27 +104,32 @@ class NowPlayingBar extends Component {
                   <div className="progress-bar-slider" />
                 </div>
               </div>
-              <div className="progress-time">{parseMs(this.state.trackLength)}</div>
+              <div className="progress-time">{parseMs(this.state.length)}</div>
             </div>
           </div>
 
-          <NowPlayingRight>Right
-            <div className="state-tracker">{this.state.trackProgress}</div>
-          </NowPlayingRight>
+          <div className="now-playing-right">
+            Right
+            <div className="state-tracker">{this.state.length}</div>
+          </div>
         </div>
-      </Footer>
+      </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
   currentlyPlaying: state.trackData.currentlyPlaying,
-  trackName: state.trackData.trackName,
+  name: state.trackData.name,
   artists: state.trackData.artists,
-  trackLength: state.trackData.trackLength,
-  trackProgress: state.trackData.trackProgress,
+  length: state.trackData.length,
+  startTimestamp: state.trackData.startTimestamp,
+  seekDistance: state.trackData.seekDistance,
+  lastPausedAt: state.trackData.lastPausedAt,
+  totalTimePaused: state.trackData.totalTimePaused,
   albumArt: state.trackData.albumArt,
   popularity: state.trackData.popularity,
+  userID: state.trackData.userID,
 });
 const mapDispatchToProps = dispatch => ({
   fetchTrackData: () => dispatch(fetchTrackData()),

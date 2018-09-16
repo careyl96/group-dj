@@ -1,14 +1,11 @@
 .search-container {
-  display: flex;
-  font-size: 18px;
+  box-sizing: border-box;
+  padding: 24px 0px 24px 0px;
+  width: 100%;
 }
 
 .search-bar {
-  width: 75%;
-  background: transparent;
-  border: 1px solid gray;
 }
 
 .search-button {
-  padding: 10px 10px;
 }

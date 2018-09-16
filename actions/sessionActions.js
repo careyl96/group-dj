@@ -15,3 +15,8 @@ export const updateTokenSuccess = (accessToken, refreshToken, expiresIn) => ({
 });
 
 export const load = () => ({ type: types.LOAD });
+
+export const updateView = view => ({
+  type: types.UPDATE_VIEW,
+  view,
+});

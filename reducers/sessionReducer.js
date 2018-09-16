@@ -7,6 +7,7 @@ const initState = {
   user: null,
   userID: null,
   userImg: null,
+  view: 'home',
 };
 
 const sessionReducer = (state = initState, action) => {
@@ -29,6 +30,11 @@ const sessionReducer = (state = initState, action) => {
         ...state,
         user: action.user,
         userImg: action.userImg,
+      };
+    case types.UPDATE_VIEW:
+      return {
+        ...state,
+        view: action.view,
       };
     default:
       return state;

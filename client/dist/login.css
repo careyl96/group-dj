@@ -6,7 +6,9 @@ html, body {
 }
 
 body {
-  background-image: linear-gradient(#4a7513b8, #2c3134);
+  /* background-color: gray; */
+  background-image: linear-gradient(#0042c6c4, #2c3134);
+  background-attachment: fixed;
 }
 
 #app {

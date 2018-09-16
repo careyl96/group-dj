@@ -1,22 +1,6 @@
 import store from '../../../../store/store';
 import { seekTrack } from '../../../../actions/trackActions';
 
-// const handleProgressBarClick = (e) => {
-//   const { trackLength } = store.getState().trackData;
-//   const progressBar = document.querySelector('.progress-bar-clickable');
-//   const progressBarProgress = document.querySelector('.progress-bar-progress');
-//   const progressBarSlider = document.querySelector('.progress-bar-slider');
-
-//   const percentBuffered = e.offsetX / progressBar.offsetWidth;
-//   const newTrackPosition = Math.floor(trackLength * percentBuffered);
-
-//   progressBarProgress.style.width = (`${percentBuffered * 100}%`);
-//   progressBarSlider.style.left = (`${percentBuffered * 100}%`);
-
-//   console.log(`seeking to ${newTrackPosition}`);
-//   store.dispatch(seekTrack(newTrackPosition));
-// };
-
 function draggable(element, context) {
   const progressBar = document.querySelector('.progress-bar-clickable');
   const progressBarProgress = document.querySelector('.progress-bar-progress');
@@ -29,16 +13,23 @@ function draggable(element, context) {
 
   function onMouseDown(e) {
     isMouseDown = true;
+    const { length } = store.getState().trackData;
     mousePositionStart = e.clientX;
     startingWidthPercentage = e.offsetX / progressBar.offsetWidth * 100;
+
     progressBarProgress.style.width = `${startingWidthPercentage}%`;
     progressBarSlider.style.left = `${startingWidthPercentage}%`;
+
+    const newTrackPosition = Math.floor(length * startingWidthPercentage / 100);
+    context.setState({
+      trackProgress: newTrackPosition,
+      mouseDown: true,
+    });
   }
 
   function onMouseMove(e) {
     if (!isMouseDown) return;
-
-    const { trackLength } = store.getState().trackData;
+    const { length } = store.getState().trackData;
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
@@ -46,7 +37,7 @@ function draggable(element, context) {
     if (percentBuffered < 0) percentBuffered = 0;
     if (percentBuffered > 100) percentBuffered = 100;
 
-    const newTrackPosition = Math.floor(trackLength * percentBuffered / 100);
+    const newTrackPosition = Math.floor(length * percentBuffered / 100);
     context.setState({ trackProgress: newTrackPosition });
 
     progressBarProgress.style.width = `${percentBuffered}%`;
@@ -55,8 +46,7 @@ function draggable(element, context) {
 
   function onMouseUp(e) {
     if (!isMouseDown) return;
-
-    const { trackLength } = store.getState().trackData;
+    const { length } = store.getState().trackData;
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
@@ -64,10 +54,13 @@ function draggable(element, context) {
     if (percentBuffered < 0) percentBuffered = 0;
     if (percentBuffered > 100) percentBuffered = 100;
 
-    const newTrackPosition = Math.floor(trackLength * percentBuffered / 100);
-    context.setState({ trackProgress: newTrackPosition });
+    const newTrackPosition = Math.floor(length * percentBuffered / 100);
+    context.setState({
+      trackProgress: newTrackPosition,
+      mouseDown: false,
+    });
+    // store.dispatch(seekTrack(deltaXPercentage));
 
-    store.dispatch(seekTrack(newTrackPosition));
     isMouseDown = false;
   }
 
@@ -81,4 +74,18 @@ const addEventListeners = (context) => {
   draggable(progressBar, context);
 };
 
-module.exports = addEventListeners;
+const updateProgressBar = (context) => {
+  const progressBar = document.querySelector('.progress-bar-progress');
+  const progressBarSlider = document.querySelector('.progress-bar-slider');
+
+  const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().trackData;
+  const progressPercentage = (Date.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
+  if (progressPercentage <= 100 && !context.state.mouseDown) {
+    progressBar.style.width = (`${progressPercentage}%`);
+    progressBarSlider.style.left = (`${progressPercentage}%`);
+    const trackProgress = length * progressPercentage / 100;
+    context.setState({ trackProgress });
+  }
+};
+
+module.exports = { addEventListeners, updateProgressBar };
