@@ -30,28 +30,21 @@ const queueManager = new QueueManager({
     globalSocket.emit('queue changed', queueManager.getQueue());
     globalSocket.broadcast.emit('queue changed', queueManager.getQueue());
   },
-  updatePlayingContextPause: () => {
-    queueManager.playingContext.currentlyPlaying = false;
-    queueManager.playingContext.lastPausedAt = Date.now();
-    queueManager.playingContext.trackProgress = (queueManager.playingContext.lastPausedAt - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance);
+  updatePlayingContext: (option, newTrackPosition) => {
+    if (option === 'pause') {
+      queueManager.playingContext.currentlyPlaying = false;
+      queueManager.playingContext.lastPausedAt = Date.now();
+      queueManager.playingContext.trackProgress = (queueManager.playingContext.lastPausedAt - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance);
+    } else if (option === 'play') {
+      queueManager.playingContext.currentlyPlaying = true;
+      queueManager.playingContext.totalTimePaused += (Date.now() - queueManager.playingContext.lastPausedAt);
+    } else if (option === 'seek') {
+      queueManager.playingContext.seekDistance += (newTrackPosition - (Date.now() - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance));
+    }
     globalSocket.emit('fetch now playing');
     globalSocket.broadcast.emit('fetch now playing');
-    console.log('pausing track');
     // console.log(`Track Progress: ${parseMs(queueManager.playingContext.trackProgress)}`);
     // console.log(`Total Time Paused: ${parseMs(queueManager.playingContext.totalTimePaused)}`);
-  },
-  updatePlayingContextPlay: () => {
-    queueManager.playingContext.currentlyPlaying = true;
-    queueManager.playingContext.totalTimePaused += (Date.now() - queueManager.playingContext.lastPausedAt);
-    globalSocket.emit('fetch now playing');
-    globalSocket.broadcast.emit('fetch now playing');
-    console.log('resuming track');
-  },
-  updatePlayingContextSeek: (newTrackPosition) => {
-    queueManager.playingContext.seekDistance += (newTrackPosition - (Date.now() - queueManager.playingContext.startTimestamp - queueManager.playingContext.totalTimePaused + queueManager.playingContext.seekDistance));
-    globalSocket.emit('fetch now playing');
-    globalSocket.broadcast.emit('fetch now playing');
-    console.log('seeking track');
   },
 });
 
@@ -70,7 +63,7 @@ const socketApi = (io) => {
     res.send(users);
   });
 
-  api.get('/now-playing', (req, res) => {
+  api.get('/playing-context', (req, res) => {
     res.send(queueManager.playingContext);
   });
 
@@ -92,13 +85,13 @@ const socketApi = (io) => {
       queueManager.overridePlayingContext(formatTrack(track, client.id));
     });
     client.on('pause playback', () => {
-      queueManager.updatePlayingContextPause();
+      queueManager.updatePlayingContext('pause');
     });
     client.on('play track', () => {
-      queueManager.updatePlayingContextPlay();
+      queueManager.updatePlayingContext('play');
     });
     client.on('seek track', (newTrackPosition) => {
-      queueManager.updatePlayingContextSeek(newTrackPosition);
+      queueManager.updatePlayingContext('seek', newTrackPosition);
     });
     client.on('disconnect', () => {
       console.log(`client ${client.id} disconnected`);

@@ -4,7 +4,7 @@ import { fetchTrackDataSuccess, playTrackSuccess, pausePlaybackSuccess } from '.
 
 const formatTrackData = (response) => {
   let formattedTrackData = null;
-  if (Object.keys(response.data).length !== 0) {
+  if (Object.prototype.hasOwnProperty.call(response.data, 'track')) {
     formattedTrackData = {
       currentlyPlaying: response.data.currentlyPlaying,
       startTimestamp: response.data.startTimestamp,
@@ -24,7 +24,7 @@ const formatTrackData = (response) => {
 };
 
 const fetchTrackData = () => (dispatch) => {
-  axios.get('/api/now-playing')
+  axios.get('/api/playing-context')
     .then((trackData) => {
       dispatch(fetchTrackDataSuccess(formatTrackData(trackData)));
     })
@@ -33,7 +33,7 @@ const fetchTrackData = () => (dispatch) => {
     });
 };
 const playTrack = () => (dispatch, getState) => {
-  console.log('---------- PLAYING TRACK ----------');
+
   const {
     id,
     startTimestamp,
@@ -41,21 +41,25 @@ const playTrack = () => (dispatch, getState) => {
     seekDistance,
   } = getState().trackData;
 
-  return axios({
-    method: 'PUT',
-    url: 'https://api.spotify.com/v1/me/player/play',
-    data: {
-      uris: [`spotify:track:${id}`],
-      position_ms: Date.now() - startTimestamp - totalTimePaused + seekDistance,
-    },
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
-  })
-    .then(() => {
-      dispatch(playTrackSuccess());
+  if (id) {
+    return axios({
+      method: 'PUT',
+      url: 'https://api.spotify.com/v1/me/player/play',
+      data: {
+        uris: [`spotify:track:${id}`],
+        position_ms: Date.now() - startTimestamp - totalTimePaused + seekDistance,
+      },
+      headers: { Authorization: `Bearer ${getState().session.accessToken}` },
     })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then(() => {
+        dispatch(playTrackSuccess());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    console.log('Nothing playing');
+  }
 };
 const pauseTrack = () => (dispatch, getState) => {
   console.log('---------- PAUSING TRACK ----------');
