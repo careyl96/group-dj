@@ -5,7 +5,7 @@ import { updateProgressBar } from './event-listeners/now-playing-bar-events';
 
 import {
   fetchTrackData,
-  resumePlayback,
+  playTrack,
   pausePlayback,
   seekTrack,
   skipTrack,
@@ -92,7 +92,7 @@ class NowPlayingBar extends Component {
             <div className="player-controls">
               <button className="control-button shuffle">shfl</button>
               <button className="control-button back">back</button>
-              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
+              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.playTrack}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
               <button className="control-button skip" onClick={this.props.skipTrack}>next</button>
               <button className="control-button resync" onClick={this.props.fetchTrackData}>resync</button>
             </div>
@@ -109,7 +109,6 @@ class NowPlayingBar extends Component {
           </div>
 
           <div className="now-playing-right">
-            Right
             <div className="state-tracker">{`Track Length: ${this.state.length}`}</div>
             <div className="state-tracker">{`Track Progress: ${Math.floor(this.state.trackProgress)}`}</div>
           </div>
@@ -134,11 +133,10 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   fetchTrackData: () => dispatch(fetchTrackData()),
-  resumePlayback: () => dispatch(resumePlayback()),
+  playTrack: () => dispatch(playTrack()),
   pausePlayback: () => dispatch(pausePlayback()),
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
   skipTrack: () => dispatch(skipTrack()),
-  incrementTrackProgress: newTrackProgress => dispatch(incrementTrackProgress(newTrackProgress)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NowPlayingBar);

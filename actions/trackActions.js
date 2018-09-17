@@ -13,8 +13,8 @@ export const overridePlayingContext = (track, userID) => ({
   userID,
 });
 
-export const resumePlayback = () => ({ type: types.RESUME_PLAYBACK });
-export const resumePlaybackSuccess = () => ({ type: types.RESUME_PLAYBACK_SUCCESS });
+export const playTrack = () => ({ type: types.PLAY_TRACK });
+export const playTrackSuccess = () => ({ type: types.PLAY_TRACK_SUCCESS });
 
 export const pausePlayback = () => ({ type: types.PAUSE_PLAYBACK });
 export const pausePlaybackSuccess = () => ({ type: types.PAUSE_PLAYBACK_SUCCESS });

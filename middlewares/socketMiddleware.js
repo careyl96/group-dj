@@ -38,8 +38,8 @@ export default store => next => (action) => {
     case types.PAUSE_PLAYBACK:
       socket.emit('pause playback');
       break;
-    case types.RESUME_PLAYBACK:
-      socket.emit('resume playback');
+    case types.PLAY_TRACK:
+      socket.emit('play track');
       break;
     case types.SEEK_TRACK:
       socket.emit('seek track', action.newTrackPosition);
@@ -47,8 +47,6 @@ export default store => next => (action) => {
     case types.OVERRIDE_PLAYING_CONTEXT:
       socket.emit('override playing context', action.track);
       break;
-    // const { track } = action
-    // socket.emit(types.QUEUE_TRACK, track);
     default:
       break;
   }

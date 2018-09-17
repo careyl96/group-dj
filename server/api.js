@@ -6,22 +6,6 @@ const { Router } = express;
 // const request = require('request');
 // const queryString = require('query-string');
 
-const parseMs = (ms) => {
-  let result = '';
-  let minutes = 0;
-  let seconds = 0;
-
-  minutes = Math.floor(ms / 1000 / 60);
-  seconds = Math.floor((ms / 1000) % 60);
-
-  if (seconds < 10) {
-    seconds = `0${seconds}`;
-  }
-
-  result += `${minutes}:${seconds}`;
-  return result;
-};
-
 const formatTrack = (track, userID) => {
   console.log('formatting track');
   const newQueueItem = new QueueItem({
@@ -56,7 +40,7 @@ const queueManager = new QueueManager({
     // console.log(`Track Progress: ${parseMs(queueManager.playingContext.trackProgress)}`);
     // console.log(`Total Time Paused: ${parseMs(queueManager.playingContext.totalTimePaused)}`);
   },
-  updatePlayingContextResume: () => {
+  updatePlayingContextPlay: () => {
     queueManager.playingContext.currentlyPlaying = true;
     queueManager.playingContext.totalTimePaused += (Date.now() - queueManager.playingContext.lastPausedAt);
     globalSocket.emit('fetch now playing');
@@ -110,8 +94,8 @@ const socketApi = (io) => {
     client.on('pause playback', () => {
       queueManager.updatePlayingContextPause();
     });
-    client.on('resume playback', () => {
-      queueManager.updatePlayingContextResume();
+    client.on('play track', () => {
+      queueManager.updatePlayingContextPlay();
     });
     client.on('seek track', (newTrackPosition) => {
       queueManager.updatePlayingContextSeek(newTrackPosition);

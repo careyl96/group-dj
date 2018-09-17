@@ -24,8 +24,8 @@ const updateToken = () => (dispatch) => {
     .then((res) => {
       if (!res.data) return;
       console.log(`access token expires in ${parseMs(res.data.expires_in - Date.now())}`);
-      const { access_token, refresh_token, expires_in } = res.data;
-      dispatch(updateTokenSuccess(access_token, refresh_token, expires_in));
+      const { access_token, expires_in } = res.data;
+      dispatch(updateTokenSuccess(access_token, expires_in));
     });
 };
 const getCurrentUserInfo = () => (dispatch, getState) => {

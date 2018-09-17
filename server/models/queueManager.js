@@ -6,7 +6,7 @@ class QueueManager {
     this.overridePlayingContext = options.overridePlayingContext;
     this.handleQueueChanged = options.handleQueueChanged;
     this.updatePlayingContextPause = options.updatePlayingContextPause;
-    this.updatePlayingContextResume = options.updatePlayingContextResume;
+    this.updatePlayingContextPlay = options.updatePlayingContextPlay;
     this.updatePlayingContextSeek = options.updatePlayingContextSeek;
   }
 

@@ -7,12 +7,10 @@ export const loginSuccess = (user, userImg) => ({
   user,
   userImg,
 });
-export const updateTokenSuccess = (accessToken, refreshToken, expiresIn) => ({
+export const updateTokenSuccess = (accessToken, expiresIn) => ({
   type: types.UPDATE_TOKEN_SUCCESS,
   accessToken,
-  refreshToken,
   expiresIn,
 });
 
 export const load = () => ({ type: types.LOAD });
-

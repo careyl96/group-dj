@@ -32,7 +32,7 @@ class SearchResults extends Component {
               track={searchResult}
               name={searchResult.name}
               artists={searchResult.artists.map(artist => artist.name).join(', ')}
-              duration={parseMs(searchResult.duration_ms)}
+              duration={searchResult.duration_ms}
               overridePlayingContext={this.props.overridePlayingContext}
             />
           ))
