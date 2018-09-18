@@ -11,13 +11,14 @@ class Home extends Component {
       <div className="home-tab">
         <div className="main-header">Queue</div>
         {queue
-          ? queue.map(queueItem => (
+          ?
+          queue.map(queueItem => (
             <TrackListItem
-              key={queueItem.uri}
-              track={queueItem}
-              name={queueItem.name}
-              artists={queueItem.artists.map(artist => artist.name).join(', ')}
-              duration={queueItem.duration_ms}
+              // key={queueItem.uri}
+              // track={queueItem}
+              // name={queueItem.name}
+              // artists={queueItem.artists.map(artist => artist.name).join(', ')}
+              // duration={queueItem.duration_ms}
               overridePlayingContext={this.props.overridePlayingContext}
             />
           ))
@@ -28,7 +29,7 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-  queue: state.view.queue,
+  queue: state.view.queue.data,
 });
 
 const mapDispatchToProps = dispatch => ({

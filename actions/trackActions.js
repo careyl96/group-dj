@@ -19,8 +19,8 @@ export const playTrackSuccess = () => ({ type: types.PLAY_TRACK_SUCCESS });
 export const pausePlayback = () => ({ type: types.PAUSE_PLAYBACK });
 export const pausePlaybackSuccess = () => ({ type: types.PAUSE_PLAYBACK_SUCCESS });
 
-export const fetchPreviousTrack = () => ({ type: types.FETCH_PREVIOUS_TRACK });
-export const fetchPreviousTrackSuccess = () => ({ type: types.FETCH_PREVIOUS_TRACK_SUCCESS });
+export const backTrack = () => ({ type: types.BACK_TRACK });
+export const backTrackSuccess = () => ({ type: types.BACK_TRACK_SUCCESS });
 
 export const skipTrack = () => (dispatch, getState) => {
   const { accessToken } = getState().session;

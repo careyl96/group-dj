@@ -19,6 +19,7 @@ auth.get('/login', (req, res) => {
   user-read-currently-playing
   user-read-playback-state
   user-modify-playback-state
+  user-library-read
   playlist-read-private`;
   const params = queryString.stringify({
     response_type: 'code',

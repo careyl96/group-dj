@@ -19,7 +19,7 @@ const parseMs = (ms) => {
 const TrackListItem = ({ track, name, artists, duration, overridePlayingContext }) => (
   <div className="track-container">
     <button className="control-button" onClick={() => overridePlayingContext(track)}>Play</button>
-    <div className="track-info result">
+    <div className="track-info track-list-item">
       <div className="track-name"> {name} </div>
       <div className="track-artist"> {artists} </div>
     </div>

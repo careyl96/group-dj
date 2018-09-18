@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addEventListeners } from './event-listeners/now-playing-bar-events';
-import { updateProgressBar } from './event-listeners/now-playing-bar-events';
-
+import { addEventListeners, updateProgressBar } from './event-listeners/now-playing-bar-events';
 import {
   fetchTrackData,
   playTrack,
   pausePlayback,
   seekTrack,
   skipTrack,
+  backTrack,
 } from '../../../actions/trackActions';
 
 const parseMs = (ms) => {
@@ -48,23 +47,8 @@ class NowPlayingBar extends Component {
 
   componentWillReceiveProps(newProps) {
     clearInterval(this.interval);
-    const {
-      // currentlyPlaying,
-      // startTimestamp,
-      // lastPausedAt,
-      // totalTimePaused,
-      // seekDistance,
-      length,
-    } = newProps;
-    this.setState({
-      // currentlyPlaying,
-      // startTimestamp,
-      // lastPausedAt,
-      // totalTimePaused,
-      // seekDistance,
-      length,
-    });
-
+    const { length } = newProps;
+    this.setState({ length });
     if (newProps.currentlyPlaying) {
       this.interval = setInterval(() => updateProgressBar(this), 300);
     }
@@ -91,7 +75,7 @@ class NowPlayingBar extends Component {
           <div className="now-playing-center">
             <div className="player-controls">
               <button className="control-button shuffle">shfl</button>
-              <button className="control-button back">back</button>
+              <button className="control-button back" onClick={this.props.backTrack}>back</button>
               <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.playTrack}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
               <button className="control-button skip" onClick={this.props.skipTrack}>next</button>
               <button className="control-button resync" onClick={this.props.fetchTrackData}>resync</button>
@@ -136,6 +120,7 @@ const mapDispatchToProps = dispatch => ({
   playTrack: () => dispatch(playTrack()),
   pausePlayback: () => dispatch(pausePlayback()),
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
+  backTrack: () => dispatch(backTrack()),
   skipTrack: () => dispatch(skipTrack()),
 });
 

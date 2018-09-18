@@ -10,7 +10,7 @@ const initState = {
   name: null,
   artists: null,
   length: null,
-  albumArt: null,
+  albumArt: 'https://image.freepik.com/free-icon/black-music-icon_318-9277.jpg',
   popularity: null,
   id: null,
 };
@@ -18,12 +18,10 @@ const initState = {
 const trackReducer = (state = initState, action) => {
   switch (action.type) {
     case types.FETCH_TRACK_DATA_SUCCESS:
-      return action.trackData || state;
+      return action.trackData || initState;
     case types.PLAY_TRACK_SUCCESS:
-      console.log('play track success');
       return state;
     case types.PAUSE_PLAYBACK_SUCCESS:
-      console.log('pause playback success');
       return state;
     // case types.SEEK_TRACK_SUCCESS:
     //   return {

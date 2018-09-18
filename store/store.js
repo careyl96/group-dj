@@ -8,12 +8,14 @@ import searchMiddleware from '../middlewares/searchMiddleware';
 import trackMiddleware from '../middlewares/trackMiddleware';
 import viewMiddleware from '../middlewares/viewMiddleware';
 
+import loggingMiddleware from '../middlewares/loggingMiddleware';
+
 const middleware = applyMiddleware(
   sessionMiddleware,
   socketMiddleware,
   trackMiddleware,
   // devicesMiddleware,
-  // loggerMiddleware,
+  loggingMiddleware,
   searchMiddleware,
   viewMiddleware,
   thunk,

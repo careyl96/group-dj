@@ -40,8 +40,9 @@
   background-color: rgba(0, 0, 0, .1);
 }
 
-.result {
+.track-list-item {
   width: 100%;
+  margin-left: 5px;
 }
 
 .track-time {

@@ -1,11 +1,16 @@
 import axios from 'axios';
 import * as types from '../actions/types';
-import { fetchQueueSuccess, fetchRecentlyPlayedSuccess, fetchMostPlayedSuccess, fetchMySongsSuccess } from '../actions/viewActions';
+import {
+  fetchQueueSuccess,
+  fetchRecentlyPlayedSuccess,
+  fetchMostPlayedSuccess,
+  fetchMySongsSuccess,
+} from '../actions/viewActions';
 
 const fetchQueue = () => (dispatch) => {
   axios.get('/api/queue')
-    .then((queue) => {
-      dispatch(fetchQueueSuccess(queue));
+    .then((response) => {
+      dispatch(fetchQueueSuccess(response.data));
     })
     .catch((err) => {
       console.log(err);
@@ -13,8 +18,8 @@ const fetchQueue = () => (dispatch) => {
 };
 const fetchRecentlyPlayed = () => (dispatch) => {
   axios.get('/api/recently-played')
-    .then((recentlyPlayed) => {
-      dispatch(fetchRecentlyPlayedSuccess(recentlyPlayed));
+    .then((response) => {
+      dispatch(fetchRecentlyPlayedSuccess(response.data));
     })
     .catch((err) => {
       console.log(err);
@@ -22,8 +27,8 @@ const fetchRecentlyPlayed = () => (dispatch) => {
 };
 const fetchMostPlayed = () => (dispatch) => {
   axios.get('/api/most-played')
-    .then((mostPlayed) => {
-      dispatch(fetchMostPlayedSuccess(mostPlayed));
+    .then((response) => {
+      dispatch(fetchMostPlayedSuccess(response.data));
     })
     .catch((err) => {
       console.log(err);
@@ -35,8 +40,8 @@ const fetchMySongs = () => (dispatch, getState) => {
     url: 'https://api.spotify.com/v1/me/tracks',
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
-    .then((mySongs) => {
-      dispatch(fetchMySongsSuccess(mySongs));
+    .then((response) => {
+      dispatch(fetchMySongsSuccess(response.data));
     });
 };
 

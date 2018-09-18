@@ -26,6 +26,7 @@ const formatTrackData = (response) => {
 const fetchTrackData = () => (dispatch) => {
   axios.get('/api/playing-context')
     .then((trackData) => {
+      console.log(trackData.data);
       dispatch(fetchTrackDataSuccess(formatTrackData(trackData)));
     })
     .catch((error) => {
@@ -33,7 +34,6 @@ const fetchTrackData = () => (dispatch) => {
     });
 };
 const playTrack = () => (dispatch, getState) => {
-
   const {
     id,
     startTimestamp,
@@ -57,9 +57,8 @@ const playTrack = () => (dispatch, getState) => {
       .catch((err) => {
         console.log(err);
       });
-  } else {
-    console.log('Nothing playing');
   }
+  console.log('Nothing playing');
 };
 const pauseTrack = () => (dispatch, getState) => {
   console.log('---------- PAUSING TRACK ----------');
@@ -79,7 +78,7 @@ const handlePlayState = () => (dispatch, getState) => {
   const { currentlyPlaying } = getState().trackData;
   if (currentlyPlaying === false) {
     dispatch(pauseTrack());
-  } else {
+  } else if (currentlyPlaying === true) {
     dispatch(playTrack());
   }
 };

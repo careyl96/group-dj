@@ -69,26 +69,25 @@ function draggable(element, context) {
   document.addEventListener('mouseup', onMouseUp);
 }
 
-const addEventListeners = (context) => {
+export const addEventListeners = (context) => {
   const progressBar = document.querySelector('.progress-bar-clickable');
   draggable(progressBar, context);
 };
 
-const updateProgressBar = (context) => {
+export const updateProgressBar = (context) => {
   const progressBar = document.querySelector('.progress-bar-progress');
   const progressBarSlider = document.querySelector('.progress-bar-slider');
 
   const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().trackData;
   const progressPercentage = (Date.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
-  if (progressPercentage <= 100 && !context.state.mouseDown) {
+  if (progressPercentage < 100 && !context.state.mouseDown) {
     progressBar.style.width = (`${progressPercentage}%`);
     progressBarSlider.style.left = (`${progressPercentage}%`);
     const trackProgress = (length * progressPercentage) / 100;
     context.setState({ trackProgress });
   } else if (progressPercentage >= 100 && !context.state.mouseDown) {
-    const trackProgress = length;
-    context.setState({ trackProgress });
+    progressBar.style.width = ('0%');
+    progressBarSlider.style.left = ('0%');
+    context.setState({ trackProgress: 0 });
   }
 };
-
-module.exports = { addEventListeners, updateProgressBar };
