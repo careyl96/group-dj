@@ -10,7 +10,6 @@ const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('../auth/config');
 const auth = Router();
 
 const redirect_uri = process.env.REDIRECT_URI || `${config.HOST}/auth/callback`;
-const hostURL = 'http://localhost:3006';
 
 auth.get('/login', (req, res) => {
   const state = rand.generate();
@@ -55,7 +54,7 @@ auth.get('/callback', (req, res) => {
       res.cookie('expires_in', Date.now() + expires_in * 1000, { httpOnly: true });
       res.cookie('user_id', rand.generate(), { httpOnly: true });
       console.log('access token cookie created');
-      res.redirect(hostURL);
+      res.redirect(config.HOST);
     });
   }
 });

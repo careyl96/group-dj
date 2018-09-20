@@ -1,12 +1,24 @@
 import axios from 'axios';
 import * as types from '../actions/types';
 import {
+  updateViewSuccess,
   fetchQueueSuccess,
   fetchRecentlyPlayedSuccess,
   fetchMostPlayedSuccess,
   fetchMySongsSuccess,
 } from '../actions/viewActions';
+import pageHistory from './history';
 
+const updateView = view => (dispatch, getState) => {
+  if (getState().view.pageHistory.view !== view && view !== 'prev' && view !== 'next') {
+    pageHistory.addNode(view);
+    dispatch(updateViewSuccess(pageHistory.pageNode));
+  } else if (view === 'prev' && getState().view.pageHistory.prev !== null) {
+    dispatch(updateViewSuccess(pageHistory.getPrev()));
+  } else if (view === 'next' && getState().view.pageHistory.next !== null) {
+    dispatch(updateViewSuccess(pageHistory.getNext()));
+  }
+};
 const fetchQueue = () => (dispatch) => {
   axios.get('/api/queue')
     .then((response) => {
@@ -48,6 +60,9 @@ const fetchMySongs = () => (dispatch, getState) => {
 export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
+    case types.UPDATE_VIEW:
+      store.dispatch(updateView(action.view));
+      break;
     case types.FETCH_QUEUE:
       store.dispatch(fetchQueue());
       break;

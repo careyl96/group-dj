@@ -1,10 +1,12 @@
 class QueueManager {
   constructor(options = {}) {
-    this.queue = [1, 2, 3, 4, 5];
-    this.playingContext = {};
+    this.queue = [];
+    this.playingContext = null;
     this.handleQueueChanged = options.handleQueueChanged;
+    this.beginTrack = options.beginTrack;
     this.updatePlayingContext = options.updatePlayingContext;
     this.updateRecentlyPlayed = options.updateRecentlyPlayed;
+    this.playNext = options.playNext;
 
     this.recentlyPlayed = [];
 
@@ -12,24 +14,21 @@ class QueueManager {
     this.serverSideTrackProgress = 0;
   }
 
-  playNextInQueue() {
-    let queueItem = {};
-    if (this.queue.length > 0) {
-      queueItem = this.queue.shift();
-      this.playingContext = queueItem;
+  queueTrack(track, userID) {
+    if (!this.playingContext) {
+      this.beginTrack(track, userID);
+    } else {
+      const queueItem = {
+        track,
+        userID,
+      };
+      this.queue.push(queueItem);
       this.handleQueueChanged();
     }
-    this.updatePlayingContext('play next', queueItem);
-  }
-
-  addToQueue(queueItem) {
-    this.queue.push(queueItem);
-    this.queueEmpty = false;
-    this.handleQueueChanged();
   }
 
   removeFromQueue(id) {
-    const index = this.queue.findIndex(item => item.id === id);
+    const index = this.queue.findIndex(item => item.track.id === id);
     if (index !== -1) {
       this.queue.splice(index, 1);
       this.handleQueueChanged();
@@ -55,8 +54,11 @@ class QueueManager {
   handleTrackEnd() {
     this.serverSideTrackProgress = 0;
     this.updateRecentlyPlayed();
-    this.playNextInQueue();
+    this.playNext();
   }
 }
 
 module.exports = QueueManager;
+
+
+// No songs playing - playingContext = null;

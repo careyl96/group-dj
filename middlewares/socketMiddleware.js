@@ -1,23 +1,26 @@
 import io from 'socket.io-client';
 import * as types from '../actions/types';
 import config from '../auth/config';
+import serverDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
-import { fetchTrackData } from '../actions/trackActions';
-import { fetchQueue, fetchRecentlyPlayed } from '../actions/viewActions';
+import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
+import { fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
 
 let socket = null;
 
 const initSocket = (store) => {
   socket = io(config.HOST);
+  const interval = setInterval(() => { socket.emit('time'); }, 1000);
   socket.on('connect', () => {
     const newUser = {};
     const { user, userImg } = store.getState().session;
-
     newUser.id = socket.id;
     newUser.username = user;
     newUser.thumbnail = userImg;
+
     socket.emit('add user', newUser);
-    store.dispatch(fetchTrackData());
+
+    store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
     store.dispatch(fetchRecentlyPlayed());
     // store.dispatch(fetchMostPlayed());
@@ -27,11 +30,19 @@ const initSocket = (store) => {
     console.log('~~~~~Updating User List~~~~~');
     store.dispatch(updateUsers(data));
   });
-  socket.on('fetch now playing', () => {
-    store.dispatch(fetchTrackData());
+  socket.on('fetch playing context', (playingContext) => {
+    store.dispatch(fetchPlayingContextSuccess(playingContext));
+    // console.log(`Server Date: ${serverDate.now()}`);
+    // console.log(`Client Date: ${Date.now()}`);
   });
   socket.on('fetch recently played', () => {
     store.dispatch(fetchRecentlyPlayed());
+  });
+  socket.on('fetch queue', (queue) => {
+    store.dispatch(fetchQueueSuccess(queue));
+  });
+  socket.on('disconnect', () => {
+    clearInterval(interval);
   });
 };
 
@@ -41,25 +52,34 @@ export default store => next => (action) => {
     case types.LOGIN_SUCCESS:
       initSocket(store);
       break;
-    case types.QUEUE_TRACK:
+    case types.OVERRIDE_PLAYING_CONTEXT:
+      socket.emit('override playing context', action.track);
+      break;
+    case types.RESUME_TRACK:
+      socket.emit('resume track');
       break;
     case types.PAUSE_PLAYBACK:
       socket.emit('pause playback');
       break;
-    case types.PLAY_TRACK:
-      socket.emit('play track');
+    case types.SEEK_TRACK:
+      socket.emit('seek track', action.newTrackPosition);
       break;
     case types.BACK_TRACK:
       socket.emit('back track');
       break;
-    case types.SEEK_TRACK:
-      socket.emit('seek track', action.newTrackPosition);
+    case types.SKIP_TRACK:
+      socket.emit('skip track');
       break;
-    case types.OVERRIDE_PLAYING_CONTEXT:
-      socket.emit('override playing context', action.track);
+    case types.QUEUE_TRACK:
+      socket.emit('queue track', action.track);
+      break;
+    case types.REMOVE_TRACK:
+      socket.emit('remove track', action.track);
       break;
     default:
       break;
   }
   return result;
 };
+
+export { serverDate };

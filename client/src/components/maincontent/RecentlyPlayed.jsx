@@ -6,7 +6,6 @@ import { overridePlayingContext } from '../../../../actions/trackActions';
 class RecentlyPlayed extends Component {
   render() {
     const { recentlyPlayed } = this.props;
-    console.log(recentlyPlayed);
     return (
       <div className="recently-played-tab">
         <div className="main-header">Recently Played</div>

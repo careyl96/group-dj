@@ -1,45 +1,24 @@
 import axios from 'axios';
 import * as types from '../actions/types';
-import { fetchTrackDataSuccess, playTrackSuccess, pausePlaybackSuccess } from '../actions/trackActions';
+import serverDate from '../helpers/serverDate';
+import { fetchPlayingContextSuccess, resumeTrackSuccess, pausePlaybackSuccess } from '../actions/trackActions';
 
-const formatTrackData = (response) => {
-  let formattedTrackData = null;
-  if (Object.prototype.hasOwnProperty.call(response.data, 'track')) {
-    formattedTrackData = {
-      currentlyPlaying: response.data.currentlyPlaying,
-      startTimestamp: response.data.startTimestamp,
-      lastPausedAt: response.data.lastPausedAt,
-      totalTimePaused: response.data.totalTimePaused,
-      seekDistance: response.data.seekDistance,
-      userID: response.data.userID,
-      name: response.data.track.name,
-      artists: response.data.track.artists.map(artist => artist.name).join(', '),
-      length: response.data.track.duration_ms,
-      albumArt: response.data.track.album.images[2].url,
-      popularity: response.data.track.popularity,
-      id: response.data.track.id,
-    };
-  }
-  return formattedTrackData;
-};
-
-const fetchTrackData = () => (dispatch) => {
+const fetchPlayingContext = () => (dispatch) => {
   axios.get('/api/playing-context')
-    .then((trackData) => {
-      console.log(trackData.data);
-      dispatch(fetchTrackDataSuccess(formatTrackData(trackData)));
+    .then((playingContext) => {
+      dispatch(fetchPlayingContextSuccess(playingContext.data));
     })
     .catch((error) => {
       console.log(error);
     });
 };
-const playTrack = () => (dispatch, getState) => {
+const resumeTrack = () => (dispatch, getState) => {
   const {
     id,
     startTimestamp,
     totalTimePaused,
     seekDistance,
-  } = getState().trackData;
+  } = getState().playingContext;
 
   if (id) {
     return axios({
@@ -47,12 +26,12 @@ const playTrack = () => (dispatch, getState) => {
       url: 'https://api.spotify.com/v1/me/player/play',
       data: {
         uris: [`spotify:track:${id}`],
-        position_ms: Date.now() - startTimestamp - totalTimePaused + seekDistance,
+        position_ms: serverDate.now() - startTimestamp - totalTimePaused + seekDistance,
       },
       headers: { Authorization: `Bearer ${getState().session.accessToken}` },
     })
       .then(() => {
-        dispatch(playTrackSuccess());
+        dispatch(resumeTrackSuccess());
       })
       .catch((err) => {
         console.log(err);
@@ -75,21 +54,21 @@ const pauseTrack = () => (dispatch, getState) => {
     });
 };
 const handlePlayState = () => (dispatch, getState) => {
-  const { currentlyPlaying } = getState().trackData;
+  const { currentlyPlaying } = getState().playingContext;
   if (currentlyPlaying === false) {
     dispatch(pauseTrack());
   } else if (currentlyPlaying === true) {
-    dispatch(playTrack());
+    dispatch(resumeTrack());
   }
 };
 
 export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
-    case types.FETCH_TRACK_DATA:
-      store.dispatch(fetchTrackData());
+    case types.FETCH_PLAYING_CONTEXT:
+      store.dispatch(fetchPlayingContext());
       break;
-    case types.FETCH_TRACK_DATA_SUCCESS:
+    case types.FETCH_PLAYING_CONTEXT_SUCCESS:
       store.dispatch(handlePlayState());
       break;
     default:

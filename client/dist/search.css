@@ -1,11 +1,48 @@
 .search-container {
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
   padding: 24px 0px 24px 0px;
+  max-height: 40px;
   width: 100%;
 }
 
 .search-bar {
+  border-radius: 15px;
+  border: 1px solid white;
+  margin-left: 24px;
+  padding: 0px 15px 0px 25px;
+  width: 125px;
+  height: 24px;
+  font-size: 15px;
+  outline: none;
+  background-image: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/mCz7hqj/videoblocks-magnifying-glass-search-icon-in-and-out-animation-loop-black_hovv31ukf_thumbnail-full04.png');
+  background-size: 31px 17px;
+  background-repeat: no-repeat;
+  background-position: -3px;
 }
 
-.search-button {
+.view-nav {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  color: hsla(0, 0%, 100%, 1);
+  font-size: 32px;
+  font-weight: 100;
+  outline: none;
+}
+
+.back-button {
+  padding: 0px 10px 3px 0px;
+}
+
+.forward-button {
+  padding: 0px 0px 3px 10px;
+}
+
+.view-nav:active {
+  color: hsla(0, 0%, 100%, .4);
+}
+
+.disabled {
+  color: hsla(0, 0%, 100%, .4);
 }

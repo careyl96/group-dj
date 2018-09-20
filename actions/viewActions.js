@@ -5,6 +5,11 @@ export const updateView = view => ({
   view,
 });
 
+export const updateViewSuccess = pageHistory => ({
+  type: types.UPDATE_VIEW_SUCCESS,
+  pageHistory,
+});
+
 export const fetchQueue = () => ({ type: types.FETCH_QUEUE });
 export const fetchQueueSuccess = queue => ({
   type: types.FETCH_QUEUE_SUCCESS,

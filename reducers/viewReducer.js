@@ -1,7 +1,11 @@
 import * as types from '../actions/types';
 
 const initState = {
-  view: 'home',
+  pageHistory: {
+    prev: null,
+    view: 'home',
+    next: null,
+  },
   queue: [],
   recentlyPlayed: [],
   mostPlayed: [],
@@ -10,10 +14,10 @@ const initState = {
 
 const viewReducer = (state = initState, action) => {
   switch (action.type) {
-    case types.UPDATE_VIEW:
+    case types.UPDATE_VIEW_SUCCESS:
       return {
         ...state,
-        view: action.view,
+        pageHistory: action.pageHistory,
       };
     case types.FETCH_QUEUE_SUCCESS:
       return {

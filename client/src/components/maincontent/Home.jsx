@@ -1,25 +1,41 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
-import TrackListItem from './TrackListItem';
-import { overridePlayingContext } from '../../../../actions/trackActions';
+import QueueItem from './QueueItem';
+import { removeTrack } from '../../../../actions/queueActions';
 import { fetchQueue } from '../../../../actions/viewActions';
+import { resumeTrack, pausePlayback } from '../../../../actions/trackActions';
 
 class Home extends Component {
   render() {
-    const { queue } = this.props;
+    const { isTrackPlaying, queue } = this.props;
     return (
       <div className="home-tab">
-        <div className="main-header">Queue</div>
+        <div className="home-header">
+          <img id="now-playing-home-album-art" src={this.props.albumArt} />
+          {isTrackPlaying ?
+            <div className="flex-vertical">
+              <h2 className="now-playing-home-track-name">{this.props.name}</h2>
+              <div className="now-playing-home-artists">{`By ${this.props.artists}` || null}</div>
+              <div className="now-playing-home-user">{`Queued by: ${this.props.userID}`}</div>
+              <button className="home-header-play-button" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumeTrack}>{this.props.currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
+            </div>
+            :
+            <h2 className="now-playing-home-track-name">No tracks currently playing</h2>
+          }
+        </div>
+        <div className="queue">Queue</div>
         {queue
           ?
-          queue.map(queueItem => (
-            <TrackListItem
-              // key={queueItem.uri}
-              // track={queueItem}
-              // name={queueItem.name}
-              // artists={queueItem.artists.map(artist => artist.name).join(', ')}
-              // duration={queueItem.duration_ms}
-              overridePlayingContext={this.props.overridePlayingContext}
+          queue.map((queueItem, index) => (
+            <QueueItem
+              key={index}
+              track={queueItem.track}
+              name={queueItem.track.name}
+              artists={queueItem.track.artists.map(artist => artist.name).join(', ')}
+              duration={queueItem.track.duration_ms}
+              removeTrack={this.props.removeTrack}
+            // queueItem.track.userID = id of user who queued the song
             />
           ))
           : null}
@@ -29,12 +45,22 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-  queue: state.view.queue.data,
+  queue: state.view.queue,
+  currentlyPlaying: state.playingContext.currentlyPlaying,
+  albumArt: state.playingContext.albumArt,
+  name: state.playingContext.name,
+  artists: state.playingContext.artists,
+  length: state.playingContext.length,
+  userID: state.playingContext.userID,
+  isTrackPlaying: state.playingContext.name !== null,
 });
 
+
 const mapDispatchToProps = dispatch => ({
+  resumeTrack: () => dispatch(resumeTrack()),
+  pausePlayback: () => dispatch(pausePlayback()),
   fetchQueue: () => dispatch(fetchQueue()),
-  overridePlayingContext: track => dispatch(overridePlayingContext(track)),
+  removeTrack: track => dispatch(removeTrack(track)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

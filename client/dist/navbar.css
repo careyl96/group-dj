@@ -26,6 +26,6 @@
 .nav-button {
   transition: none 33ms cubic-bezier(.3,0,0,1);
   transition-property: all;
-  transform: scale(1.06);
+  transform: scale(1.03);
   color: #fff;
 }

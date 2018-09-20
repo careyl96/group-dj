@@ -11,11 +11,11 @@ import viewMiddleware from '../middlewares/viewMiddleware';
 import loggingMiddleware from '../middlewares/loggingMiddleware';
 
 const middleware = applyMiddleware(
+  loggingMiddleware,
   sessionMiddleware,
   socketMiddleware,
   trackMiddleware,
   // devicesMiddleware,
-  loggingMiddleware,
   searchMiddleware,
   viewMiddleware,
   thunk,

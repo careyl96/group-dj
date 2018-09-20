@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../auth/config';
+import serverDate from '../helpers/serverDate';
 import * as types from '../actions/types';
 import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
 
@@ -23,7 +24,7 @@ const updateToken = () => (dispatch) => {
   return axios.get(`${config.HOST}/auth/token`)
     .then((res) => {
       if (!res.data) return;
-      console.log(`access token expires in ${parseMs(res.data.expires_in - Date.now())}`);
+      console.log(`access token expires in ${parseMs(res.data.expires_in - serverDate.now())}`);
       const { access_token, expires_in } = res.data;
       dispatch(updateTokenSuccess(access_token, expires_in));
     });

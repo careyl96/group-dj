@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addEventListeners, updateProgressBar } from './event-listeners/now-playing-bar-events';
 import {
-  fetchTrackData,
-  playTrack,
+  fetchPlayingContext,
+  resumeTrack,
   pausePlayback,
   seekTrack,
   skipTrack,
@@ -30,10 +30,6 @@ class NowPlayingBar extends Component {
   constructor() {
     super();
     this.state = {
-      // currentlyPlaying: false,
-      // startTimestamp: 0,
-      // lastPausedAt: 0,
-      // totalTimePaused: 0,
       trackProgress: 0,
       length: 0,
       mouseDown: false,
@@ -46,6 +42,7 @@ class NowPlayingBar extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    updateProgressBar(this);
     clearInterval(this.interval);
     const { length } = newProps;
     this.setState({ length });
@@ -58,7 +55,6 @@ class NowPlayingBar extends Component {
     return (
       <div className="now-playing-wrapper">
         <div className="now-playing-container">
-
           {/* NOW PLAYING BAR LEFT SIDE - ALBUM ART/TRACK INFO */}
           <div className="now-playing-left">
             <div className="album-art-container">
@@ -74,13 +70,34 @@ class NowPlayingBar extends Component {
           {/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */}
           <div className="now-playing-center">
             <div className="player-controls">
-              <button className="control-button shuffle">shfl</button>
-              <button className="control-button back" onClick={this.props.backTrack}>back</button>
-              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.playTrack}>{this.props.currentlyPlaying ? 'pause' : 'play'}</button>
-              <button className="control-button skip" onClick={this.props.skipTrack}>next</button>
-              <button className="control-button resync" onClick={this.props.fetchTrackData}>resync</button>
+              {/* <button className="control-button shuffle">
+                <i class="material-icons md-light md-24">shuffle</i>
+              </button> */}
+
+              <button className="control-button back" onClick={this.props.backTrack}>
+                <i class="material-icons md-light md-36">skip_previous</i>
+              </button>
+
+              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumeTrack}>
+                {this.props.currentlyPlaying
+                  ? <i class="material-icons md-light md-36">pause_circle_outline</i>
+                  : <i class="material-icons md-light md-36">play_circle_outline</i>
+                }
+              </button>
+
+              <button className="control-button skip" onClick={this.props.skipTrack}>
+                <i class="material-icons md-light md-36">skip_next</i>
+              </button>
+
+              {/* <button className="control-button resync" onClick={this.props.fetchPlayingContext}>
+                <i class="material-icons md-light md-24">sync</i>
+              </button> */}
+
             </div>
             <div className="progress-bar-container">
+              <button className="resync" onClick={this.props.fetchPlayingContext}>
+                <i class="material-icons md-light md-18">sync</i>
+              </button>
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
               <div className="progress-bar-clickable" onClick={this.handleClick}>
                 <div className="progress-bar">
@@ -103,21 +120,21 @@ class NowPlayingBar extends Component {
 }
 
 const mapStateToProps = state => ({
-  currentlyPlaying: state.trackData.currentlyPlaying,
-  name: state.trackData.name,
-  artists: state.trackData.artists,
-  length: state.trackData.length,
-  startTimestamp: state.trackData.startTimestamp,
-  seekDistance: state.trackData.seekDistance,
-  lastPausedAt: state.trackData.lastPausedAt,
-  totalTimePaused: state.trackData.totalTimePaused,
-  albumArt: state.trackData.albumArt,
-  popularity: state.trackData.popularity,
-  userID: state.trackData.userID,
+  currentlyPlaying: state.playingContext.currentlyPlaying,
+  name: state.playingContext.name,
+  artists: state.playingContext.artists,
+  length: state.playingContext.length,
+  startTimestamp: state.playingContext.startTimestamp,
+  seekDistance: state.playingContext.seekDistance,
+  lastPausedAt: state.playingContext.lastPausedAt,
+  totalTimePaused: state.playingContext.totalTimePaused,
+  albumArt: state.playingContext.albumArt,
+  popularity: state.playingContext.popularity,
+  userID: state.playingContext.userID,
 });
 const mapDispatchToProps = dispatch => ({
-  fetchTrackData: () => dispatch(fetchTrackData()),
-  playTrack: () => dispatch(playTrack()),
+  fetchPlayingContext: () => dispatch(fetchPlayingContext()),
+  resumeTrack: () => dispatch(resumeTrack()),
   pausePlayback: () => dispatch(pausePlayback()),
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
   backTrack: () => dispatch(backTrack()),

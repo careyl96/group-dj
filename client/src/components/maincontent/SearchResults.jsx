@@ -2,22 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TrackListItem from './TrackListItem';
 import { overridePlayingContext } from '../../../../actions/trackActions';
-
-const parseMs = (ms) => {
-  let result = '';
-  let minutes = 0;
-  let seconds = 0;
-
-  minutes = Math.floor(ms / 1000 / 60);
-  seconds = Math.floor((ms / 1000) % 60);
-
-  if (seconds < 10) {
-    seconds = `0${seconds}`;
-  }
-
-  result += `${minutes}:${seconds}`;
-  return result;
-};
+import { queueTrack } from '../../../../actions/queueActions';
 
 class SearchResults extends Component {
   render() {
@@ -34,6 +19,7 @@ class SearchResults extends Component {
               artists={searchResult.artists.map(artist => artist.name).join(', ')}
               duration={searchResult.duration_ms}
               overridePlayingContext={this.props.overridePlayingContext}
+              queueTrack={this.props.queueTrack}
             />
           ))
           : null}
@@ -48,6 +34,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   overridePlayingContext: track => dispatch(overridePlayingContext(track)),
+  queueTrack: track => dispatch(queueTrack(track)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchResults);

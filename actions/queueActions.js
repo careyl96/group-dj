@@ -1,12 +1,10 @@
-import axios from 'axios';
-import store from '../store/store';
 import * as types from './types';
 
-export const addToQueue = track => ({
-  type: types.ADD_TO_QUEUE,
+export const queueTrack = track => ({
+  type: types.QUEUE_TRACK,
   track,
 });
-export const removeFromQueue = track => ({
-  type: types.ADD_TO_QUEUE,
+export const removeTrack = track => ({
+  type: types.REMOVE_TRACK,
   track,
 });

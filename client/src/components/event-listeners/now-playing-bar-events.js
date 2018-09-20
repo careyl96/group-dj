@@ -1,4 +1,5 @@
 import store from '../../../../store/store';
+import serverDate from '../../../../helpers/serverDate';
 import { seekTrack } from '../../../../actions/trackActions';
 
 function draggable(element, context) {
@@ -13,14 +14,15 @@ function draggable(element, context) {
 
   function onMouseDown(e) {
     isMouseDown = true;
-    const { length } = store.getState().trackData;
+    const { length } = store.getState().playingContext;
     mousePositionStart = e.clientX;
     startingWidthPercentage = e.offsetX / progressBar.offsetWidth * 100;
 
     progressBarProgress.style.width = `${startingWidthPercentage}%`;
     progressBarSlider.style.left = `${startingWidthPercentage}%`;
 
-    const newTrackPosition = Math.floor(length * startingWidthPercentage / 100);
+    let newTrackPosition = Math.floor(length * startingWidthPercentage / 100);
+    if (newTrackPosition < 0) newTrackPosition = 0;
     context.setState({
       trackProgress: newTrackPosition,
       mouseDown: true,
@@ -29,7 +31,7 @@ function draggable(element, context) {
 
   function onMouseMove(e) {
     if (!isMouseDown) return;
-    const { length } = store.getState().trackData;
+    const { length } = store.getState().playingContext;
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
@@ -37,7 +39,8 @@ function draggable(element, context) {
     if (percentBuffered < 0) percentBuffered = 0;
     if (percentBuffered > 100) percentBuffered = 100;
 
-    const newTrackPosition = Math.floor(length * percentBuffered / 100);
+    let newTrackPosition = Math.floor(length * percentBuffered / 100);
+    if (newTrackPosition < 0) newTrackPosition = 0;
     context.setState({ trackProgress: newTrackPosition });
 
     progressBarProgress.style.width = `${percentBuffered}%`;
@@ -46,7 +49,7 @@ function draggable(element, context) {
 
   function onMouseUp(e) {
     if (!isMouseDown) return;
-    const { length } = store.getState().trackData;
+    const { length } = store.getState().playingContext;
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / progressBar.offsetWidth * 100;
@@ -54,7 +57,8 @@ function draggable(element, context) {
     if (percentBuffered < 0) percentBuffered = 0;
     if (percentBuffered > 100) percentBuffered = 100;
 
-    const newTrackPosition = Math.floor(length * percentBuffered / 100);
+    let newTrackPosition = Math.floor(length * percentBuffered / 100);
+    if (newTrackPosition < 0) newTrackPosition = 0;
     context.setState({
       trackProgress: newTrackPosition,
       mouseDown: false,
@@ -78,8 +82,8 @@ export const updateProgressBar = (context) => {
   const progressBar = document.querySelector('.progress-bar-progress');
   const progressBarSlider = document.querySelector('.progress-bar-slider');
 
-  const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().trackData;
-  const progressPercentage = (Date.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
+  const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().playingContext;
+  const progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
   if (progressPercentage < 100 && !context.state.mouseDown) {
     progressBar.style.width = (`${progressPercentage}%`);
     progressBarSlider.style.left = (`${progressPercentage}%`);

@@ -16,12 +16,10 @@ const parseMs = (ms) => {
   return result;
 };
 
-const TrackListItem = ({ track, name, artists, duration, overridePlayingContext, queueTrack }) => (
+const QueueItem = ({ track, name, artists, duration, removeTrack }) => (
   <div className="track-container">
-    <button className="track-list-item-control btn-play" onClick={() => overridePlayingContext(track)} />
-    <button className="track-list-item-control btn-queue" onClick={() => queueTrack(track)}>
-      <i className="material-icons md-light md-24">playlist_add</i>
-      {/* <i class="material-icons md-light md-24">check</i> */}
+    <button className="track-list-item-control btn-remove-track" onClick={() => removeTrack(track.id)}>
+      <i className="material-icons md-light md-24">close</i>
     </button>
     <div className="track-info track-list-item">
       <div className="track-name"> {name} </div>
@@ -33,4 +31,4 @@ const TrackListItem = ({ track, name, artists, duration, overridePlayingContext,
   </div>
 );
 
-export default TrackListItem;
+export default QueueItem;

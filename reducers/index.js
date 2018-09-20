@@ -7,7 +7,7 @@ import viewReducer from './viewReducer';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
-  trackData: trackReducer,
+  playingContext: trackReducer,
   users: usersReducer,
   search: searchReducer,
   view: viewReducer,

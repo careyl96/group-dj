@@ -15,6 +15,7 @@
 .main-content-spacing {
   min-width: 300px;
   padding: 0px 24px 91px 24px;
+  overflow: hidden;
 }
 
 .main-header {
@@ -40,16 +41,55 @@
   background-color: rgba(0, 0, 0, .1);
 }
 
+.track-container:hover .btn-play::before {
+  content: "►";
+  font-size: 16px;
+}
+
 .track-list-item {
   width: 100%;
-  margin-left: 5px;
+}
+
+.track-list-item-control {
+  background-color: transparent;
+  border: none;
+  color: hsla(0, 0%, 100%, .6);
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  max-height: 32px;
+  padding: 0px 8px 10px 0px;
+  outline: none;
+}
+
+.btn-play:hover {
+  transition: none 33ms cubic-bezier(.3, 0, 0, 1);
+  transition-property: all;
+  transform: scale(1.06);
+  color: #fff;
+}
+
+.track-list-item-control:hover .material-icons.md-light {
+  color: #fff;
+}
+
+.track-list-item-control:active {
+  transition: none 33ms cubic-bezier(.3, 0, 0, 1);
+  transition-property: all;
+  transform: scale(1);
+  color: hsla(0, 0%, 100%, .3);
+}
+
+.btn-queue {
+  position: relative;
+  top: -2px;
 }
 
 .track-time {
   box-sizing: border-box;
   right: 0;
   font-size: 14px;
-  color:hsla(0, 0%, 100%, .6);
+  color: hsla(0, 0%, 100%, .6);
   height: 100%;
   padding-top: 0.5em;
 }

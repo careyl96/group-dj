@@ -10,7 +10,7 @@ const Users = ({ users }) => {
           ? users.map((user) => {
             const { thumbnail, username } = user;
             return (
-              <li key={user} className="user-list-item">
+              <li key={user.id} className="user-list-item">
                 <div className="user-img-container">
                   <img className="user-img" src={thumbnail} />
                 </div>

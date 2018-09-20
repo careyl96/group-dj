@@ -21,7 +21,7 @@ const searchTracks = query => (dispatch, getState) => {
       // console.log(response.data.tracks.items);
     })
     .catch((error) => {
-      console.log(error);
+      dispatch(clearTracks());
     });
 };
 
@@ -29,13 +29,7 @@ export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
     case types.SEARCH_TRACKS:
-      store.dispatch(updateView('search results'));
       store.dispatch(searchTracks(action.query));
-      break;
-    case types.UPDATE_VIEW:
-      if (action.view === 'search results') {
-        store.dispatch(clearTracks());
-      }
       break;
     default:
       break;

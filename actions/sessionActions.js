@@ -12,5 +12,9 @@ export const updateTokenSuccess = (accessToken, expiresIn) => ({
   accessToken,
   expiresIn,
 });
+export const updateTime = timeDifference => ({
+  type: types.UPDATE_TIME,
+  timeDifference,
+});
 
 export const load = () => ({ type: types.LOAD });
