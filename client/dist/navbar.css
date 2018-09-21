@@ -10,22 +10,29 @@
 
 .navbar-item {
   padding: 10px 20px 10px 0px;
-}
-
-.nav-button {
   font-size: 16px;
   font-weight: 500;
   background-color: transparent;
   color: hsla(0, 0%, 100%, .6);
-  padding: 0px;
   outline: none;
   border: none;
 }
 
-.navbar-item:hover
-.nav-button {
+.navbar-item:hover {
   transition: none 33ms cubic-bezier(.3,0,0,1);
   transition-property: all;
+  transform: scale(1.03);
+  color: #fff;
+}
+
+.navbar-item:active {
+  transition: none 33ms cubic-bezier(.3,0,0,1);
+  transition-property: all;
+  transform: scale(1.03);
+  color: hsla(0, 0%, 100%, 0.6);
+}
+
+.selected {
   transform: scale(1.03);
   color: #fff;
 }

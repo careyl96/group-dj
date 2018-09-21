@@ -3,7 +3,7 @@ import * as types from '../actions/types';
 const initState = {
   pageHistory: {
     prev: null,
-    view: 'home',
+    item: 'home',
     next: null,
   },
   queue: [],

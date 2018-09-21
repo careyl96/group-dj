@@ -7,12 +7,15 @@ import {
   fetchMostPlayedSuccess,
   fetchMySongsSuccess,
 } from '../actions/viewActions';
-import pageHistory from './history';
+import DoublyLinkedList from '../helpers/history';
+
+const pageHistory = new DoublyLinkedList('home');
 
 const updateView = view => (dispatch, getState) => {
-  if (getState().view.pageHistory.view !== view && view !== 'prev' && view !== 'next') {
+  if (view !== 'prev' && view !== 'next') {
+    console.log(pageHistory);
     pageHistory.addNode(view);
-    dispatch(updateViewSuccess(pageHistory.pageNode));
+    dispatch(updateViewSuccess(pageHistory.node));
   } else if (view === 'prev' && getState().view.pageHistory.prev !== null) {
     dispatch(updateViewSuccess(pageHistory.getPrev()));
   } else if (view === 'next' && getState().view.pageHistory.next !== null) {

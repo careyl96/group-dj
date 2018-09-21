@@ -34,7 +34,7 @@ class Main extends Component {
 }
 
 const mapStateToProps = state => ({
-  view: state.view.pageHistory.view,
+  view: state.view.pageHistory.item,
 });
 
 export default connect(mapStateToProps, null)(Main);

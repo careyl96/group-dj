@@ -32,3 +32,11 @@ const QueueItem = ({ track, name, artists, duration, removeTrack }) => (
 );
 
 export default QueueItem;
+
+// TODO
+// highlight page user is on
+// change text for TrackListItem to green when playing
+// change play icon to pause when track is playing
+// change queueTrack icon to checkmark when track is queued
+// change queueTrack icon to depress when clicked
+// implement recentlyplayed 
