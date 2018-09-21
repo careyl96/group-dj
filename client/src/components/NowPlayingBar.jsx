@@ -118,6 +118,7 @@ const mapStateToProps = state => ({
   albumArt: state.playingContext.albumArt,
   popularity: state.playingContext.popularity,
 });
+
 const mapDispatchToProps = dispatch => ({
   fetchPlayingContext: () => dispatch(fetchPlayingContext()),
   resumeTrack: () => dispatch(resumeTrack()),
