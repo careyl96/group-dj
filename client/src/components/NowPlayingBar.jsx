@@ -114,6 +114,7 @@ const mapStateToProps = state => ({
   currentlyPlaying: state.playingContext.currentlyPlaying,
   name: state.playingContext.name,
   artists: state.playingContext.artists,
+  length: state.playingContext.length,
   albumArt: state.playingContext.albumArt,
   popularity: state.playingContext.popularity,
 });
