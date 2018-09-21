@@ -9,18 +9,25 @@ import {
 } from '../actions/viewActions';
 import DoublyLinkedList from '../helpers/history';
 
-const pageHistory = new DoublyLinkedList('home');
+const pageHistory = new DoublyLinkedList();
 
-const updateView = view => (dispatch, getState) => {
+const updateView = (view, item) => (dispatch, getState) => {
   if (view !== 'prev' && view !== 'next') {
-    console.log(pageHistory);
     pageHistory.addNode(view);
     dispatch(updateViewSuccess(pageHistory.node));
-  } else if (view === 'prev' && getState().view.pageHistory.prev !== null) {
+  } else if (view === 'prev' && getState().view.pageHistory.prev) {
     dispatch(updateViewSuccess(pageHistory.getPrev()));
-  } else if (view === 'next' && getState().view.pageHistory.next !== null) {
+  } else if (view === 'next' && getState().view.pageHistory.next) {
     dispatch(updateViewSuccess(pageHistory.getNext()));
   }
+  const navBarItems = Array.from(document.querySelectorAll('.navbar-item'));
+  navBarItems.forEach((node) => {
+    if (node.classList.contains('selected')) {
+      node.classList.remove('selected');
+    }
+  });
+  if (!item) return;
+  item.add('selected');
 };
 const fetchQueue = () => (dispatch) => {
   axios.get('/api/queue')
@@ -64,7 +71,7 @@ export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
     case types.UPDATE_VIEW:
-      store.dispatch(updateView(action.view));
+      store.dispatch(updateView(action.view, action.item));
       break;
     case types.FETCH_QUEUE:
       store.dispatch(fetchQueue());

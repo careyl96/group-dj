@@ -1,3 +1,5 @@
+const DoublyLinkedList = require('../../helpers/history');
+
 class QueueManager {
   constructor(options = {}) {
     this.queue = [];
@@ -7,6 +9,7 @@ class QueueManager {
     this.updatePlayingContext = options.updatePlayingContext;
     this.updateRecentlyPlayed = options.updateRecentlyPlayed;
     this.playNext = options.playNext;
+    this.playHistory = new DoublyLinkedList();
 
     this.recentlyPlayed = [];
 

@@ -4,7 +4,7 @@ import config from '../auth/config';
 import serverDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
-import { fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
+import { updateView, fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
 
 let socket = null;
 
@@ -23,6 +23,7 @@ const initSocket = (store) => {
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
     store.dispatch(fetchRecentlyPlayed());
+    store.dispatch(updateView('home'));
     // store.dispatch(fetchMostPlayed());
     // store.dispatch(fetchMySongs());
   });

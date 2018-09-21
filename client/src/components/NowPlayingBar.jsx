@@ -70,33 +70,24 @@ class NowPlayingBar extends Component {
           {/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */}
           <div className="now-playing-center">
             <div className="player-controls">
-              {/* <button className="control-button shuffle">
-                <i class="material-icons md-light md-24">shuffle</i>
-              </button> */}
-
               <button className="control-button back" onClick={this.props.backTrack}>
-                <i class="material-icons md-light md-36">skip_previous</i>
+                <i className="material-icons md-light md-36">skip_previous</i>
               </button>
 
               <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumeTrack}>
                 {this.props.currentlyPlaying
-                  ? <i class="material-icons md-light md-36">pause_circle_outline</i>
-                  : <i class="material-icons md-light md-36">play_circle_outline</i>
+                  ? <i className="material-icons md-light md-36">pause_circle_outline</i>
+                  : <i className="material-icons md-light md-36">play_circle_outline</i>
                 }
               </button>
 
               <button className="control-button skip" onClick={this.props.skipTrack}>
-                <i class="material-icons md-light md-36">skip_next</i>
+                <i className="material-icons md-light md-36">skip_next</i>
               </button>
-
-              {/* <button className="control-button resync" onClick={this.props.fetchPlayingContext}>
-                <i class="material-icons md-light md-24">sync</i>
-              </button> */}
-
             </div>
             <div className="progress-bar-container">
               <button className="resync" onClick={this.props.fetchPlayingContext}>
-                <i class="material-icons md-light md-18">sync</i>
+                <i className="material-icons md-light md-18">sync</i>
               </button>
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
               <div className="progress-bar-clickable" onClick={this.handleClick}>
@@ -123,14 +114,8 @@ const mapStateToProps = state => ({
   currentlyPlaying: state.playingContext.currentlyPlaying,
   name: state.playingContext.name,
   artists: state.playingContext.artists,
-  length: state.playingContext.length,
-  startTimestamp: state.playingContext.startTimestamp,
-  seekDistance: state.playingContext.seekDistance,
-  lastPausedAt: state.playingContext.lastPausedAt,
-  totalTimePaused: state.playingContext.totalTimePaused,
   albumArt: state.playingContext.albumArt,
   popularity: state.playingContext.popularity,
-  userID: state.playingContext.userID,
 });
 const mapDispatchToProps = dispatch => ({
   fetchPlayingContext: () => dispatch(fetchPlayingContext()),

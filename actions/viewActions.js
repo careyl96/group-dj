@@ -1,8 +1,9 @@
 import * as types from './types';
 
-export const updateView = view => ({
+export const updateView = (view, e) => ({
   type: types.UPDATE_VIEW,
   view,
+  e,
 });
 
 export const updateViewSuccess = pageHistory => ({

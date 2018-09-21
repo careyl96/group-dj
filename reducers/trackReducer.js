@@ -23,7 +23,7 @@ const formatPlayingContext = (response) => {
 };
 
 const initState = {
-  currentlyPlaying: false,
+  currentlyPlaying: true,
   startTimestamp: 0,
   lastPausedAt: 0,
   totalTimePaused: 0,

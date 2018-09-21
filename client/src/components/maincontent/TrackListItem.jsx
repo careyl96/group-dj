@@ -21,7 +21,7 @@ const TrackListItem = ({ track, name, artists, duration, overridePlayingContext,
     <button className="track-list-item-control btn-play" onClick={() => overridePlayingContext(track)} />
     <button className="track-list-item-control btn-queue" onClick={() => queueTrack(track)}>
       <i className="material-icons md-light md-24">playlist_add</i>
-      {/* <i class="material-icons md-light md-24">check</i> */}
+      {/* <i className="material-icons md-light md-24">check</i> */}
     </button>
     <div className="track-info track-list-item">
       <div className="track-name"> {name} </div>

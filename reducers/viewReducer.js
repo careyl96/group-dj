@@ -1,11 +1,8 @@
 import * as types from '../actions/types';
 
 const initState = {
-  pageHistory: {
-    prev: null,
-    item: 'home',
-    next: null,
-  },
+  pageHistory: {},
+  playHistory: {},
   queue: [],
   recentlyPlayed: [],
   mostPlayed: [],
