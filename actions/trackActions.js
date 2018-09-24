@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as types from './types';
 
 export const fetchPlayingContext = () => ({ type: types.FETCH_PLAYING_CONTEXT });
@@ -7,14 +6,14 @@ export const fetchPlayingContextSuccess = playingContext => ({
   playingContext,
 });
 
-export const overridePlayingContext = (track, userID) => ({
+export const overridePlayingContext = (track, user) => ({
   type: types.OVERRIDE_PLAYING_CONTEXT,
   track,
-  userID,
+  user,
 });
 
-export const resumeTrack = () => ({ type: types.RESUME_TRACK });
-export const resumeTrackSuccess = () => ({ type: types.RESUME_TRACK_SUCCESS });
+export const resumePlayback = () => ({ type: types.RESUME_PLAYBACK });
+export const resumePlaybackSuccess = () => ({ type: types.RESUME_PLAYBACK_SUCCESS });
 
 export const pausePlayback = () => ({ type: types.PAUSE_PLAYBACK });
 export const pausePlaybackSuccess = () => ({ type: types.PAUSE_PLAYBACK_SUCCESS });
@@ -33,3 +32,9 @@ export const seekTrackSuccess = newTrackPosition => ({
   type: types.SEEK_TRACK_SUCCESS,
   newTrackPosition,
 });
+
+export const adjustVolume = volume => ({
+  type: types.ADJUST_VOLUME,
+  volume,
+});
+export const adjustVolumeSuccess = () => ({ type: types.ADJUST_VOLUME_SUCCESS });

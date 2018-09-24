@@ -4,8 +4,8 @@ const initState = {
   accessToken: null,
   expiresIn: null,
   user: null,
-  userID: null,
-  userImg: null,
+  id: null,
+  avatar: null,
   timeDifference: 0,
 };
 
@@ -27,12 +27,12 @@ const sessionReducer = (state = initState, action) => {
       return {
         ...state,
         user: action.user,
-        userImg: action.userImg,
+        avatar: action.avatar,
       };
-    case types.UPDATE_TIME:
+    case types.UPDATE_USER_ID:
       return {
         ...state,
-        timeDifference: action.timeDifference,
+        id: action.id,
       };
     default:
       return state;

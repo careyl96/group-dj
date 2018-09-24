@@ -17,16 +17,18 @@ class QueueManager {
     this.serverSideTrackProgress = 0;
   }
 
-  queueTrack(track, userID) {
+  queueTrack(track, user) {
     if (!this.playingContext) {
-      this.beginTrack(track, userID);
-    } else {
+      this.beginTrack(track, user);
+    } else if (!this.getQueue().find(item => item.track.id === track.id)) {
       const queueItem = {
         track,
-        userID,
+        user,
       };
       this.queue.push(queueItem);
       this.handleQueueChanged();
+    } else {
+      console.log('hello');
     }
   }
 

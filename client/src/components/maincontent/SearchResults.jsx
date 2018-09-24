@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TrackListItem from './TrackListItem';
-import { overridePlayingContext } from '../../../../actions/trackActions';
-import { queueTrack } from '../../../../actions/queueActions';
 
 class SearchResults extends Component {
   render() {
@@ -11,15 +9,13 @@ class SearchResults extends Component {
       <div className="home-tab">
         <div className="main-header">Results</div>
         {results
-          ? results.map(searchResult => (
+          ? results.map((searchResult, index) => (
             <TrackListItem
-              key={searchResult.uri}
+              key={index}
               track={searchResult}
               name={searchResult.name}
               artists={searchResult.artists.map(artist => artist.name).join(', ')}
               duration={searchResult.duration_ms}
-              overridePlayingContext={this.props.overridePlayingContext}
-              queueTrack={this.props.queueTrack}
             />
           ))
           : null}
@@ -32,9 +28,4 @@ const mapStateToProps = state => ({
   results: state.search.results,
 });
 
-const mapDispatchToProps = dispatch => ({
-  overridePlayingContext: track => dispatch(overridePlayingContext(track)),
-  queueTrack: track => dispatch(queueTrack(track)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SearchResults);
+export default connect(mapStateToProps, null)(SearchResults);

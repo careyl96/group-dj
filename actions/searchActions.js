@@ -1,6 +1,6 @@
 import * as types from './types';
 
-export const searchTracks = (query) => ({
+export const searchTracks = query => ({
   type: types.SEARCH_TRACKS,
   query,
 });

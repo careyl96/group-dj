@@ -7,6 +7,7 @@ import socketMiddleware from '../middlewares/socketMiddleware';
 import searchMiddleware from '../middlewares/searchMiddleware';
 import trackMiddleware from '../middlewares/trackMiddleware';
 import viewMiddleware from '../middlewares/viewMiddleware';
+import devicesMiddleware from '../middlewares/devicesMiddleware';
 
 import loggingMiddleware from '../middlewares/loggingMiddleware';
 
@@ -15,7 +16,7 @@ const middleware = applyMiddleware(
   sessionMiddleware,
   socketMiddleware,
   trackMiddleware,
-  // devicesMiddleware,
+  devicesMiddleware,
   searchMiddleware,
   viewMiddleware,
   thunk,

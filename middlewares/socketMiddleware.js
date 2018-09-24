@@ -2,9 +2,10 @@ import io from 'socket.io-client';
 import * as types from '../actions/types';
 import config from '../auth/config';
 import serverDate from '../helpers/serverDate';
-import { updateUsers } from '../actions/usersActions';
+import { updateUsers, updateUserID } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
-import { updateView, fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
+import { fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
+import { fetchAvailableDevices } from '../actions/devicesActions';
 
 let socket = null;
 
@@ -13,17 +14,17 @@ const initSocket = (store) => {
   const interval = setInterval(() => { socket.emit('time'); }, 1000);
   socket.on('connect', () => {
     const newUser = {};
-    const { user, userImg } = store.getState().session;
+    const { user, avatar } = store.getState().session;
     newUser.id = socket.id;
     newUser.username = user;
-    newUser.thumbnail = userImg;
+    newUser.thumbnail = avatar;
 
     socket.emit('add user', newUser);
-
+    store.dispatch(updateUserID(socket.id));
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
     store.dispatch(fetchRecentlyPlayed());
-    store.dispatch(updateView('home'));
+    store.dispatch(fetchAvailableDevices());
     // store.dispatch(fetchMostPlayed());
     // store.dispatch(fetchMySongs());
   });
@@ -54,9 +55,9 @@ export default store => next => (action) => {
       initSocket(store);
       break;
     case types.OVERRIDE_PLAYING_CONTEXT:
-      socket.emit('override playing context', action.track);
+      socket.emit('override playing context', action.track, action.user);
       break;
-    case types.RESUME_TRACK:
+    case types.RESUME_PLAYBACK:
       socket.emit('resume track');
       break;
     case types.PAUSE_PLAYBACK:
@@ -72,7 +73,7 @@ export default store => next => (action) => {
       socket.emit('skip track');
       break;
     case types.QUEUE_TRACK:
-      socket.emit('queue track', action.track);
+      socket.emit('queue track', action.track, action.user);
       break;
     case types.REMOVE_TRACK:
       socket.emit('remove track', action.track);

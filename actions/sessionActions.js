@@ -2,10 +2,10 @@ import * as types from './types';
 
 export const login = () => ({ type: types.LOGIN });
 export const loginFail = () => ({ type: types.LOGIN_FAIL });
-export const loginSuccess = (user, userImg) => ({
+export const loginSuccess = (user, avatar) => ({
   type: types.LOGIN_SUCCESS,
   user,
-  userImg,
+  avatar,
 });
 export const updateTokenSuccess = (accessToken, expiresIn) => ({
   type: types.UPDATE_TOKEN_SUCCESS,

@@ -10,7 +10,7 @@ const formatPlayingContext = (response) => {
       lastPausedAt: response.lastPausedAt,
       totalTimePaused: response.totalTimePaused,
       seekDistance: response.seekDistance,
-      userID: response.userID,
+      user: response.user,
       name: response.track.name,
       artists: response.track.artists.map(artist => artist.name).join(', '),
       length: response.track.duration_ms,
@@ -28,7 +28,7 @@ const initState = {
   lastPausedAt: 0,
   totalTimePaused: 0,
   seekDistance: 0,
-  userID: null,
+  user: null,
   name: null,
   artists: null,
   length: 0,
@@ -41,7 +41,7 @@ const trackReducer = (state = initState, action) => {
   switch (action.type) {
     case types.FETCH_PLAYING_CONTEXT_SUCCESS:
       return formatPlayingContext(action.playingContext) || initState;
-    case types.RESUME_TRACK_SUCCESS:
+    case types.RESUME_PLAYBACK_SUCCESS:
       return state;
     case types.PAUSE_PLAYBACK_SUCCESS:
       return state;

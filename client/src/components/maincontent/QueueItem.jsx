@@ -18,10 +18,10 @@ const parseMs = (ms) => {
 
 const QueueItem = ({ track, name, artists, duration, removeTrack }) => (
   <div className="track-container">
-    <button className="track-list-item-control btn-remove-track" onClick={() => removeTrack(track.id)}>
-      <i className="material-icons md-light md-24">close</i>
+    <button className="btn-tracklist-item" onClick={() => removeTrack(track.id)}>
+      <i className="material-icons md-light md-36 remove-track">close</i>
     </button>
-    <div className="track-info track-list-item">
+    <div className="track-info tracklist-item">
       <div className="track-name"> {name} </div>
       <div className="track-artist"> {artists} </div>
     </div>
@@ -32,11 +32,3 @@ const QueueItem = ({ track, name, artists, duration, removeTrack }) => (
 );
 
 export default QueueItem;
-
-// TODO
-// highlight page user is on
-// change text for TrackListItem to green when playing
-// change play icon to pause when track is playing
-// change queueTrack icon to checkmark when track is queued
-// change queueTrack icon to depress when clicked
-// implement recentlyplayed 

@@ -38,8 +38,8 @@ const getCurrentUserInfo = () => (dispatch, getState) => {
   return axios.get('https://api.spotify.com/v1/me', params)
     .then((res) => {
       const user = res.data.display_name;
-      const userImg = res.data.images[0].url;
-      dispatch(loginSuccess(user, userImg));
+      const avatar = res.data.images[0].url;
+      dispatch(loginSuccess(user, avatar));
     })
     .catch((err) => {
       console.log(`failed to get user information ${err}`);

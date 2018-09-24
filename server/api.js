@@ -6,12 +6,12 @@ const { Router } = express;
 // const request = require('request');
 // const queryString = require('query-string');
 
-const formatTrack = (track, userID) => {
+const formatTrack = (track, user) => {
   console.log('formatting track');
   const newQueueItem = new QueueItem({
     track,
     startTimestamp: Date.now(),
-    userID,
+    user,
   });
   return newQueueItem;
 };
@@ -21,12 +21,11 @@ let users = [];
 let globalSocket = null;
 
 const queueManager = new QueueManager({
-  beginTrack: (track, userID) => {
-    queueManager.updateRecentlyPlayed();
+  beginTrack: (track, user) => {
     queueManager.playingContext = new QueueItem({
       track,
       startTimestamp: Date.now(),
-      userID,
+      user,
     });
     globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
@@ -36,7 +35,7 @@ const queueManager = new QueueManager({
     if (queueManager.queue.length > 0) {
       const queueItem = queueManager.getQueue().shift();
       queueManager.handleQueueChanged();
-      queueManager.beginTrack(queueItem.track, queueItem.userID);
+      queueManager.beginTrack(queueItem.track, queueItem.user);
     } else {
       console.log('queue is empty');
       queueManager.playingContext = null;
@@ -49,7 +48,7 @@ const queueManager = new QueueManager({
     globalSocket.emit('fetch queue', queueManager.getQueue());
     globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
   },
-  updatePlayingContext: (option, track, userID, newTrackPosition) => {
+  updatePlayingContext: (option, track, user, newTrackPosition) => {
     clearInterval(queueManager.interval);
     if (option === 'play next') {
       queueManager.playNext();
@@ -76,8 +75,7 @@ const queueManager = new QueueManager({
       globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
       globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
     } else if (option === 'back') {
-      // queueManager.playingContext = formatTrack(queueManager.playHistory.shift().track, userID);
-      queueManager.beginTrack(queueManager.recentlyPlayed.shift().track, userID);
+      queueManager.beginTrack(queueManager.recentlyPlayed.shift().track, user);
     }
 
     if (queueManager.getPlayingContext()) {
@@ -101,13 +99,14 @@ const queueManager = new QueueManager({
   },
   updateRecentlyPlayed: () => {
     if (!queueManager.getPlayingContext()) return;
-    const { track, userID } = queueManager.getPlayingContext();
+    const { track, user } = queueManager.getPlayingContext();
     if (queueManager.recentlyPlayed.findIndex(recentTrack => recentTrack.track.uri === track.uri) === -1) {
       queueManager.recentlyPlayed.unshift(queueManager.getPlayingContext());
     }
     globalSocket.emit('fetch recently played');
     globalSocket.broadcast.emit('fetch recently played');
   },
+
 });
 
 const socketApi = (io) => {
@@ -144,8 +143,9 @@ const socketApi = (io) => {
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });
-    client.on('override playing context', (track) => {
-      queueManager.beginTrack(track, client.id);
+    client.on('override playing context', (track, user) => {
+      console.log(user);
+      queueManager.beginTrack(track, user);
     });
     client.on('pause playback', () => {
       queueManager.updatePlayingContext('pause');
@@ -166,8 +166,9 @@ const socketApi = (io) => {
     client.on('skip track', () => {
       queueManager.updatePlayingContext('play next');
     });
-    client.on('queue track', (track) => {
-      queueManager.queueTrack(track, client.id);
+    client.on('queue track', (track, user) => {
+      console.log('queue track')
+      queueManager.queueTrack(track, user);
     });
     client.on('remove track', (trackID) => {
       queueManager.removeFromQueue(trackID);

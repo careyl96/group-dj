@@ -10,9 +10,10 @@ import {
 import DoublyLinkedList from '../helpers/history';
 
 const pageHistory = new DoublyLinkedList();
+pageHistory.addNode('home');
 
 const updateView = (view, item) => (dispatch, getState) => {
-  if (view !== 'prev' && view !== 'next') {
+  if (view !== getState().view.pageHistory.item && view !== 'prev' && view !== 'next') {
     pageHistory.addNode(view);
     dispatch(updateViewSuccess(pageHistory.node));
   } else if (view === 'prev' && getState().view.pageHistory.prev) {
@@ -20,6 +21,7 @@ const updateView = (view, item) => (dispatch, getState) => {
   } else if (view === 'next' && getState().view.pageHistory.next) {
     dispatch(updateViewSuccess(pageHistory.getNext()));
   }
+
   const navBarItems = Array.from(document.querySelectorAll('.navbar-item'));
   navBarItems.forEach((node) => {
     if (node.classList.contains('selected')) {
@@ -27,7 +29,7 @@ const updateView = (view, item) => (dispatch, getState) => {
     }
   });
   if (!item) return;
-  item.add('selected');
+  item.classList.add('selected');
 };
 const fetchQueue = () => (dispatch) => {
   axios.get('/api/queue')
@@ -57,13 +59,18 @@ const fetchMostPlayed = () => (dispatch) => {
     });
 };
 const fetchMySongs = () => (dispatch, getState) => {
-  axios({
+  console.log('---------- FETCHING MY SONGS ----------');
+  return axios({
     method: 'GET',
-    url: 'https://api.spotify.com/v1/me/tracks',
+    url: 'https://api.spotify.com/v1/me/top/tracks',
+    params: { limit: 50 },
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then((response) => {
-      dispatch(fetchMySongsSuccess(response.data));
+      dispatch(fetchMySongsSuccess(response.data.items));
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 

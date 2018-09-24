@@ -21,14 +21,20 @@ class Search extends Component {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
-    this.timeout = setTimeout(() => this.props.searchTracks(this.state.query), 500);
+    this.timeout = setTimeout(() => this.props.searchTracks(this.state.query), 300);
   }
 
   render() {
     return (
       <div className="search-container">
-        <button className={`view-nav back-button ${this.props.hasPreviousPage ? null : 'disabled'}`} onClick={() => this.props.updateView('prev')}>&lt;</button>
-        <button className={`view-nav back-button ${this.props.hasNextPage ? null : 'disabled'}`} onClick={() => this.props.updateView('next')}>&gt;</button>
+        {this.props.hasPreviousPage
+          ? <button className="view-nav back-button" onClick={() => this.props.updateView('prev')}>&lt;</button>
+          : <button className="view-nav back-button disabled">&lt;</button>
+        }
+        {this.props.hasNextPage
+          ? <button className="view-nav forward-button" onClick={() => this.props.updateView('next')}>&gt;</button>
+          : <button className="view-nav forward-button disabled">&gt;</button>
+        }
         <input type="text" placeholder="Search" className="search-bar"
           onClick={() => this.props.updateView('search results')}
           onChange={this.handleSearchChange}

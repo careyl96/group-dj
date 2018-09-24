@@ -19,7 +19,8 @@ auth.get('/login', (req, res) => {
   user-read-playback-state
   user-modify-playback-state
   user-library-read
-  playlist-read-private`;
+  playlist-read-private
+  user-top-read`;
   const params = queryString.stringify({
     response_type: 'code',
     client_id: SPOTIFY_CLIENT_ID,
@@ -62,30 +63,30 @@ auth.get('/callback', (req, res) => {
 auth.get('/token', (req, res) => {
   if (!req.cookies) return;
   const { expires_in, refresh_token } = req.cookies;
-  if (Date.now() > expires_in) {
-    const authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-        refresh_token,
-        grant_type: 'refresh_token',
-      },
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
-      },
-      json: true,
-    };
-    request.post(authOptions, (error, response, body) => {
-      if (!error && response.statusCode === 200) {
-        const { access_token, expires_in } = body;
-        console.log(`new expires_in: ${Date.now() + expires_in * 1000}`);
-        res.cookie('access_token', access_token, { httpOnly: true });
-        res.cookie('expires_in', Date.now() + expires_in * 1000, { httpOnly: true });
-        res.send({ access_token, expires_in: Date.now() + expires_in * 1000 });
-      }
-    });
-  } else {
-    res.send(req.cookies);
-  }
+  // if (Date.now() > expires_in) {
+  const authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      refresh_token,
+      grant_type: 'refresh_token',
+    },
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+    },
+    json: true,
+  };
+  request.post(authOptions, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      const { access_token, expires_in } = body;
+      console.log(`new expires_in: ${Date.now() + expires_in * 1000}`);
+      res.cookie('access_token', access_token, { httpOnly: true });
+      res.cookie('expires_in', Date.now() + expires_in * 1000, { httpOnly: true });
+      res.send({ access_token, expires_in: Date.now() + expires_in * 1000 });
+    }
+  });
+  // } else {
+  // res.send(req.cookies);
+  // }
   // check expiration time for access token
   // if access token is expired, get a new token
 });

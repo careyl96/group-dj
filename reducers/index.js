@@ -4,6 +4,7 @@ import trackReducer from './trackReducer';
 import usersReducer from './usersReducer';
 import searchReducer from './searchReducer';
 import viewReducer from './viewReducer';
+import devicesReducer from './devicesReducer';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   users: usersReducer,
   search: searchReducer,
   view: viewReducer,
+  devices: devicesReducer,
 });
 
 export default rootReducer;

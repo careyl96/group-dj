@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import QueueItem from './QueueItem';
 import { removeTrack } from '../../../../actions/queueActions';
 import { fetchQueue } from '../../../../actions/viewActions';
-import { resumeTrack, pausePlayback } from '../../../../actions/trackActions';
+import { resumePlayback, pausePlayback } from '../../../../actions/trackActions';
 
 class Home extends Component {
   render() {
@@ -17,8 +16,8 @@ class Home extends Component {
             <div className="flex-vertical">
               <h2 className="now-playing-home-track-name">{this.props.name}</h2>
               <div className="now-playing-home-artists">{`By ${this.props.artists}` || null}</div>
-              <div className="now-playing-home-user">{`Queued by: ${this.props.userID}`}</div>
-              <button className="home-header-play-button" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumeTrack}>{this.props.currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
+              <div className="now-playing-home-user">{`Queued by: ${this.props.user ? this.props.user.username : null}`}</div>
+              <button className="home-header-play-button" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
             </div>
             :
             <h2 className="now-playing-home-track-name">No tracks currently playing</h2>
@@ -35,7 +34,7 @@ class Home extends Component {
               artists={queueItem.track.artists.map(artist => artist.name).join(', ')}
               duration={queueItem.track.duration_ms}
               removeTrack={this.props.removeTrack}
-            // queueItem.track.userID = id of user who queued the song
+            // queueItem.track.user = id of user who queued the song
             />
           ))
           : null}
@@ -51,16 +50,16 @@ const mapStateToProps = state => ({
   name: state.playingContext.name,
   artists: state.playingContext.artists,
   length: state.playingContext.length,
-  userID: state.playingContext.userID,
+  user: state.playingContext.user,
   isTrackPlaying: state.playingContext.name !== null,
 });
 
 
 const mapDispatchToProps = dispatch => ({
-  resumeTrack: () => dispatch(resumeTrack()),
+  resumePlayback: () => dispatch(resumePlayback()),
   pausePlayback: () => dispatch(pausePlayback()),
   fetchQueue: () => dispatch(fetchQueue()),
-  removeTrack: track => dispatch(removeTrack(track)),
+  removeTrack: trackID => dispatch(removeTrack(trackID)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

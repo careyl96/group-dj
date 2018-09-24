@@ -5,7 +5,7 @@ class QueueItem {
     this.lastPausedAt = 0;
     this.totalTimePaused = 0;
     this.seekDistance = 0;
-    this.userID = options.userID || null;
+    this.user = options.user || null;
     this.startTimestamp = options.startTimestamp || null;
     this.queuedTimestamp = options.queuedTimestamp || Date.now();
   }

@@ -8,15 +8,19 @@ class Node {
 }
 
 class DoublyLinkedList {
-  constructor(item) {
-    this.node = new Node(item);
+  constructor() {
+    this.node = null;
   }
 
   addNode(item) {
     const node = new Node(item);
-    this.node.next = node;
-    node.prev = this.node;
-    this.node = node;
+    if (!this.node) {
+      this.node = node;
+    } else {
+      this.node.next = node;
+      node.prev = this.node;
+      this.node = node;
+    }
   }
 
   getPrev() {

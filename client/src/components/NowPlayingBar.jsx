@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Device from './Device';
 import { addEventListeners, updateProgressBar } from './event-listeners/now-playing-bar-events';
 import {
   fetchPlayingContext,
-  resumeTrack,
+  resumePlayback,
   pausePlayback,
   seekTrack,
   skipTrack,
@@ -51,6 +52,7 @@ class NowPlayingBar extends Component {
     }
   }
 
+
   render() {
     return (
       <div className="now-playing-wrapper">
@@ -64,7 +66,9 @@ class NowPlayingBar extends Component {
               <div className="track-name"> {this.props.name} </div>
               <div className="track-artist"> {this.props.artists} </div>
             </div>
-            <button className="control-button add-song">+</button>
+            <button className="control-button add-song">
+              <i className="material-icons md-light md-24">add</i>
+            </button>
           </div>
 
           {/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */}
@@ -74,7 +78,7 @@ class NowPlayingBar extends Component {
                 <i className="material-icons md-light md-36">skip_previous</i>
               </button>
 
-              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumeTrack}>
+              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>
                 {this.props.currentlyPlaying
                   ? <i className="material-icons md-light md-36">pause_circle_outline</i>
                   : <i className="material-icons md-light md-36">play_circle_outline</i>
@@ -86,7 +90,7 @@ class NowPlayingBar extends Component {
               </button>
             </div>
             <div className="progress-bar-container">
-              <button className="resync" onClick={this.props.fetchPlayingContext}>
+              <button className="icon-small resync" onClick={this.props.fetchPlayingContext}>
                 <i className="material-icons md-light md-18">sync</i>
               </button>
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
@@ -101,8 +105,38 @@ class NowPlayingBar extends Component {
           </div>
 
           <div className="now-playing-right">
-            <div className="state-tracker">{`Track Length: ${this.state.length}`}</div>
-            <div className="state-tracker">{`Track Progress: ${Math.floor(this.state.trackProgress)}`}</div>
+            <button className="icon-now-playing-right btn-devices">
+              <i className="material-icons md-light md-24 icon-devices">devices</i>
+            </button>
+            <div className="devices-menu" style={{ display: 'none' }}>
+              <h3 className="devices-menu-header"> Connect to a Device </h3>
+              <ul className="available-devices-list">
+                {this.props.devices
+                  ? this.props.devices.map(device => (
+                    <Device
+                      key={device.id}
+                      deviceID={device.id}
+                      isActive={device.is_active}
+                      name={device.name}
+                      volumePercentage={device.volume_percent}
+                    />
+                  ))
+                  : null
+                }
+              </ul>
+            </div>
+            <div className="volume-container">
+              <button className="icon-now-playing-right btn-volume">
+                <i className="material-icons md-light md-24 icon-volume">volume_up</i>
+              </button>
+              <div className="progress-bar-clickable volume-bar-clickable" onClick={this.handleClick}>
+                <div className="progress-bar">
+                  <div className="progress-bar-progress" />
+                  <div className="progress-bar-slider" />
+                </div>
+              </div>
+            </div>
+            <div className="state-tracker">{`${Math.floor(this.state.trackProgress)}`}</div>
           </div>
         </div>
       </div>
@@ -117,11 +151,12 @@ const mapStateToProps = state => ({
   length: state.playingContext.length,
   albumArt: state.playingContext.albumArt,
   popularity: state.playingContext.popularity,
+  devices: state.devices,
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchPlayingContext: () => dispatch(fetchPlayingContext()),
-  resumeTrack: () => dispatch(resumeTrack()),
+  resumePlayback: () => dispatch(resumePlayback()),
   pausePlayback: () => dispatch(pausePlayback()),
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
   backTrack: () => dispatch(backTrack()),

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as types from '../actions/types';
 import serverDate from '../helpers/serverDate';
-import { fetchPlayingContextSuccess, resumeTrackSuccess, pausePlaybackSuccess } from '../actions/trackActions';
+import { fetchPlayingContextSuccess, resumePlaybackSuccess, pausePlaybackSuccess, adjustVolumeSuccess } from '../actions/trackActions';
 
 const fetchPlayingContext = () => (dispatch) => {
   axios.get('/api/playing-context')
@@ -12,14 +12,8 @@ const fetchPlayingContext = () => (dispatch) => {
       console.log(error);
     });
 };
-const resumeTrack = () => (dispatch, getState) => {
-  const {
-    id,
-    startTimestamp,
-    totalTimePaused,
-    seekDistance,
-  } = getState().playingContext;
-
+const resumePlayback = () => (dispatch, getState) => {
+  const { id, startTimestamp, totalTimePaused, seekDistance } = getState().playingContext;
   if (id) {
     return axios({
       method: 'PUT',
@@ -31,7 +25,7 @@ const resumeTrack = () => (dispatch, getState) => {
       headers: { Authorization: `Bearer ${getState().session.accessToken}` },
     })
       .then(() => {
-        dispatch(resumeTrackSuccess());
+        dispatch(resumePlaybackSuccess());
       })
       .catch((err) => {
         console.log(err);
@@ -58,8 +52,22 @@ const handlePlayState = () => (dispatch, getState) => {
   if (currentlyPlaying === false) {
     dispatch(pauseTrack());
   } else if (currentlyPlaying === true) {
-    dispatch(resumeTrack());
+    dispatch(resumePlayback());
   }
+};
+const adjustVolume = volume => (dispatch, getState) => {
+  return axios({
+    method: 'PUT',
+    url: 'https://api.spotify.com/v1/me/player/volume',
+    params: { volume_percent: volume },
+    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+  })
+    .then(() => {
+      dispatch(adjustVolumeSuccess());
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 export default store => next => (action) => {
@@ -70,6 +78,9 @@ export default store => next => (action) => {
       break;
     case types.FETCH_PLAYING_CONTEXT_SUCCESS:
       store.dispatch(handlePlayState());
+      break;
+    case types.ADJUST_VOLUME:
+      store.dispatch(adjustVolume(action.volume));
       break;
     default:
       break;
