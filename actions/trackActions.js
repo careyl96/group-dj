@@ -37,4 +37,7 @@ export const adjustVolume = volume => ({
   type: types.ADJUST_VOLUME,
   volume,
 });
-export const adjustVolumeSuccess = () => ({ type: types.ADJUST_VOLUME_SUCCESS });
+export const adjustVolumeSuccess = volume => ({
+  type: types.ADJUST_VOLUME_SUCCESS,
+  volume,
+});

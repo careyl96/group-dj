@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../auth/config';
-import serverDate from '../helpers/serverDate';
+import { serverDate } from './socketMiddleware';
 import * as types from '../actions/types';
 import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
 
@@ -24,7 +24,7 @@ const updateToken = () => (dispatch) => {
   return axios.get(`${config.HOST}/auth/token`)
     .then((res) => {
       if (!res.data) return;
-      console.log(`access token expires in ${parseMs(res.data.expires_in - serverDate.now())}`);
+      console.log(`access token expires in ${parseMs(res.data.expires_in - Date.now())}`);
       const { access_token, expires_in } = res.data;
       dispatch(updateTokenSuccess(access_token, expires_in));
     });
@@ -41,8 +41,8 @@ const getCurrentUserInfo = () => (dispatch, getState) => {
       const avatar = res.data.images[0].url;
       dispatch(loginSuccess(user, avatar));
     })
-    .catch((err) => {
-      console.log(`failed to get user information ${err}`);
+    .catch((error) => {
+      console.log(`failed to get user information ${error}`);
     });
 };
 

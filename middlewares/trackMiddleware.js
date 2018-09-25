@@ -1,10 +1,15 @@
 import axios from 'axios';
 import * as types from '../actions/types';
-import serverDate from '../helpers/serverDate';
-import { fetchPlayingContextSuccess, resumePlaybackSuccess, pausePlaybackSuccess, adjustVolumeSuccess } from '../actions/trackActions';
+import {
+  fetchPlayingContextSuccess,
+  resumePlaybackSuccess,
+  pausePlaybackSuccess,
+  adjustVolumeSuccess,
+  resumeAtTimestampSuccess,
+} from '../actions/trackActions';
 
 const fetchPlayingContext = () => (dispatch) => {
-  axios.get('/api/playing-context')
+  return axios.get('/api/playing-context')
     .then((playingContext) => {
       dispatch(fetchPlayingContextSuccess(playingContext.data));
     })
@@ -13,26 +18,54 @@ const fetchPlayingContext = () => (dispatch) => {
     });
 };
 const resumePlayback = () => (dispatch, getState) => {
-  const { id, startTimestamp, totalTimePaused, seekDistance } = getState().playingContext;
-  if (id) {
-    return axios({
-      method: 'PUT',
-      url: 'https://api.spotify.com/v1/me/player/play',
-      data: {
-        uris: [`spotify:track:${id}`],
-        position_ms: serverDate.now() - startTimestamp - totalTimePaused + seekDistance,
-      },
-      headers: { Authorization: `Bearer ${getState().session.accessToken}` },
-    })
-      .then(() => {
-        dispatch(resumePlaybackSuccess());
+  const { id } = getState().playingContext;
+  return axios.get('/api/server-track-progress')
+    .then((response) => {
+      const trackProgress = response.data;
+      return axios({
+        method: 'PUT',
+        url: 'https://api.spotify.com/v1/me/player/play',
+        data: {
+          uris: [`spotify:track:${id}`],
+          position_ms: trackProgress,
+        },
+        headers: { Authorization: `Bearer ${getState().session.accessToken}` },
       })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  console.log('Nothing playing');
+        .then(() => {
+          dispatch(resumePlaybackSuccess());
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
+
+// const resumePlayback = () => (dispatch, getState) => {
+//   const { id, startTimestamp, totalTimePaused, seekDistance } = getState().playingContext;
+//   if (id) {
+//     return axios({
+//       method: 'PUT',
+//       url: 'https://api.spotify.com/v1/me/player/play',
+//       data: {
+//         uris: [`spotify:track:${id}`],
+//         position_ms: serverDate.now() - startTimestamp - totalTimePaused + seekDistance,
+//       },
+//       headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+//     })
+//       .then(() => {
+//         dispatch(resumePlaybackSuccess());
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+//   }
+//   console.log('Nothing playing');
+// };
+
+
 const pauseTrack = () => (dispatch, getState) => {
   console.log('---------- PAUSING TRACK ----------');
   return axios({
@@ -43,8 +76,10 @@ const pauseTrack = () => (dispatch, getState) => {
     .then(() => {
       dispatch(pausePlaybackSuccess());
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      // console.log(error.config);
+      // console.log(error.request);
+      console.log(error.response.data.error.message);
     });
 };
 const handlePlayState = () => (dispatch, getState) => {
@@ -63,12 +98,19 @@ const adjustVolume = volume => (dispatch, getState) => {
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then(() => {
-      dispatch(adjustVolumeSuccess());
+      dispatch(adjustVolumeSuccess(volume));
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
+const mute = () => (dispatch) => {
+  dispatch(adjustVolume(0));
+}
+const unmute = () => (dispatch, getState) => {
+  const activeDevice = getState().devices.filter(device => device.is_active === true);
+  dispatch(adjustVolume(activeDevice.volume_percent));
+}
 
 export default store => next => (action) => {
   const result = next(action);
@@ -81,6 +123,12 @@ export default store => next => (action) => {
       break;
     case types.ADJUST_VOLUME:
       store.dispatch(adjustVolume(action.volume));
+      break;
+    case types.MUTE:
+      // store.dispatch(mute());
+      break;
+    case types.UNMUTE:
+      // store.dispatch(unmute(action.volume));
       break;
     default:
       break;

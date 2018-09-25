@@ -1,9 +1,8 @@
 import * as types from './types';
 
-export const updateView = (view, item) => ({
+export const updateView = view => ({
   type: types.UPDATE_VIEW,
   view,
-  item,
 });
 
 export const updateViewSuccess = pageHistory => ({
@@ -33,4 +32,9 @@ export const fetchMySongs = () => ({ type: types.FETCH_MY_SONGS });
 export const fetchMySongsSuccess = mySongs => ({
   type: types.FETCH_MY_SONGS_SUCCESS,
   mySongs,
+});
+
+export const fetchPlayHistorySuccess = playHistory => ({
+  type: types.FETCH_PLAY_HISTORY_SUCCESS,
+  playHistory,
 });

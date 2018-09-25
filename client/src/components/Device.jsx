@@ -2,17 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { transferPlaybackToDevice } from '../../../actions/devicesActions';
 
-const adjustVolumeSlider = (volumePercentage) => {
+const adjustVolumeSlider = (volume) => {
   const volumeBar = document.querySelector('.volume-bar-clickable');
   const volumeBarProgress = volumeBar.children[0].children[0];
   const volumeBarSlider = volumeBar.children[0].children[1];
-  volumeBarProgress.style.width = `${volumePercentage}%`;
-  volumeBarSlider.style.left = `${volumePercentage}%`;
+  volumeBarProgress.style.width = `${volume}%`;
+  volumeBarSlider.style.left = `${volume}%`;
 };
 
-const Device = ({ deviceID, isActive, name, volumePercentage, transferPlaybackToDevice }) => {
+const Device = ({ deviceID, isActive, name, volume, transferPlaybackToDevice }) => {
   if (isActive) {
-    adjustVolumeSlider(volumePercentage);
+    adjustVolumeSlider(volume);
     return (
       <li className="available-device">
         <div className="device-container">

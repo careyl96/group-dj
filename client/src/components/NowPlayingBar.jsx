@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Device from './Device';
 import { addEventListeners, updateProgressBar } from './event-listeners/now-playing-bar-events';
+import { fetchAvailableDevices } from '../../../actions/devicesActions';
 import {
   fetchPlayingContext,
   resumePlayback,
@@ -9,6 +10,7 @@ import {
   seekTrack,
   skipTrack,
   backTrack,
+  adjustVolume,
 } from '../../../actions/trackActions';
 
 const parseMs = (ms) => {
@@ -32,7 +34,6 @@ class NowPlayingBar extends Component {
     super();
     this.state = {
       trackProgress: 0,
-      length: 0,
       mouseDown: false,
     };
     this.interval = null;
@@ -44,9 +45,6 @@ class NowPlayingBar extends Component {
 
   componentWillReceiveProps(newProps) {
     updateProgressBar(this);
-    clearInterval(this.interval);
-    const { length } = newProps;
-    this.setState({ length });
     if (newProps.currentlyPlaying) {
       this.interval = setInterval(() => updateProgressBar(this), 300);
     }
@@ -90,7 +88,7 @@ class NowPlayingBar extends Component {
               </button>
             </div>
             <div className="progress-bar-container">
-              <button className="icon-small resync" onClick={this.props.fetchPlayingContext}>
+              <button className="btn-clear md-18 resync" onClick={this.props.fetchPlayingContext}>
                 <i className="material-icons md-light md-18">sync</i>
               </button>
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
@@ -100,16 +98,19 @@ class NowPlayingBar extends Component {
                   <div className="progress-bar-slider" />
                 </div>
               </div>
-              <div className="progress-time">{parseMs(this.state.length)}</div>
+              <div className="progress-time">{parseMs(this.props.length)}</div>
             </div>
           </div>
 
           <div className="now-playing-right">
-            <button className="icon-now-playing-right btn-devices">
+            <button className="btn-clear btn-devices">
               <i className="material-icons md-light md-24 icon-devices">devices</i>
             </button>
-            <div className="devices-menu" style={{ display: 'none' }}>
+            <div className="devices-menu" style={{ display: 'block' }}>
               <h3 className="devices-menu-header"> Connect to a Device </h3>
+              <button className="btn-clear md-18 refresh" onClick={this.props.fetchAvailableDevices}>
+                <i className="material-icons md-light md-18 icon-refresh">refresh</i>
+              </button>
               <ul className="available-devices-list">
                 {this.props.devices
                   ? this.props.devices.map(device => (
@@ -118,7 +119,7 @@ class NowPlayingBar extends Component {
                       deviceID={device.id}
                       isActive={device.is_active}
                       name={device.name}
-                      volumePercentage={device.volume_percent}
+                      volume={device.volume_percent}
                     />
                   ))
                   : null
@@ -126,7 +127,7 @@ class NowPlayingBar extends Component {
               </ul>
             </div>
             <div className="volume-container">
-              <button className="icon-now-playing-right btn-volume">
+              <button className="btn-clear btn-volume">
                 <i className="material-icons md-light md-24 icon-volume">volume_up</i>
               </button>
               <div className="progress-bar-clickable volume-bar-clickable" onClick={this.handleClick}>
@@ -146,6 +147,7 @@ class NowPlayingBar extends Component {
 
 const mapStateToProps = state => ({
   currentlyPlaying: state.playingContext.currentlyPlaying,
+  seekDistance: state.playingContext.seekDistance,
   name: state.playingContext.name,
   artists: state.playingContext.artists,
   length: state.playingContext.length,
@@ -161,6 +163,8 @@ const mapDispatchToProps = dispatch => ({
   seekTrack: newTrackPosition => dispatch(seekTrack(newTrackPosition)),
   backTrack: () => dispatch(backTrack()),
   skipTrack: () => dispatch(skipTrack()),
+  fetchAvailableDevices: () => dispatch(fetchAvailableDevices()),
+  adjustVolume: volume => dispatch(adjustVolume(volume)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NowPlayingBar);

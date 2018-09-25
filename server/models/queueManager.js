@@ -27,8 +27,6 @@ class QueueManager {
       };
       this.queue.push(queueItem);
       this.handleQueueChanged();
-    } else {
-      console.log('hello');
     }
   }
 
@@ -42,6 +40,7 @@ class QueueManager {
 
   modifyPlayingContext(modifiedPlayingContext) {
     this.playingContext = { ...this.playingContext, ...modifiedPlayingContext };
+    this.serverSideTrackProgress = Date.now() - this.playingContext.startTimestamp - this.playingContext.totalTimePaused + this.playingContext.seekDistance;
   }
 
   getQueue() {
@@ -56,9 +55,21 @@ class QueueManager {
     return this.recentlyPlayed;
   }
 
+  getPlayHistory() {
+    const playHistory = {
+      prev: (this.playHistory.node.prev !== null),
+      next: (this.playHistory.node.next !== null),
+    };
+    return playHistory;
+  }
+
+  getTrackProgress() {
+    return this.serverSideTrackProgress;
+  }
+
   handleTrackEnd() {
+    clearInterval(this.interval);
     this.serverSideTrackProgress = 0;
-    this.updateRecentlyPlayed();
     this.playNext();
   }
 }

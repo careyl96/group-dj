@@ -1,6 +1,6 @@
 
 class Node {
-  constructor(item) {
+  constructor(item = null) {
     this.prev = null;
     this.item = item;
     this.next = null;
@@ -9,12 +9,12 @@ class Node {
 
 class DoublyLinkedList {
   constructor() {
-    this.node = null;
+    this.node = new Node();
   }
 
   addNode(item) {
     const node = new Node(item);
-    if (!this.node) {
+    if (!this.node.item) {
       this.node = node;
     } else {
       this.node.next = node;

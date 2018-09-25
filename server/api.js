@@ -6,22 +6,13 @@ const { Router } = express;
 // const request = require('request');
 // const queryString = require('query-string');
 
-const formatTrack = (track, user) => {
-  console.log('formatting track');
-  const newQueueItem = new QueueItem({
-    track,
-    startTimestamp: Date.now(),
-    user,
-  });
-  return newQueueItem;
-};
-
 let users = [];
 
 let globalSocket = null;
 
 const queueManager = new QueueManager({
   beginTrack: (track, user) => {
+    queueManager.serverSideTrackProgress = 0;
     queueManager.playingContext = new QueueItem({
       track,
       startTimestamp: Date.now(),
@@ -32,14 +23,21 @@ const queueManager = new QueueManager({
   },
   playNext: () => {
     queueManager.updateRecentlyPlayed();
-    if (queueManager.queue.length > 0) {
-      const queueItem = queueManager.getQueue().shift();
+    let nextItem = null;
+    if (queueManager.playHistory.node.next) {
+      nextItem = queueManager.playHistory.getNext().item;
+    } else if (queueManager.queue.length > 0) {
+      nextItem = queueManager.getQueue().shift();
       queueManager.handleQueueChanged();
-      queueManager.beginTrack(queueItem.track, queueItem.user);
+    }
+
+    if (nextItem) {
+      queueManager.beginTrack(nextItem.track, nextItem.user);
     } else {
       console.log('queue is empty');
       queueManager.playingContext = null;
     }
+
     globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
@@ -49,14 +47,20 @@ const queueManager = new QueueManager({
     globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
   },
   updatePlayingContext: (option, track, user, newTrackPosition) => {
-    clearInterval(queueManager.interval);
     if (option === 'play next') {
       queueManager.playNext();
+    } else if (option === 'override') {
+      queueManager.playHistory.addNode({
+        track,
+        user,
+      });
+      queueManager.beginTrack(track, user);
+      globalSocket.emit('fetch play history', queueManager.getPlayHistory());
+      globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
     } else if (option === 'pause' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: false,
         lastPausedAt: Date.now(),
-        trackProgress: (queueManager.getPlayingContext().lastPausedAt - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance),
       });
       globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
       globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
@@ -75,14 +79,21 @@ const queueManager = new QueueManager({
       globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
       globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
     } else if (option === 'back') {
-      queueManager.beginTrack(queueManager.recentlyPlayed.shift().track, user);
+      if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.node.prev) {
+        const prevItem = queueManager.playHistory.getPrev().item;
+        queueManager.beginTrack(prevItem.track, prevItem.user);
+        globalSocket.emit('fetch play history', queueManager.getPlayHistory());
+        globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
+      } else {
+        queueManager.updatePlayingContext('seek', null, null, 0);
+      }
     }
 
+    clearInterval(queueManager.interval);
     if (queueManager.getPlayingContext()) {
-      const progressTracker = () => {
+      queueManager.interval = setInterval(() => {
         if (queueManager.serverSideTrackProgress >= queueManager.getPlayingContext().track.duration_ms) {
           queueManager.handleTrackEnd();
-          clearInterval(queueManager.interval);
           return;
         }
 
@@ -91,22 +102,21 @@ const queueManager = new QueueManager({
         } else if (queueManager.getPlayingContext.currentlyPlaying === false) {
           queueManager.serverSideTrackProgress = queueManager.getPlayingContext().lastPausedAt - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
         }
-      };
-      queueManager.interval = setInterval(progressTracker, 300);
+      }, 300);
     }
     // globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     // globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
   updateRecentlyPlayed: () => {
     if (!queueManager.getPlayingContext()) return;
-    const { track, user } = queueManager.getPlayingContext();
+    const { track } = queueManager.getPlayingContext();
     if (queueManager.recentlyPlayed.findIndex(recentTrack => recentTrack.track.uri === track.uri) === -1) {
       queueManager.recentlyPlayed.unshift(queueManager.getPlayingContext());
     }
+
     globalSocket.emit('fetch recently played');
     globalSocket.broadcast.emit('fetch recently played');
   },
-
 });
 
 const socketApi = (io) => {
@@ -127,15 +137,21 @@ const socketApi = (io) => {
     res.json(queueManager.getRecentlyPlayed());
   });
 
+  api.get('/server-track-progress', (req, res) => {
+    res.json(queueManager.getTrackProgress());
+  });
+
   api.get('/time', (req, res) => {
     res.json(Date.now());
   });
 
   io.on('connection', (client) => {
     globalSocket = client;
-    console.log(`client ${client.id} connected`);
     client.on('time', () => {
-      client.emit('fetch server time', Date.now());
+      client.emit('fetch server time', {
+        time: Date.now(),
+        trackProgress: queueManager.serverSideTrackProgress,
+      });
     });
     client.on('add user', (data) => {
       users.push(data);
@@ -144,8 +160,7 @@ const socketApi = (io) => {
       client.broadcast.emit('update users', users);
     });
     client.on('override playing context', (track, user) => {
-      console.log(user);
-      queueManager.beginTrack(track, user);
+      queueManager.updatePlayingContext('override', track, user);
     });
     client.on('pause playback', () => {
       queueManager.updatePlayingContext('pause');
@@ -157,24 +172,18 @@ const socketApi = (io) => {
       queueManager.updatePlayingContext('seek', null, null, newTrackPosition);
     });
     client.on('back track', () => {
-      if (queueManager.serverSideTrackProgress <= 5000 && queueManager.getRecentlyPlayed().length > 0) {
-        queueManager.updatePlayingContext('back');
-      } else {
-        queueManager.updatePlayingContext('seek', null, null, 0);
-      }
+      queueManager.updatePlayingContext('back');
     });
     client.on('skip track', () => {
       queueManager.updatePlayingContext('play next');
     });
     client.on('queue track', (track, user) => {
-      console.log('queue track')
       queueManager.queueTrack(track, user);
     });
     client.on('remove track', (trackID) => {
       queueManager.removeFromQueue(trackID);
     });
     client.on('disconnect', () => {
-      console.log(`client ${client.id} disconnected`);
       users = users.filter(user => user.id !== client.id);
       client.emit('update users', users);
       client.broadcast.emit('update users', users);

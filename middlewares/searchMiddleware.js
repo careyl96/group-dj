@@ -1,7 +1,6 @@
 import axios from 'axios';
 import * as types from '../actions/types';
 import { searchTracksSuccess, clearTracks } from '../actions/searchActions';
-import { updateView } from '../actions/viewActions';
 
 const searchTracks = query => (dispatch, getState) => {
   const params = {

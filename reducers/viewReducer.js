@@ -40,6 +40,11 @@ const viewReducer = (state = initState, action) => {
         ...state,
         mySongs: action.mySongs,
       };
+    case types.FETCH_PLAY_HISTORY_SUCCESS:
+      return {
+        ...state,
+        playHistory: action.playHistory,
+      };
     default:
       return state;
   }

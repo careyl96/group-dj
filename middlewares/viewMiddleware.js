@@ -12,7 +12,7 @@ import DoublyLinkedList from '../helpers/history';
 const pageHistory = new DoublyLinkedList();
 pageHistory.addNode('home');
 
-const updateView = (view, item) => (dispatch, getState) => {
+const updateView = view => (dispatch, getState) => {
   if (view !== getState().view.pageHistory.item && view !== 'prev' && view !== 'next') {
     pageHistory.addNode(view);
     dispatch(updateViewSuccess(pageHistory.node));
@@ -21,23 +21,14 @@ const updateView = (view, item) => (dispatch, getState) => {
   } else if (view === 'next' && getState().view.pageHistory.next) {
     dispatch(updateViewSuccess(pageHistory.getNext()));
   }
-
-  const navBarItems = Array.from(document.querySelectorAll('.navbar-item'));
-  navBarItems.forEach((node) => {
-    if (node.classList.contains('selected')) {
-      node.classList.remove('selected');
-    }
-  });
-  if (!item) return;
-  item.classList.add('selected');
 };
 const fetchQueue = () => (dispatch) => {
   axios.get('/api/queue')
     .then((response) => {
       dispatch(fetchQueueSuccess(response.data));
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 const fetchRecentlyPlayed = () => (dispatch) => {
@@ -45,8 +36,8 @@ const fetchRecentlyPlayed = () => (dispatch) => {
     .then((response) => {
       dispatch(fetchRecentlyPlayedSuccess(response.data));
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 const fetchMostPlayed = () => (dispatch) => {
@@ -54,8 +45,8 @@ const fetchMostPlayed = () => (dispatch) => {
     .then((response) => {
       dispatch(fetchMostPlayedSuccess(response.data));
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 const fetchMySongs = () => (dispatch, getState) => {
@@ -69,8 +60,8 @@ const fetchMySongs = () => (dispatch, getState) => {
     .then((response) => {
       dispatch(fetchMySongsSuccess(response.data.items));
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 

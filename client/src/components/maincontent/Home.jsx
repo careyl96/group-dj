@@ -20,11 +20,11 @@ class Home extends Component {
               <button className="home-header-play-button" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
             </div>
             :
-            <h2 className="now-playing-home-track-name">No tracks currently playing</h2>
+            <h2 className="now-playing-home-track-name">No songs currently playing</h2>
           }
         </div>
         <div className="queue">Queue</div>
-        {queue
+        {queue.length > 0
           ?
           queue.map((queueItem, index) => (
             <QueueItem
@@ -37,7 +37,12 @@ class Home extends Component {
             // queueItem.track.user = id of user who queued the song
             />
           ))
-          : null}
+          :
+          <h2 className="queue-empty-container">
+            <span>The queue is empty!</span>
+            <span>Use the search bar to search for songs</span>
+          </h2>
+          }
       </div>
     );
   }

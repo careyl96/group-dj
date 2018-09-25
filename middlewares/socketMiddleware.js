@@ -1,18 +1,26 @@
 import io from 'socket.io-client';
 import * as types from '../actions/types';
 import config from '../auth/config';
-import serverDate from '../helpers/serverDate';
+import ServerDate from '../helpers/serverDate';
 import { updateUsers, updateUserID } from '../actions/usersActions';
-import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
-import { fetchQueue, fetchQueueSuccess, fetchRecentlyPlayed } from '../actions/viewActions';
+import { fetchPlayingContext, fetchPlayingContextSuccess, resumeAtTimestamp } from '../actions/trackActions';
+import {
+  fetchQueue,
+  fetchQueueSuccess,
+  fetchRecentlyPlayed,
+  fetchPlayHistorySuccess,
+} from '../actions/viewActions';
 import { fetchAvailableDevices } from '../actions/devicesActions';
 
 let socket = null;
+let interval = null;
+let serverDate = null;
 
 const initSocket = (store) => {
   socket = io(config.HOST);
-  const interval = setInterval(() => { socket.emit('time'); }, 1000);
+  serverDate = new ServerDate(socket);
   socket.on('connect', () => {
+    interval = setInterval(() => { socket.emit('time'); }, 100);
     const newUser = {};
     const { user, avatar } = store.getState().session;
     newUser.id = socket.id;
@@ -21,12 +29,10 @@ const initSocket = (store) => {
 
     socket.emit('add user', newUser);
     store.dispatch(updateUserID(socket.id));
+    store.dispatch(fetchAvailableDevices());
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
     store.dispatch(fetchRecentlyPlayed());
-    store.dispatch(fetchAvailableDevices());
-    // store.dispatch(fetchMostPlayed());
-    // store.dispatch(fetchMySongs());
   });
   socket.on('update users', (data) => {
     console.log('~~~~~Updating User List~~~~~');
@@ -34,14 +40,18 @@ const initSocket = (store) => {
   });
   socket.on('fetch playing context', (playingContext) => {
     store.dispatch(fetchPlayingContextSuccess(playingContext));
-    // console.log(`Server Date: ${serverDate.now()}`);
-    // console.log(`Client Date: ${Date.now()}`);
   });
   socket.on('fetch recently played', () => {
     store.dispatch(fetchRecentlyPlayed());
   });
+  socket.on('fetch play history', (playHistory) => {
+    store.dispatch(fetchPlayHistorySuccess(playHistory));
+  });
   socket.on('fetch queue', (queue) => {
     store.dispatch(fetchQueueSuccess(queue));
+  });
+  socket.on('fetch server track progress', (trackProgress) => {
+    store.dispatch(resumeAtTimestamp(trackProgress));
   });
   socket.on('disconnect', () => {
     clearInterval(interval);

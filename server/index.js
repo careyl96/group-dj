@@ -23,8 +23,8 @@ app.use('/api', socketApi(io)); // other routes
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const port = 3006;
-server.listen(process.env.PORT || port, (err) => {
-  if (err) throw err;
+server.listen(process.env.PORT || port, (error) => {
+  if (error) throw error;
   console.log(`Listening on http://localhost:${process.env.PORT || port}`);
 });
 

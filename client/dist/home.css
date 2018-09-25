@@ -81,3 +81,13 @@
   transform: scale(1);
   color: hsla(0, 0%, 100%, .3);
 }
+
+.queue-empty-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 24px;
+  width: 100%;
+  text-align: center;
+  color: hsla(0, 0%, 100%, .8);
+}
