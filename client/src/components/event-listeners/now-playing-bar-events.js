@@ -124,13 +124,6 @@ function draggableVolume(element) {
 }
 function devicesMenuHandler() {
   const devicesMenu = document.querySelector('.devices-menu');
-  // const { devices } = store.getState();
-  // if (devices) {
-  //   console.log(devices);
-  //   devices.find(device => device.is_active === true)
-  //     ? devicesMenu.style.display = 'block'
-  //     : devicesMenu.style.display = 'none';
-  // }
   document.addEventListener('click', (e) => {
     if (e.target !== document.querySelector('.btn-clear.refresh')) {
       if (e.target === document.querySelector('.btn-devices')) {
@@ -146,14 +139,10 @@ function devicesMenuHandler() {
   });
 }
 
-export const addEventListeners = (context) => {
+export const addNowPlayingCenterEventListeners = (context) => {
   const progressBar = document.querySelector('.progress-bar-clickable');
-  const volumeBar = document.querySelector('.volume-bar-clickable');
   draggable(progressBar, context);
-  draggableVolume(volumeBar);
-  devicesMenuHandler();
 };
-
 export const updateProgressBar = (context) => {
   const progressBar = document.querySelector('.progress-bar-progress');
   const progressBarSlider = document.querySelector('.progress-bar-slider');
@@ -172,4 +161,10 @@ export const updateProgressBar = (context) => {
     progressBarSlider.style.left = ('0%');
     context.setState({ trackProgress: 0 });
   }
+};
+
+export const addNowPlayingRightEventListeners = () => {
+  const volumeBar = document.querySelector('.volume-bar-clickable');
+  draggableVolume(volumeBar);
+  devicesMenuHandler();
 };

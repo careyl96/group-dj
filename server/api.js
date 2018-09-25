@@ -12,6 +12,7 @@ let globalSocket = null;
 
 const queueManager = new QueueManager({
   beginTrack: (track, user) => {
+    queueManager.updateRecentlyPlayed();
     queueManager.playingContext = new QueueItem({
       track,
       startTimestamp: Date.now(),
@@ -27,10 +28,17 @@ const queueManager = new QueueManager({
     if (queueManager.playHistory.node.next) {
       nextItem = queueManager.playHistory.getNext().item;
       queueManager.beginTrack(nextItem.track, nextItem.user);
+      queueManager.handlePlayHistoryChanged();
     } else if (queueManager.queue.length > 0) {
       nextItem = queueManager.getQueue().shift();
       queueManager.handleQueueChanged();
       queueManager.beginTrack(nextItem.track, nextItem.user);
+
+      queueManager.playHistory.addNode({
+        track: nextItem.track,
+        user: nextItem.user,
+      });
+      queueManager.handlePlayHistoryChanged();
     } else {
       queueManager.playingContext = null;
       queueManager.handlePlayingContextChanged();
@@ -66,6 +74,11 @@ const queueManager = new QueueManager({
   updatePlayingContext: (option, track, user, newTrackPosition) => {
     if (option === 'override') {
       queueManager.beginTrack(track, user);
+      queueManager.playHistory.addNode({
+        track,
+        user,
+      });
+      queueManager.handlePlayHistoryChanged();
     } else if (option === 'pause' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: false,

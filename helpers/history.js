@@ -13,7 +13,6 @@ class DoublyLinkedList {
   }
 
   addNode(item) {
-    console.log('adding node');
     const node = new Node(item);
     if (!this.node.item) {
       this.node = node;
