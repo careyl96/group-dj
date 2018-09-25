@@ -5,7 +5,6 @@ import {
   resumePlaybackSuccess,
   pausePlaybackSuccess,
   adjustVolumeSuccess,
-  resumeAtTimestampSuccess,
 } from '../actions/trackActions';
 
 const fetchPlayingContext = () => (dispatch) => {
@@ -18,6 +17,7 @@ const fetchPlayingContext = () => (dispatch) => {
     });
 };
 const resumePlayback = () => (dispatch, getState) => {
+  console.log('---------- RESUMING PLAYBACK ----------');
   const { id } = getState().playingContext;
   return axios.get('/api/server-track-progress')
     .then((response) => {
@@ -32,6 +32,7 @@ const resumePlayback = () => (dispatch, getState) => {
         headers: { Authorization: `Bearer ${getState().session.accessToken}` },
       })
         .then(() => {
+          console.log('RESUMED PLAYBACK');
           dispatch(resumePlaybackSuccess());
         })
         .catch((error) => {
@@ -42,38 +43,15 @@ const resumePlayback = () => (dispatch, getState) => {
       console.log(error);
     });
 };
-
-// const resumePlayback = () => (dispatch, getState) => {
-//   const { id, startTimestamp, totalTimePaused, seekDistance } = getState().playingContext;
-//   if (id) {
-//     return axios({
-//       method: 'PUT',
-//       url: 'https://api.spotify.com/v1/me/player/play',
-//       data: {
-//         uris: [`spotify:track:${id}`],
-//         position_ms: serverDate.now() - startTimestamp - totalTimePaused + seekDistance,
-//       },
-//       headers: { Authorization: `Bearer ${getState().session.accessToken}` },
-//     })
-//       .then(() => {
-//         dispatch(resumePlaybackSuccess());
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       });
-//   }
-//   console.log('Nothing playing');
-// };
-
-
-const pauseTrack = () => (dispatch, getState) => {
-  console.log('---------- PAUSING TRACK ----------');
+const pausePlayback = () => (dispatch, getState) => {
+  console.log('---------- PAUSING PLAYBACK ----------');
   return axios({
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/pause',
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then(() => {
+      console.log('PAUSED PLAYBACK');
       dispatch(pausePlaybackSuccess());
     })
     .catch((error) => {
@@ -84,10 +62,10 @@ const pauseTrack = () => (dispatch, getState) => {
 };
 const handlePlayState = () => (dispatch, getState) => {
   const { currentlyPlaying } = getState().playingContext;
-  if (currentlyPlaying === false) {
-    dispatch(pauseTrack());
-  } else if (currentlyPlaying === true) {
+  if (currentlyPlaying) {
     dispatch(resumePlayback());
+  } else {
+    dispatch(pausePlayback());
   }
 };
 const adjustVolume = volume => (dispatch, getState) => {

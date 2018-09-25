@@ -2,7 +2,6 @@ import * as types from '../actions/types';
 
 const formatPlayingContext = (response) => {
   let formattedTrackData = null;
-  // if (Object.prototype.hasOwnProperty.call(response, 'track')) {
   if (response) {
     formattedTrackData = {
       currentlyPlaying: response.currentlyPlaying,

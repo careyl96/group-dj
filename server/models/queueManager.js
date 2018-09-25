@@ -4,16 +4,33 @@ class QueueManager {
   constructor(options = {}) {
     this.queue = [];
     this.playingContext = null;
+
     this.handleQueueChanged = options.handleQueueChanged;
+    this.handlePlayingContextChanged = options.handlePlayingContextChanged;
+    this.handlePlayHistoryChanged = options.handlePlayHistoryChanged;
+    this.handleRecentlyPlayedChanged = options.handleRecentlyPlayedChanged;
+
     this.beginTrack = options.beginTrack;
     this.updatePlayingContext = options.updatePlayingContext;
     this.updateRecentlyPlayed = options.updateRecentlyPlayed;
     this.playNext = options.playNext;
+    this.playPrev = options.playPrev;
     this.playHistory = new DoublyLinkedList();
 
     this.recentlyPlayed = [];
 
-    this.interval = null;
+    this.interval = setInterval(() => {
+      if (this.playingContext) {
+        if (this.serverSideTrackProgress >= this.playingContext.track.duration_ms) {
+          this.playNext();
+          return;
+        }
+
+        this.serverSideTrackProgress = this.playingContext.currentlyPlaying
+          ? Date.now() - this.playingContext.startTimestamp - this.playingContext.totalTimePaused + this.playingContext.seekDistance
+          : this.playingContext.lastPausedAt - this.playingContext.startTimestamp - this.playingContext.totalTimePaused + this.playingContext.seekDistance;
+      }
+    }, 300);
     this.serverSideTrackProgress = 0;
   }
 
@@ -57,20 +74,14 @@ class QueueManager {
 
   getPlayHistory() {
     const playHistory = {
-      prev: (this.playHistory.node.prev !== null),
-      next: (this.playHistory.node.next !== null),
+      prev: (this.playHistory.node.prev && this.playHistory.node.prev.item !== null),
+      next: (this.playHistory.node.next && this.playHistory.node.next.item !== null),
     };
     return playHistory;
   }
 
   getTrackProgress() {
     return this.serverSideTrackProgress;
-  }
-
-  handleTrackEnd() {
-    clearInterval(this.interval);
-    this.serverSideTrackProgress = 0;
-    this.playNext();
   }
 }
 

@@ -71,28 +71,46 @@ class NowPlayingBar extends Component {
 
           {/* NOW PLAYING CENTER - PLAYER CONTROLS AND PROGRESS BAR */}
           <div className="now-playing-center">
-            <div className="player-controls">
-              <button className="control-button back" onClick={this.props.backTrack}>
-                <i className="material-icons md-light md-36">skip_previous</i>
-              </button>
+            {this.props.playingContext.id
+              ? (
+                <div className="player-controls">
+                  <button className="control-button back" onClick={this.props.backTrack}>
+                    <i className="material-icons md-light md-36">skip_previous</i>
+                  </button>
 
-              <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>
-                {this.props.currentlyPlaying
-                  ? <i className="material-icons md-light md-36">pause_circle_outline</i>
-                  : <i className="material-icons md-light md-36">play_circle_outline</i>
-                }
-              </button>
+                  <button className="control-button play" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>
+                    {this.props.currentlyPlaying
+                      ? <i className="material-icons md-light md-36">pause_circle_outline</i>
+                      : <i className="material-icons md-light md-36">play_circle_outline</i>
+                    }
+                  </button>
 
-              <button className="control-button skip" onClick={this.props.skipTrack}>
-                <i className="material-icons md-light md-36">skip_next</i>
-              </button>
-            </div>
+                  <button className={`control-button skip ${this.props.nextTrack || this.props.queue.length > 0 ? null : 'disabled'}`} onClick={this.props.skipTrack}>
+                    <i className="material-icons md-light md-36">skip_next</i>
+                  </button>
+                </div>
+              ) : (
+                <div className="player-controls">
+                  <button className="control-button back disabled">
+                    <i className="material-icons md-light md-36">skip_previous</i>
+                  </button>
+
+                  <button className="control-button play disabled">
+                    <i className="material-icons md-light md-36">play_circle_outline</i>
+                  </button>
+
+                  <button className="control-button skip disabled">
+                    <i className="material-icons md-light md-36">skip_next</i>
+                  </button>
+                </div>
+              )
+            }
             <div className="progress-bar-container">
               <button className="btn-clear md-18 resync" onClick={this.props.fetchPlayingContext}>
                 <i className="material-icons md-light md-18">sync</i>
               </button>
               <div className="progress-time">{parseMs(this.state.trackProgress)}</div>
-              <div className="progress-bar-clickable" onClick={this.handleClick}>
+              <div className={`progress-bar-clickable ${this.props.playingContext.id ? null : 'disabled'}`} onClick={this.handleClick}>
                 <div className="progress-bar">
                   <div className="progress-bar-progress" />
                   <div className="progress-bar-slider" />
@@ -146,14 +164,17 @@ class NowPlayingBar extends Component {
 }
 
 const mapStateToProps = state => ({
+  playingContext: state.playingContext,
   currentlyPlaying: state.playingContext.currentlyPlaying,
-  seekDistance: state.playingContext.seekDistance,
   name: state.playingContext.name,
   artists: state.playingContext.artists,
   length: state.playingContext.length,
   albumArt: state.playingContext.albumArt,
   popularity: state.playingContext.popularity,
   devices: state.devices,
+  queue: state.view.queue,
+  prevTrack: state.view.playHistory.prev,
+  nextTrack: state.view.playHistory.next,
 });
 
 const mapDispatchToProps = dispatch => ({

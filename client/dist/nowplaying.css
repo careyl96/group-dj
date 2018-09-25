@@ -355,3 +355,11 @@
 .refresh:active .icon-refresh {
   color: hsla(0, 0%, 100%, .6);
 }
+
+.disabled .material-icons.md-light {
+  color: hsla(0, 0%, 100%, .3) !important;
+}
+
+.progress-bar-clickable.disabled {
+  pointer-events: none !important;
+}

@@ -12,98 +12,95 @@ let globalSocket = null;
 
 const queueManager = new QueueManager({
   beginTrack: (track, user) => {
-    queueManager.serverSideTrackProgress = 0;
     queueManager.playingContext = new QueueItem({
       track,
       startTimestamp: Date.now(),
       user,
     });
-    globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-    globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
+    queueManager.serverSideTrackProgress = 0;
+    queueManager.handlePlayingContextChanged();
   },
   playNext: () => {
+    queueManager.serverSideTrackProgress = 0;
     queueManager.updateRecentlyPlayed();
     let nextItem = null;
     if (queueManager.playHistory.node.next) {
       nextItem = queueManager.playHistory.getNext().item;
+      queueManager.beginTrack(nextItem.track, nextItem.user);
     } else if (queueManager.queue.length > 0) {
       nextItem = queueManager.getQueue().shift();
       queueManager.handleQueueChanged();
-    }
-
-    if (nextItem) {
       queueManager.beginTrack(nextItem.track, nextItem.user);
     } else {
-      console.log('queue is empty');
       queueManager.playingContext = null;
+      queueManager.handlePlayingContextChanged();
     }
-
-    globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-    globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
+  playPrev: () => {
+    if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.node.prev) {
+      const prevItem = queueManager.playHistory.getPrev().item;
+      queueManager.beginTrack(prevItem.track, prevItem.user);
+      queueManager.handlePlayHistoryChanged();
+    } else {
+      queueManager.updatePlayingContext('seek', null, null, 0);
+    }
+  },
+
   handleQueueChanged: () => {
-    // broadcasts updated queue to all clients
     globalSocket.emit('fetch queue', queueManager.getQueue());
     globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
   },
+  handlePlayingContextChanged: () => {
+    globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
+    globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
+  },
+  handleRecentlyPlayedChanged: () => {
+    globalSocket.emit('fetch recently played', queueManager.getRecentlyPlayed());
+    globalSocket.broadcast.emit('fetch recently played', queueManager.getRecentlyPlayed());
+  },
+  handlePlayHistoryChanged: () => {
+    globalSocket.emit('fetch play history', queueManager.getPlayHistory());
+    globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
+  },
+
   updatePlayingContext: (option, track, user, newTrackPosition) => {
-    if (option === 'play next') {
-      queueManager.playNext();
-    } else if (option === 'override') {
-      queueManager.playHistory.addNode({
-        track,
-        user,
-      });
+    if (option === 'override') {
       queueManager.beginTrack(track, user);
-      globalSocket.emit('fetch play history', queueManager.getPlayHistory());
-      globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
     } else if (option === 'pause' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: false,
         lastPausedAt: Date.now(),
       });
-      globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-      globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
-    } else if (option === 'play' && queueManager.getPlayingContext()) {
+      queueManager.handlePlayingContextChanged();
+    } else if (option === 'resume' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: true,
         totalTimePaused: queueManager.getPlayingContext().totalTimePaused + Date.now() - queueManager.getPlayingContext().lastPausedAt,
       });
-      globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-      globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
+      queueManager.handlePlayingContextChanged();
     } else if (option === 'seek' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: true,
         seekDistance: queueManager.getPlayingContext().seekDistance + (newTrackPosition - (Date.now() - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance)),
       });
-      globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-      globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
-    } else if (option === 'back') {
-      if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.node.prev) {
-        const prevItem = queueManager.playHistory.getPrev().item;
-        queueManager.beginTrack(prevItem.track, prevItem.user);
-        globalSocket.emit('fetch play history', queueManager.getPlayHistory());
-        globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
-      } else {
-        queueManager.updatePlayingContext('seek', null, null, 0);
-      }
+      queueManager.handlePlayingContextChanged();
     }
 
-    clearInterval(queueManager.interval);
-    if (queueManager.getPlayingContext()) {
-      queueManager.interval = setInterval(() => {
-        if (queueManager.serverSideTrackProgress >= queueManager.getPlayingContext().track.duration_ms) {
-          queueManager.handleTrackEnd();
-          return;
-        }
+    // clearInterval(queueManager.interval);
+    // if (queueManager.getPlayingContext()) {
+    //   queueManager.interval = setInterval(() => {
+    //     if (queueManager.serverSideTrackProgress >= queueManager.getPlayingContext().track.duration_ms) {
+    //       queueManager.handleTrackEnd();
+    //       return;
+    //     }
 
-        if (queueManager.getPlayingContext().currentlyPlaying === true) {
-          queueManager.serverSideTrackProgress = Date.now() - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
-        } else if (queueManager.getPlayingContext.currentlyPlaying === false) {
-          queueManager.serverSideTrackProgress = queueManager.getPlayingContext().lastPausedAt - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
-        }
-      }, 300);
-    }
+    //     if (queueManager.getPlayingContext().currentlyPlaying === true) {
+    //       queueManager.serverSideTrackProgress = Date.now() - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
+    //     } else if (queueManager.getPlayingContext.currentlyPlaying === false) {
+    //       queueManager.serverSideTrackProgress = queueManager.getPlayingContext().lastPausedAt - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
+    //     }
+    //   }, 300);
+    // }
     // globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     // globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
@@ -114,8 +111,7 @@ const queueManager = new QueueManager({
       queueManager.recentlyPlayed.unshift(queueManager.getPlayingContext());
     }
 
-    globalSocket.emit('fetch recently played');
-    globalSocket.broadcast.emit('fetch recently played');
+    queueManager.handleRecentlyPlayedChanged();
   },
 });
 
@@ -165,17 +161,17 @@ const socketApi = (io) => {
     client.on('pause playback', () => {
       queueManager.updatePlayingContext('pause');
     });
-    client.on('resume track', () => {
-      queueManager.updatePlayingContext('play');
+    client.on('resume playback', () => {
+      queueManager.updatePlayingContext('resume');
     });
     client.on('seek track', (newTrackPosition) => {
       queueManager.updatePlayingContext('seek', null, null, newTrackPosition);
     });
     client.on('back track', () => {
-      queueManager.updatePlayingContext('back');
+      queueManager.playPrev();
     });
     client.on('skip track', () => {
-      queueManager.updatePlayingContext('play next');
+      queueManager.playNext();
     });
     client.on('queue track', (track, user) => {
       queueManager.queueTrack(track, user);

@@ -45,4 +45,5 @@
 
 .disabled {
   color: hsla(0, 0%, 100%, .4);
+  pointer-events: none !important;
 }

@@ -68,7 +68,7 @@ export default store => next => (action) => {
       socket.emit('override playing context', action.track, action.user);
       break;
     case types.RESUME_PLAYBACK:
-      socket.emit('resume track');
+      socket.emit('resume playback');
       break;
     case types.PAUSE_PLAYBACK:
       socket.emit('pause playback');
