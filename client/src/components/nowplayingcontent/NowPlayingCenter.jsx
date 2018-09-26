@@ -40,6 +40,7 @@ class NowPlayingCenter extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    clearInterval(this.interval);
     updateProgressBar(this);
     if (newProps.currentlyPlaying) {
       this.interval = setInterval(() => updateProgressBar(this), 300);

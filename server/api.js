@@ -54,10 +54,6 @@ const queueManager = new QueueManager({
     }
   },
 
-  handleQueueChanged: () => {
-    globalSocket.emit('fetch queue', queueManager.getQueue());
-    globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
-  },
   handlePlayingContextChanged: () => {
     globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
@@ -69,6 +65,10 @@ const queueManager = new QueueManager({
   handlePlayHistoryChanged: () => {
     globalSocket.emit('fetch play history', queueManager.getPlayHistory());
     globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
+  },
+  handleQueueChanged: () => {
+    globalSocket.emit('fetch queue', queueManager.getQueue());
+    globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
   },
 
   updatePlayingContext: (option, track, user, newTrackPosition) => {
@@ -98,24 +98,6 @@ const queueManager = new QueueManager({
       });
       queueManager.handlePlayingContextChanged();
     }
-
-    // clearInterval(queueManager.interval);
-    // if (queueManager.getPlayingContext()) {
-    //   queueManager.interval = setInterval(() => {
-    //     if (queueManager.serverSideTrackProgress >= queueManager.getPlayingContext().track.duration_ms) {
-    //       queueManager.handleTrackEnd();
-    //       return;
-    //     }
-
-    //     if (queueManager.getPlayingContext().currentlyPlaying === true) {
-    //       queueManager.serverSideTrackProgress = Date.now() - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
-    //     } else if (queueManager.getPlayingContext.currentlyPlaying === false) {
-    //       queueManager.serverSideTrackProgress = queueManager.getPlayingContext().lastPausedAt - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance;
-    //     }
-    //   }, 300);
-    // }
-    // globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
-    // globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
   updateRecentlyPlayed: () => {
     if (!queueManager.getPlayingContext()) return;
@@ -148,10 +130,6 @@ const socketApi = (io) => {
 
   api.get('/server-track-progress', (req, res) => {
     res.json(queueManager.getTrackProgress());
-  });
-
-  api.get('/time', (req, res) => {
-    res.json(Date.now());
   });
 
   io.on('connection', (client) => {

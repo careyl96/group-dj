@@ -266,6 +266,7 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
   position: absolute;
   width: 280px;
+  min-height: 242px;
   color: white;
 }
 
@@ -296,18 +297,20 @@
   margin: 0;
 }
 
-.device-container {
+.devices-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 10px 16px 10px 16px;
 }
 
-.device-container:hover {
+.devices-container:hover {
   background-color: #333;
 }
 
 .device-info {
+  display: flex;
+  flex-direction: column;
   padding-left: 14px;
   letter-spacing: 0.05em;
 }
@@ -352,6 +355,7 @@
 .refresh:hover .icon-refresh {
   color: #fff;
 }
+
 .refresh:active .icon-refresh {
   color: hsla(0, 0%, 100%, .6);
 }
@@ -362,4 +366,22 @@
 
 .progress-bar-clickable.disabled {
   pointer-events: none !important;
+}
+
+.icon-error {
+  color: red !important;
+}
+
+.btn-devices:hover .icon-error{
+  color: #ff7272 !important;
+}
+
+.btn-devices:active .icon-error{
+  color: red !important;
+}
+
+.no-device {
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  color: hsla(0, 0%, 100%, .3);
 }

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as types from '../actions/types';
 import { updateAvailableDevicesSuccess, transferPlaybackToDeviceSuccess } from '../actions/devicesActions';
+import { fetchPlayingContext } from '../actions/trackActions';
 
 const fetchAvailableDevices = () => (dispatch, getState) => {
   return axios({
@@ -46,6 +47,9 @@ export default store => next => (action) => {
       break;
     case types.TRANSFER_PLAYBACK_TO_DEVICE:
       store.dispatch(transferPlaybackToDevice(action.deviceID));
+      break;
+    case types.TRANSFER_PLAYBACK_TO_DEVICE_SUCCESS:
+      setTimeout(() => { store.dispatch(fetchPlayingContext()); }, 2000);
       break;
     case types.ADJUST_VOLUME_SUCCESS:
       devices = store.getState().devices.map(device => ((device.is_active) ? { ...device, volume_percent: action.volume } : device));

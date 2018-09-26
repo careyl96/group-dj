@@ -44,6 +44,6 @@
 }
 
 .disabled {
-  color: hsla(0, 0%, 100%, .4);
+  color: hsla(0, 0%, 100%, .4) !important;
   pointer-events: none !important;
 }

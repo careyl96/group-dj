@@ -2,20 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { transferPlaybackToDevice } from '../../../../actions/devicesActions';
 
-const adjustVolumeSlider = (volume) => {
-  const volumeBar = document.querySelector('.volume-bar-clickable');
-  const volumeBarProgress = volumeBar.children[0].children[0];
-  const volumeBarSlider = volumeBar.children[0].children[1];
-  volumeBarProgress.style.width = `${volume}%`;
-  volumeBarSlider.style.left = `${volume}%`;
-};
-
-const Device = ({ deviceID, isActive, name, volume, transferPlaybackToDevice }) => {
+const Device = ({ deviceID, isActive, name, volume, transferPlaybackToDevice, context }) => {
   if (isActive) {
-    adjustVolumeSlider(volume);
     return (
       <li className="available-device">
-        <div className="device-container">
+        <div className="devices-container">
           <i className="material-icons md-light md-32 icon-devices highlighted">devices</i>
           <div className="device-info">
             <div className="device-info-line1 highlighted">Listening On</div>
@@ -27,11 +18,11 @@ const Device = ({ deviceID, isActive, name, volume, transferPlaybackToDevice }) 
   }
   return (
     <li className="available-device">
-      <div className="device-container" onClick={() => transferPlaybackToDevice(deviceID)}>
+      <div className="devices-container" onClick={() => transferPlaybackToDevice(deviceID)}>
         <i className="material-icons md-light md-32 icon-devices">devices</i>
         <div className="device-info">
-          <div className="device-info-line1">{name}</div>
-          <div className="device-info-line2">Spotify Connect</div>
+          <span className="device-info-line1">{name}</span>
+          <span className="device-info-line2">Spotify Connect</span>
         </div>
       </div>
     </li>

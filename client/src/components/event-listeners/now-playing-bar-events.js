@@ -59,13 +59,11 @@ function draggable(element, context) {
 
     let newTrackPosition = Math.floor(length * percentBuffered / 100);
     if (newTrackPosition < 0) newTrackPosition = 0;
-    clearInterval(context.interval);
     context.setState({
       trackProgress: newTrackPosition,
       mouseDown: false,
     });
     store.dispatch(seekTrack(newTrackPosition));
-
     isMouseDown = false;
   }
 
@@ -73,7 +71,7 @@ function draggable(element, context) {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 }
-function draggableVolume(element) {
+function draggableVolume(element, context) {
   const volumeBar = element;
   const volumeBarProgress = volumeBar.children[0].children[0];
   const volumeBarSlider = volumeBar.children[0].children[1];
@@ -87,7 +85,7 @@ function draggableVolume(element) {
     isMouseDown = true;
     mousePositionStart = e.clientX;
     startingWidthPercentage = e.offsetX / volumeBar.offsetWidth * 100;
-
+    context.setState({ volume: Math.ceil(startingWidthPercentage) });
     volumeBarProgress.style.width = `${startingWidthPercentage}%`;
     volumeBarSlider.style.left = `${startingWidthPercentage}%`;
   }
@@ -97,9 +95,10 @@ function draggableVolume(element) {
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / volumeBar.offsetWidth * 100;
-    volume = startingWidthPercentage + deltaXPercentage;
+    volume = Math.ceil(startingWidthPercentage + deltaXPercentage);
     if (volume < 0) volume = 0;
     if (volume > 100) volume = 100;
+    context.setState({ volume });
 
     volumeBarProgress.style.width = `${volume}%`;
     volumeBarSlider.style.left = `${volume}%`;
@@ -110,12 +109,11 @@ function draggableVolume(element) {
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / volumeBar.offsetWidth * 100;
-    volume = startingWidthPercentage + deltaXPercentage;
+    volume = Math.ceil(startingWidthPercentage + deltaXPercentage);
     if (volume < 0) volume = 0;
     if (volume > 100) volume = 100;
+    store.dispatch(adjustVolume(volume));
     isMouseDown = false;
-
-    store.dispatch(adjustVolume(Math.ceil(volume)));
   }
 
   element.addEventListener('mousedown', onMouseDown);
@@ -143,14 +141,20 @@ export const addNowPlayingCenterEventListeners = (context) => {
   const progressBar = document.querySelector('.progress-bar-clickable');
   draggable(progressBar, context);
 };
+
+export const addNowPlayingRightEventListeners = (context) => {
+  const volumeBar = document.querySelector('.volume-bar-clickable');
+  draggableVolume(volumeBar, context);
+  devicesMenuHandler();
+};
+
 export const updateProgressBar = (context) => {
   const progressBar = document.querySelector('.progress-bar-progress');
   const progressBarSlider = document.querySelector('.progress-bar-slider');
 
-  const { length } = store.getState().playingContext;
-  // const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().playingContext;
-  // const progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
-  const progressPercentage = serverDate.trackProgress / length * 100;
+  const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().playingContext;
+  const progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
+  // const progressPercentage = (serverDate.trackProgress) / length * 100;
   if (progressPercentage < 100 && !context.state.mouseDown) {
     progressBar.style.width = (`${progressPercentage}%`);
     progressBarSlider.style.left = (`${progressPercentage}%`);
@@ -161,10 +165,4 @@ export const updateProgressBar = (context) => {
     progressBarSlider.style.left = ('0%');
     context.setState({ trackProgress: 0 });
   }
-};
-
-export const addNowPlayingRightEventListeners = () => {
-  const volumeBar = document.querySelector('.volume-bar-clickable');
-  draggableVolume(volumeBar);
-  devicesMenuHandler();
 };
