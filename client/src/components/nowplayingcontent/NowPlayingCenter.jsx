@@ -32,19 +32,12 @@ class NowPlayingCenter extends Component {
       trackProgress: 0,
       mouseDown: false,
     };
-    this.interval = null;
+
+    this.interval = setInterval(() => updateProgressBar(this), 300);
   }
 
   componentDidMount() {
     addNowPlayingCenterEventListeners(this);
-  }
-
-  componentWillReceiveProps(newProps) {
-    clearInterval(this.interval);
-    updateProgressBar(this);
-    if (newProps.currentlyPlaying) {
-      this.interval = setInterval(() => updateProgressBar(this), 300);
-    }
   }
 
   render() {

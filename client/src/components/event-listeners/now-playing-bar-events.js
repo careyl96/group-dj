@@ -151,18 +151,21 @@ export const addNowPlayingRightEventListeners = (context) => {
 export const updateProgressBar = (context) => {
   const progressBar = document.querySelector('.progress-bar-progress');
   const progressBarSlider = document.querySelector('.progress-bar-slider');
+  if (context.props.playingContext) {
+    const { startTimestamp, totalTimePaused, seekDistance, length } = context.props.playingContext;
+    const progressPercentage = context.props.currentlyPlaying
+      ? (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100
+      : context.state.trackProgress / length * 100;
 
-  const { startTimestamp, totalTimePaused, seekDistance, length } = store.getState().playingContext;
-  const progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
-  // const progressPercentage = (serverDate.trackProgress) / length * 100;
-  if (progressPercentage < 100 && !context.state.mouseDown) {
-    progressBar.style.width = (`${progressPercentage}%`);
-    progressBarSlider.style.left = (`${progressPercentage}%`);
-    const trackProgress = (length * progressPercentage) / 100;
-    context.setState({ trackProgress });
-  } else if (progressPercentage >= 100 && !context.state.mouseDown) {
-    progressBar.style.width = ('0%');
-    progressBarSlider.style.left = ('0%');
-    context.setState({ trackProgress: 0 });
+    if (progressPercentage < 100 && !context.state.mouseDown) {
+      progressBar.style.width = (`${progressPercentage}%`);
+      progressBarSlider.style.left = (`${progressPercentage}%`);
+      const trackProgress = (length * progressPercentage) / 100;
+      context.setState({ trackProgress });
+    } else if (progressPercentage >= 100 && !context.state.mouseDown) {
+      progressBar.style.width = ('0%');
+      progressBarSlider.style.left = ('0%');
+      context.setState({ trackProgress: 0 });
+    }
   }
 };
