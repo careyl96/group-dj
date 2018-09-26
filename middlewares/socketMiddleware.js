@@ -3,7 +3,7 @@ import * as types from '../actions/types';
 import config from '../auth/config';
 import ServerDate from '../helpers/serverDate';
 import { updateUsers, updateUserID } from '../actions/usersActions';
-import { fetchPlayingContext, fetchPlayingContextSuccess, resumeAtTimestamp } from '../actions/trackActions';
+import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
 import {
   fetchQueue,
   fetchQueueSuccess,
@@ -49,9 +49,6 @@ const initSocket = (store) => {
   });
   socket.on('fetch queue', (queue) => {
     store.dispatch(fetchQueueSuccess(queue));
-  });
-  socket.on('fetch server track progress', (trackProgress) => {
-    store.dispatch(resumeAtTimestamp(trackProgress));
   });
   socket.on('disconnect', () => {
     clearInterval(interval);

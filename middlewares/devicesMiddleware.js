@@ -1,7 +1,11 @@
 import axios from 'axios';
 import * as types from '../actions/types';
-import { updateAvailableDevicesSuccess, transferPlaybackToDeviceSuccess } from '../actions/devicesActions';
 import { fetchPlayingContext } from '../actions/trackActions';
+import {
+  fetchAvailableDevicesSuccess,
+  updateAvailableDevicesSuccess,
+  transferPlaybackToDeviceSuccess,
+} from '../actions/devicesActions';
 
 const fetchAvailableDevices = () => (dispatch, getState) => {
   return axios({
@@ -10,7 +14,7 @@ const fetchAvailableDevices = () => (dispatch, getState) => {
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then((response) => {
-      dispatch(updateAvailableDevicesSuccess(response.data.devices));
+      dispatch(fetchAvailableDevicesSuccess(response.data.devices));
     })
     .catch((error) => {
     });
@@ -34,26 +38,24 @@ const transferPlaybackToDevice = deviceID => (dispatch, getState) => {
 
 export default store => next => (action) => {
   const result = next(action);
-  let devices = null;
   switch (action.type) {
     case types.FETCH_AVAILABLE_DEVICES:
       store.dispatch(fetchAvailableDevices());
       break;
-    case types.UPDATE_AVAILABLE_DEVICES_SUCCESS:
-      devices = action.devices;
-      if (devices && devices.every(device => device.is_active === false)) {
-        store.dispatch(transferPlaybackToDevice(devices[0].id));
+    case types.FETCH_AVAILABLE_DEVICES_SUCCESS:
+      if (action.devices.length && action.devices.every(device => device.is_active === false)) {
+        store.dispatch(transferPlaybackToDevice(action.devices[0].id));
       }
       break;
     case types.TRANSFER_PLAYBACK_TO_DEVICE:
       store.dispatch(transferPlaybackToDevice(action.deviceID));
       break;
     case types.TRANSFER_PLAYBACK_TO_DEVICE_SUCCESS:
-      setTimeout(() => { store.dispatch(fetchPlayingContext()); }, 2000);
+      setTimeout(() => { store.dispatch(fetchPlayingContext()); }, 1000);
       break;
     case types.ADJUST_VOLUME_SUCCESS:
-      devices = store.getState().devices.map(device => ((device.is_active) ? { ...device, volume_percent: action.volume } : device));
-      store.dispatch(updateAvailableDevicesSuccess(devices));
+      // set the volume property of the active device to action.volume
+      store.dispatch(updateAvailableDevicesSuccess(store.getState().devices.map(device => ((device.is_active) ? { ...device, volume_percent: action.volume } : device))));
       break;
     default:
       break;

@@ -1,6 +1,7 @@
 import store from '../../../../store/store';
 import { serverDate } from '../../../../middlewares/socketMiddleware';
-import { seekTrack, adjustVolume } from '../../../../actions/trackActions';
+import { seekTrack } from '../../../../actions/trackActions';
+import { adjustVolume } from '../../../../actions/audioActions';
 
 function draggable(element, context) {
   const progressBar = element;

@@ -32,12 +32,3 @@ export const seekTrackSuccess = newTrackPosition => ({
   type: types.SEEK_TRACK_SUCCESS,
   newTrackPosition,
 });
-
-export const adjustVolume = volume => ({
-  type: types.ADJUST_VOLUME,
-  volume,
-});
-export const adjustVolumeSuccess = volume => ({
-  type: types.ADJUST_VOLUME_SUCCESS,
-  volume,
-});

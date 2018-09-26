@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { addNowPlayingRightEventListeners } from '../event-listeners/now-playing-bar-events';
 import Device from './Device';
 import { fetchAvailableDevices } from '../../../../actions/devicesActions';
+import { mute, unmute } from '../../../../actions/audioActions';
 
 class NowPlayingRight extends Component {
   constructor() {
@@ -21,7 +22,8 @@ class NowPlayingRight extends Component {
     if (devices.length) {
       const activeDevice = devices.filter(device => device.is_active)[0];
       if (activeDevice) {
-        this.setState({ volume: activeDevice.volume_percent });
+        const volume = activeDevice.volume_percent;
+        this.setState({ volume });
       }
     }
   }
@@ -30,8 +32,9 @@ class NowPlayingRight extends Component {
     const { devices } = this.props;
     if (devices.length) {
       return devices.map((device) => {
+        // set volume bar width css to active device volume
         if (device.is_active) {
-          const volume = device.volume_percent;
+          const { volume } = this.state;
           const volumeBar = document.querySelector('.volume-bar-clickable');
           const volumeBarProgress = volumeBar.children[0].children[0];
           const volumeBarSlider = volumeBar.children[0].children[1];
@@ -64,11 +67,14 @@ class NowPlayingRight extends Component {
 
   renderVolumeIcon() {
     const { volume } = this.state;
-    if (volume >= 50) {
+    if (volume >= 70) {
       return (<i className="material-icons md-light md-24 icon-volume">volume_up</i>);
     }
-    if (volume < 50 && volume > 0) {
+    if (volume < 70 && volume >= 20) {
       return (<i className="material-icons md-light md-24 icon-volume">volume_down</i>);
+    }
+    if (volume < 20 && volume > 0) {
+      return (<i className="material-icons md-light md-24 icon-volume">volume_mute</i>);
     }
     return (<i className="material-icons md-light md-24 icon-volume">volume_off</i>);
   }
@@ -93,7 +99,7 @@ class NowPlayingRight extends Component {
           </ul>
         </div>
         <div className={`volume-container ${devices.length ? null : 'disabled'}`}>
-          <button className="btn-clear btn-volume">
+          <button className="btn-clear btn-volume" onClick={this.props.muted ? this.props.unmute : () => this.props.mute(this.state.volume)}>
             {this.renderVolumeIcon()}
           </button>
           <div className="progress-bar-clickable volume-bar-clickable">
@@ -111,10 +117,14 @@ class NowPlayingRight extends Component {
 
 const mapStateToProps = state => ({
   devices: state.devices,
+  muted: state.audio.muted,
+  volume: state.audio.volume,
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchAvailableDevices: () => dispatch(fetchAvailableDevices()),
+  mute: volume => dispatch(mute(volume)),
+  unmute: () => dispatch(unmute()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NowPlayingRight);

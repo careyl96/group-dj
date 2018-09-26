@@ -4,8 +4,8 @@ import {
   fetchPlayingContextSuccess,
   resumePlaybackSuccess,
   pausePlaybackSuccess,
-  adjustVolumeSuccess,
 } from '../actions/trackActions';
+
 
 const fetchPlayingContext = () => (dispatch) => {
   return axios.get('/api/playing-context')
@@ -68,27 +68,7 @@ const handlePlayState = () => (dispatch, getState) => {
     dispatch(pausePlayback());
   }
 };
-const adjustVolume = volume => (dispatch, getState) => {
-  return axios({
-    method: 'PUT',
-    url: 'https://api.spotify.com/v1/me/player/volume',
-    params: { volume_percent: volume },
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
-  })
-    .then(() => {
-      dispatch(adjustVolumeSuccess(volume));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-const mute = () => (dispatch) => {
-  dispatch(adjustVolume(0));
-}
-const unmute = () => (dispatch, getState) => {
-  const activeDevice = getState().devices.filter(device => device.is_active === true);
-  dispatch(adjustVolume(activeDevice.volume_percent));
-}
+
 
 export default store => next => (action) => {
   const result = next(action);
@@ -98,15 +78,6 @@ export default store => next => (action) => {
       break;
     case types.FETCH_PLAYING_CONTEXT_SUCCESS:
       store.dispatch(handlePlayState());
-      break;
-    case types.ADJUST_VOLUME:
-      store.dispatch(adjustVolume(action.volume));
-      break;
-    case types.MUTE:
-      // store.dispatch(mute());
-      break;
-    case types.UNMUTE:
-      // store.dispatch(unmute(action.volume));
       break;
     default:
       break;
