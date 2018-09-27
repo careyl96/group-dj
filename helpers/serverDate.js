@@ -9,7 +9,7 @@ class ServerDate {
   }
 
   now() {
-    return Date.now() + this.timeDifference;
+    return Date.now() + this.timeDifference + 100;
   }
 
   getTrackProgress() {

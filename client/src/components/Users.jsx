@@ -5,6 +5,12 @@ const Users = ({ users, playingContext }) => (
   <div className="users-container sidebar">
     <div className="online">online users</div>
     <ul className="users-list">
+      {/* <li className="user-list-item">
+        <div className="user-img-container">
+          <img className="user-img" src="https://scontent.xx.fbcdn.net/v/t1.0-1/c0.0.200.200/p200x200/40140062_1947247652008094_6446707394029289472_n.jpg?_nc_cat=104&amp;oh=627a2216618163c0337173ddf1ed334f&amp;oe=5C2530BF" />
+        </div>
+        <div className="username">Carey Lee</div>
+      </li> */}
       {users.length
         ? users.map((user, index) => {
           const { avatar, username } = user;

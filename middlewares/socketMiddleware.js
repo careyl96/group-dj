@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 import * as types from '../actions/types';
 import config from '../auth/config';
 import ServerDate from '../helpers/serverDate';
-import { updateUsers, updateUserID } from '../actions/usersActions';
+import { updateUsers } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
 import {
   fetchQueue,
@@ -28,7 +28,6 @@ const initSocket = (store) => {
     newUser.avatar = avatar;
 
     socket.emit('add user', newUser);
-    // store.dispatch(updateUserID(socket.id));
     store.dispatch(fetchAvailableDevices());
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());

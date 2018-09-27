@@ -77,7 +77,6 @@ const TrackListItem = ({ track, name, artists, duration, playingContext, user, q
     )
 );
 
-
 const mapStateToProps = state => ({
   playingContext: state.playingContext,
   user: {

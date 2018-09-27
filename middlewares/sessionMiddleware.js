@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../auth/config';
 import * as types from '../actions/types';
-import { updateUserID, updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
+import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
 
 const parseMs = (ms) => {
   let result = '';
@@ -23,9 +23,8 @@ const updateToken = () => (dispatch) => {
   return axios.get(`${config.HOST}/auth/token`)
     .then((response) => {
       if (!response.data) return;
-      const { access_token, expires_in, user_id } = response.data;
+      const { access_token, expires_in } = response.data;
       dispatch(updateTokenSuccess(access_token, expires_in));
-      dispatch(updateUserID(user_id));
     });
 };
 const getCurrentUserInfo = () => (dispatch, getState) => {
@@ -36,9 +35,10 @@ const getCurrentUserInfo = () => (dispatch, getState) => {
   };
   return axios.get('https://api.spotify.com/v1/me', params)
     .then((response) => {
+      const { id } = response.data;
       const username = response.data.display_name;
       const avatar = response.data.images[0].url;
-      dispatch(loginSuccess(username, avatar));
+      dispatch(loginSuccess(id, username, avatar));
     })
     .catch((error) => {
       console.log(`failed to get user information ${error}`);

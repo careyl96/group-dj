@@ -2,14 +2,11 @@ import * as types from './types';
 
 export const login = () => ({ type: types.LOGIN });
 export const loginFail = () => ({ type: types.LOGIN_FAIL });
-export const loginSuccess = (username, avatar) => ({
+export const loginSuccess = (id, username, avatar) => ({
   type: types.LOGIN_SUCCESS,
+  id,
   username,
   avatar,
-});
-export const updateUserID = id => ({
-  type: types.UPDATE_USER_ID,
-  id,
 });
 export const updateTokenSuccess = (accessToken, expiresIn) => ({
   type: types.UPDATE_TOKEN_SUCCESS,

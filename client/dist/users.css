@@ -1,11 +1,10 @@
 .users-container {
-  box-sizing: border-box;
   width: 200px;
   right: 0;
 }
 
 @media screen and (max-width: 1024px) {
-  .users-container {
+  #users-container {
     display: none !important;
   }
   .main-view-container {
@@ -18,7 +17,7 @@
   box-sizing: border-box;
   font-size: 14px;
   height: 100vh;
-  padding: 24px 24px 91px 24px;
+  padding: 24px 24px 90px 24px;
   background-color: rgba(0, 0, 0, .4);
   user-select: none;
   color: white;

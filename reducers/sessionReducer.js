@@ -25,6 +25,7 @@ const sessionReducer = (state = initState, action) => {
     case types.LOGIN_SUCCESS:
       return {
         ...state,
+        id: action.id,
         username: action.username,
         avatar: action.avatar,
       };

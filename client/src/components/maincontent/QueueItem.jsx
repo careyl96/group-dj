@@ -22,12 +22,16 @@ const QueueItem = ({ track, name, artists, duration, removeTrack, user }) => (
       <i className="material-icons md-light md-36 remove-track">close</i>
     </button>
     <div className="track-info tracklist-item">
-      <div className="track-name"> {name} </div>
-      <div className="track-artist"> {artists} </div>
+      <span className="track-name"> {name} </span>
+      <span className="track-artist"> {artists} </span>
+    </div>
+    <div className="queued-by">
+      <i className="material-icons md-light md-24 icon-queued-by">queue</i>
+      <span className="queued-by-name">{`Queued by ${user.username}`}</span>
     </div>
     <div className="track-time">
       <span> {parseMs(duration)} </span>
-      <span> {console.log(user)} </span>
+      {/* <span> {console.log(user)} </span> */}
     </div>
   </div>
 );

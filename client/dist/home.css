@@ -91,3 +91,33 @@
   text-align: center;
   color: hsla(0, 0%, 100%, .8);
 }
+
+.queued-by {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 60%;
+  height: 36px;
+  margin: 0px 10px 0px 10px;
+}
+
+.queued-by > *{
+  color: hsla(0, 0%, 100%, .3) !important;
+}
+
+.track-container:hover .queued-by > *{
+  color: white !important;
+}
+
+.icon-queued-by {
+  color: black;
+}
+
+.track-container:hover .queued-by {
+  display: flex;
+}
+
+.queued-by-name {
+  font-size: 14px;
+  padding-left: 5px;
+}
