@@ -28,7 +28,6 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   accessToken: state.session.accessToken,
-  // user: state.session.user,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -2,19 +2,19 @@ import * as types from './types';
 
 export const login = () => ({ type: types.LOGIN });
 export const loginFail = () => ({ type: types.LOGIN_FAIL });
-export const loginSuccess = (user, avatar) => ({
+export const loginSuccess = (username, avatar) => ({
   type: types.LOGIN_SUCCESS,
-  user,
+  username,
   avatar,
+});
+export const updateUserID = id => ({
+  type: types.UPDATE_USER_ID,
+  id,
 });
 export const updateTokenSuccess = (accessToken, expiresIn) => ({
   type: types.UPDATE_TOKEN_SUCCESS,
   accessToken,
   expiresIn,
-});
-export const updateTime = timeDifference => ({
-  type: types.UPDATE_TIME,
-  timeDifference,
 });
 
 export const load = () => ({ type: types.LOAD });

@@ -3,10 +3,9 @@ import * as types from '../actions/types';
 const initState = {
   accessToken: null,
   expiresIn: null,
-  user: null,
   id: null,
+  username: null,
   avatar: null,
-  timeDifference: 0,
 };
 
 const sessionReducer = (state = initState, action) => {
@@ -26,7 +25,7 @@ const sessionReducer = (state = initState, action) => {
     case types.LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.user,
+        username: action.username,
         avatar: action.avatar,
       };
     case types.UPDATE_USER_ID:

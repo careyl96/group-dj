@@ -141,10 +141,13 @@ const socketApi = (io) => {
       });
     });
     client.on('add user', (data) => {
-      users.push(data);
-      console.log(`${data.username} has connected!`);
+      if (!users.find(user => user.id === data.id)) {
+        const newUser = data;
+        newUser.socketID = client.id;
+        users.push(newUser);
+        client.broadcast.emit('update users', users);
+      }
       client.emit('update users', users);
-      client.broadcast.emit('update users', users);
     });
     client.on('override playing context', (track, user) => {
       queueManager.updatePlayingContext('override', track, user);
@@ -171,7 +174,7 @@ const socketApi = (io) => {
       queueManager.removeFromQueue(trackID);
     });
     client.on('disconnect', () => {
-      users = users.filter(user => user.id !== client.id);
+      users = users.filter(user => user.socketID !== client.id);
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });

@@ -7,12 +7,12 @@ const Users = ({ users }) => {
       <div className="online">online users</div>
       <ul className="users-list">
         {users.length
-          ? users.map((user) => {
-            const { thumbnail, username } = user;
+          ? users.map((user, index) => {
+            const { avatar, username } = user;
             return (
-              <li key={user.id} className="user-list-item">
+              <li key={index} className="user-list-item">
                 <div className="user-img-container">
-                  <img className="user-img" src={thumbnail} />
+                  <img className="user-img" src={avatar} />
                 </div>
                 <div className="username">{username}</div>
               </li>

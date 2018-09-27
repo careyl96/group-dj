@@ -6,10 +6,7 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server, {
-  pingInterval: 1000,
-  pingTimeout: 60000,
-});
+const io = require('socket.io')(server);
 
 const authRouter = require('./auth');
 const socketApi = require('./api');

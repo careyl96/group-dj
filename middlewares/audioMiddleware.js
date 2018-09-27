@@ -28,8 +28,8 @@ const mute = volume => (dispatch, getState) => {
       .then(() => {
         dispatch(muteSuccess(volume));
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
       });
   }
 };
@@ -38,8 +38,8 @@ const unmute = () => (dispatch, getState) => {
     .then(() => {
       dispatch(unmuteSuccess());
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 

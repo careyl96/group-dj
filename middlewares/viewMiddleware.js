@@ -50,7 +50,6 @@ const fetchMostPlayed = () => (dispatch) => {
     });
 };
 const fetchMySongs = () => (dispatch, getState) => {
-  console.log('---------- FETCHING MY SONGS ----------');
   return axios({
     method: 'GET',
     url: 'https://api.spotify.com/v1/me/top/tracks',

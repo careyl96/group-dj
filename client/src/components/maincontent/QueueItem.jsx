@@ -16,7 +16,7 @@ const parseMs = (ms) => {
   return result;
 };
 
-const QueueItem = ({ track, name, artists, duration, removeTrack }) => (
+const QueueItem = ({ track, name, artists, duration, removeTrack, user }) => (
   <div className="track-container">
     <button className="btn-tracklist-item" onClick={() => removeTrack(track.id)}>
       <i className="material-icons md-light md-36 remove-track">close</i>

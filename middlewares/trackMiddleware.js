@@ -17,7 +17,6 @@ const fetchPlayingContext = () => (dispatch) => {
     });
 };
 const resumePlayback = () => (dispatch, getState) => {
-  console.log('---------- RESUMING PLAYBACK ----------');
   const { id } = getState().playingContext;
   return axios.get('/api/server-track-progress')
     .then((response) => {
@@ -32,7 +31,7 @@ const resumePlayback = () => (dispatch, getState) => {
         headers: { Authorization: `Bearer ${getState().session.accessToken}` },
       })
         .then(() => {
-          console.log('RESUMED PLAYBACK');
+          console.log('Resumed playback');
           dispatch(resumePlaybackSuccess());
         })
         .catch((error) => {
@@ -44,14 +43,13 @@ const resumePlayback = () => (dispatch, getState) => {
     });
 };
 const pausePlayback = () => (dispatch, getState) => {
-  console.log('---------- PAUSING PLAYBACK ----------');
   return axios({
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/pause',
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then(() => {
-      console.log('PAUSED PLAYBACK');
+      console.log('Paused playback');
       dispatch(pausePlaybackSuccess());
     })
     .catch((error) => {

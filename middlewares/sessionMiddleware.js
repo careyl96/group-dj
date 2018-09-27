@@ -1,8 +1,7 @@
 import axios from 'axios';
 import config from '../auth/config';
-import { serverDate } from './socketMiddleware';
 import * as types from '../actions/types';
-import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
+import { updateUserID, updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
 
 const parseMs = (ms) => {
   let result = '';
@@ -22,11 +21,11 @@ const parseMs = (ms) => {
 
 const updateToken = () => (dispatch) => {
   return axios.get(`${config.HOST}/auth/token`)
-    .then((res) => {
-      if (!res.data) return;
-      console.log(`access token expires in ${parseMs(res.data.expires_in - Date.now())}`);
-      const { access_token, expires_in } = res.data;
+    .then((response) => {
+      if (!response.data) return;
+      const { access_token, expires_in, user_id } = response.data;
       dispatch(updateTokenSuccess(access_token, expires_in));
+      dispatch(updateUserID(user_id));
     });
 };
 const getCurrentUserInfo = () => (dispatch, getState) => {
@@ -36,10 +35,10 @@ const getCurrentUserInfo = () => (dispatch, getState) => {
     },
   };
   return axios.get('https://api.spotify.com/v1/me', params)
-    .then((res) => {
-      const user = res.data.display_name;
-      const avatar = res.data.images[0].url;
-      dispatch(loginSuccess(user, avatar));
+    .then((response) => {
+      const username = response.data.display_name;
+      const avatar = response.data.images[0].url;
+      dispatch(loginSuccess(username, avatar));
     })
     .catch((error) => {
       console.log(`failed to get user information ${error}`);
@@ -56,6 +55,7 @@ export default store => next => (action) => {
       store.dispatch(updateToken())
         .then(() => {
           store.dispatch(getCurrentUserInfo());
+          setInterval(() => store.dispatch(updateToken()), 3000000);
         });
       break;
     default:

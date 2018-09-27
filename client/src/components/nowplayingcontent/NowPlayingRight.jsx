@@ -109,7 +109,7 @@ class NowPlayingRight extends Component {
             </div>
           </div>
         </div>
-        <div className="state-tracker">{this.state.volume}</div>
+        {/* <div className="state-tracker">{this.state.volume}</div> */}
       </div>
     );
   }

@@ -7,42 +7,54 @@ import { resumePlayback, pausePlayback } from '../../../../actions/trackActions'
 
 class Home extends Component {
   render() {
-    const { isTrackPlaying, queue } = this.props;
+    const {
+      albumArt,
+      name,
+      artists,
+      user,
+      currentlyPlaying,
+      removeTrack,
+      pausePlayback,
+      resumePlayback,
+      queue,
+    } = this.props;
     return (
       <div className="home-tab">
         <div className="home-header">
-          <img id="now-playing-home-album-art" src={this.props.albumArt} />
-          {isTrackPlaying ?
-            <div className="flex-vertical">
-              <h2 className="now-playing-home-track-name">{this.props.name}</h2>
-              <div className="now-playing-home-artists">{`By ${this.props.artists}` || null}</div>
-              <div className="now-playing-home-user">{`Queued by: ${this.props.user ? this.props.user.username : null}`}</div>
-              <button className="home-header-play-button" onClick={this.props.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>{this.props.currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
-            </div>
-            :
-            <h2 className="now-playing-home-track-name">No songs currently playing</h2>
+          <img id="now-playing-home-album-art" src={albumArt} />
+          {name
+            ? (
+              <div className="flex-vertical">
+                <h2 className="now-playing-home-track-name">{name}</h2>
+                <div className="now-playing-home-artists">{`By ${artists}` || null}</div>
+                <div className="now-playing-home-user">{`Queued by: ${user ? user.username : null}`}</div>
+                <button className="home-header-play-button" onClick={currentlyPlaying ? pausePlayback : resumePlayback}>{currentlyPlaying ? 'PAUSE' : 'PLAY'}</button>
+              </div>
+            )
+            : <h2 className="now-playing-home-track-name">No songs currently playing</h2>
           }
         </div>
         <div className="queue">Queue</div>
-        {queue.length > 0
-          ?
-          queue.map((queueItem, index) => (
+        {queue.length
+          ? queue.map((queueItem, index) => (
             <QueueItem
               key={index}
               track={queueItem.track}
               name={queueItem.track.name}
               artists={queueItem.track.artists.map(artist => artist.name).join(', ')}
               duration={queueItem.track.duration_ms}
-              removeTrack={this.props.removeTrack}
+              removeTrack={removeTrack}
+              user={user}
             // queueItem.track.user = id of user who queued the song
             />
           ))
-          :
-          <h2 className="queue-empty-container">
-            <span>The queue is empty!</span>
-            <span>Use the search bar to search for songs</span>
-          </h2>
-          }
+          : (
+            <h2 className="queue-empty-container">
+              <span>The queue is empty!</span>
+              <span>Use the search bar to search for songs</span>
+            </h2>
+          )
+        }
       </div>
     );
   }
@@ -56,7 +68,6 @@ const mapStateToProps = state => ({
   artists: state.playingContext.artists,
   length: state.playingContext.length,
   user: state.playingContext.user,
-  isTrackPlaying: state.playingContext.name !== null,
 });
 
 

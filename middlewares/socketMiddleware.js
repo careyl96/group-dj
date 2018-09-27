@@ -22,20 +22,19 @@ const initSocket = (store) => {
   socket.on('connect', () => {
     interval = setInterval(() => { socket.emit('time'); }, 100);
     const newUser = {};
-    const { user, avatar } = store.getState().session;
-    newUser.id = socket.id;
-    newUser.username = user;
-    newUser.thumbnail = avatar;
+    const { id, username, avatar } = store.getState().session;
+    newUser.id = id;
+    newUser.username = username;
+    newUser.avatar = avatar;
 
     socket.emit('add user', newUser);
-    store.dispatch(updateUserID(socket.id));
+    // store.dispatch(updateUserID(socket.id));
     store.dispatch(fetchAvailableDevices());
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
     store.dispatch(fetchRecentlyPlayed());
   });
   socket.on('update users', (data) => {
-    console.log('~~~~~Updating User List~~~~~');
     store.dispatch(updateUsers(data));
   });
   socket.on('fetch playing context', (playingContext) => {
