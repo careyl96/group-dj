@@ -145,9 +145,9 @@ const socketApi = (io) => {
         const newUser = data;
         newUser.socketID = client.id;
         users.push(newUser);
-        client.broadcast.emit('update users', users);
       }
       client.emit('update users', users);
+      client.broadcast.emit('update users', users);
     });
     client.on('override playing context', (track, user) => {
       queueManager.updatePlayingContext('override', track, user);

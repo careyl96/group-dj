@@ -50,13 +50,30 @@
 }
 
 .user-img-container {
+  position: relative;
   display: flex;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.5em;
 }
 
 .user-img {
+  position: absolute;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  margin-right: 0.5em;
+}
+
+.volume-overlay {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid hsla(0, 0%, 100%, .6);
+}
+
+.icon-user-track {
+  padding: 6px;
 }

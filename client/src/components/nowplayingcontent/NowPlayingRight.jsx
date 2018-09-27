@@ -19,12 +19,9 @@ class NowPlayingRight extends Component {
 
   componentWillReceiveProps(newProps) {
     const { devices } = newProps;
-    if (devices.length) {
-      const activeDevice = devices.filter(device => device.is_active)[0];
-      if (activeDevice) {
-        const volume = activeDevice.volume_percent;
-        this.setState({ volume });
-      }
+    const activeDevice = devices.find(device => device.is_active);
+    if (activeDevice) {
+      this.setState({ volume: activeDevice.volume_percent });
     }
   }
 
