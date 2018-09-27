@@ -19,76 +19,69 @@ const parseMs = (ms) => {
   return result;
 };
 
-class TrackListItem extends Component {
-  constructor(props) {
-    super(props);
-  }
+const TrackListItem = ({ track, name, artists, duration, playingContext, user, queue, overridePlayingContext, queueTrack, removeTrack, resumePlayback, pausePlayback }) => (
+  track.id !== playingContext.id // if this item is not the track that is currently playing
+    ? (
+      <div className="track-container">
+        <button className="btn-tracklist-item" onClick={() => overridePlayingContext(track, user)}>
+          <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
+        </button>
 
-  render() {
-    if (this.props.track.id !== this.props.playingContext.id) { //if this item is a regular queue item
-      return (
-        <div className="track-container">
-          <button className="btn-tracklist-item" onClick={() => this.props.overridePlayingContext(this.props.track, this.props.user)} >
-            <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
-          </button>
-
-          {this.props.queue.find(item => item.track.id === this.props.track.id)
-            ?
-            <button className="btn-tracklist-item" onClick={() => this.props.removeTrack(this.props.track.id)}>
+        {queue.find(item => item.track.id === track.id)
+          ? (
+            <button className="btn-tracklist-item" onClick={() => removeTrack(track.id)}>
               <i className="material-icons md-light md-36 check">check</i>
               <i className="material-icons md-light md-36 clear">clear</i>
             </button>
-            :
-            <button className="btn-tracklist-item" onClick={() => this.props.queueTrack(this.props.track, this.props.user)}>
+          ) : (
+            <button className="btn-tracklist-item" onClick={() => queueTrack(track, user)}>
               <i className="material-icons md-light md-36 btn-queue">playlist_add</i>
             </button>
-          }
-          <div className="track-info tracklist-item">
-            <div className="track-name"> {this.props.name} </div>
-            <div className="track-artist"> {this.props.artists} </div>
-          </div>
-          <div className="track-time">
-            <span> {parseMs(this.props.duration)} </span>
-          </div>
-        </div >
-      )
-    } else { //if this item is playing right now
-      return (
-        <div className="track-container selected-track">
-          <button className="btn-tracklist-item" onClick={this.props.playingContext.currentlyPlaying ? this.props.pausePlayback : this.props.resumePlayback}>
-            {this.props.playingContext.currentlyPlaying
-              ? <i className="material-icons md-light md-36 btn-play selected-track">pause_circle_outline</i>
-              : <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
-            }
-          </button>
-          {this.props.queue.find(item => item.track.id === this.props.track.id)
-            ?
-            <button className="btn-tracklist-item" onClick={() => this.props.removeTrack(this.props.track.id)}>
-              <i className="material-icons md-light md-36 check">check</i>
-              <i className="material-icons md-light md-36 clear">clear</i>
-            </button>
-            :
-            <button className="btn-tracklist-item" onClick={() => this.props.queueTrack(this.props.track, this.props.user)}>
-              <i className="material-icons md-light md-36 btn-queue">playlist_add</i>
-            </button>
-          }
-          <div className="track-info tracklist-item">
-            <div className="track-name highlighted"> {this.props.name} </div>
-            <div className="track-artist"> {this.props.artists} </div>
-          </div>
-          <div className="track-time highlighted">
-            <span> {parseMs(this.props.duration)} </span>
-          </div>
+          )}
+        <div className="track-info tracklist-item">
+          <div className="track-name"> {name} </div>
+          <div className="track-artist"> {artists} </div>
         </div>
-      )
-    };
-  }
-}
+        <div className="track-time">
+          <span> {parseMs(duration)} </span>
+        </div>
+      </div>
+    ) : ( // if this track list item is the currently playing track
+      <div className="track-container selected-track">
+        <button className="btn-tracklist-item" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
+          {playingContext.currentlyPlaying
+            ? <i className="material-icons md-light md-36 btn-play selected-track">pause_circle_outline</i>
+            : <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
+          }
+        </button>
+        {queue.find(item => item.track.id === track.id)
+          ? (
+            <button className="btn-tracklist-item" onClick={() => removeTrack(track.id)}>
+              <i className="material-icons md-light md-36 check">check</i>
+              <i className="material-icons md-light md-36 clear">clear</i>
+            </button>
+          ) : (
+            <button className="btn-tracklist-item" onClick={() => queueTrack(track, user)}>
+              <i className="material-icons md-light md-36 btn-queue">playlist_add</i>
+            </button>
+          )
+        }
+        <div className="track-info tracklist-item">
+          <div className="track-name highlighted"> {name} </div>
+          <div className="track-artist"> {artists} </div>
+        </div>
+        <div className="track-time highlighted">
+          <span> {parseMs(duration)} </span>
+        </div>
+      </div>
+    )
+);
+
 
 const mapStateToProps = state => ({
   playingContext: state.playingContext,
   user: {
-    username: state.session.user,
+    username: state.session.username,
     id: state.session.id,
   },
   queue: state.view.queue,

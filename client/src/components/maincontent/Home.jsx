@@ -44,7 +44,7 @@ class Home extends Component {
               artists={queueItem.track.artists.map(artist => artist.name).join(', ')}
               duration={queueItem.track.duration_ms}
               removeTrack={removeTrack}
-              user={user}
+              user={queueItem.user}
             // queueItem.track.user = id of user who queued the song
             />
           ))

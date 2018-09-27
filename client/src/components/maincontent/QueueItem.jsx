@@ -27,6 +27,7 @@ const QueueItem = ({ track, name, artists, duration, removeTrack, user }) => (
     </div>
     <div className="track-time">
       <span> {parseMs(duration)} </span>
+      <span> {console.log(user)} </span>
     </div>
   </div>
 );
