@@ -7,7 +7,7 @@ class Queue extends Component {
   onSortEnd = ({ oldIndex, newIndex }) => {
     const queue = document.querySelectorAll('.track-container');
     queue.forEach(queueItem => queueItem.style.removeProperty('pointer-events'));
-    this.props.updateQueue(oldIndex, newIndex);
+    if (oldIndex !== newIndex) this.props.updateQueue(oldIndex, newIndex);
   };
 
   onSortStart = () => {
