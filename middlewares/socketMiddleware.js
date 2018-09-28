@@ -20,7 +20,7 @@ const initSocket = (store) => {
   socket = io(config.HOST);
   serverDate = new ServerDate(socket);
   socket.on('connect', () => {
-    interval = setInterval(() => { socket.emit('time'); }, 100);
+    interval = setInterval(() => { socket.emit('time'); }, 300);
     const newUser = {};
     const { id, username, avatar } = store.getState().session;
     newUser.id = id;
@@ -47,6 +47,15 @@ const initSocket = (store) => {
   });
   socket.on('fetch queue', (queue) => {
     store.dispatch(fetchQueueSuccess(queue));
+  });
+  socket.on('user action', (socketID) => {
+    const avatar = document.querySelector(`.${socketID}`);
+    if (avatar.classList.contains('flash')) avatar.classList.remove('flash');
+    avatar.classList.add('flash');
+    setTimeout(() => { avatar.classList.remove('flash'); }, 500);
+  });
+  socket.on('error', (error) => {
+    console.log(error);
   });
   socket.on('disconnect', () => {
     clearInterval(interval);
@@ -82,6 +91,9 @@ export default store => next => (action) => {
       break;
     case types.REMOVE_TRACK:
       socket.emit('remove track', action.track);
+      break;
+    case types.UPDATE_QUEUE:
+      socket.emit('update queue', action.oldIndex, action.newIndex);
       break;
     default:
       break;

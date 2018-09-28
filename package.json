@@ -46,6 +46,7 @@
     "react-cookie": "^2.2.0",
     "react-dom": "^16.4.1",
     "react-redux": "^5.0.7",
+    "react-sortable-hoc": "^0.8.3",
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.3.0",
@@ -53,7 +54,6 @@
     "serverdate": "^3.1.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
-    "styled-components": "^3.3.3",
     "uuid": "^3.3.0"
   }
 }

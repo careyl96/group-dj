@@ -17,7 +17,15 @@ class Queue extends Component {
 
   render() {
     return (
-      <QueueList onSortStart={this.onSortStart} onSortEnd={this.onSortEnd} transitionDuration={0} queue={this.props.queue} />
+      <QueueList
+        lockAxis="y"
+        lockOffset={0}
+        lockToContainerEdges
+        onSortStart={this.onSortStart}
+        onSortEnd={this.onSortEnd}
+        transitionDuration={0}
+        queue={this.props.queue}
+      />
     );
   }
 }

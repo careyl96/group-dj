@@ -25,6 +25,11 @@ const viewReducer = (state = initState, action) => {
         ...state,
         queue: action.queue,
       };
+    case types.UPDATE_QUEUE_SUCCESS:
+      return {
+        ...state,
+        queue: action.queue,
+      };
     case types.FETCH_RECENTLY_PLAYED_SUCCESS:
       return {
         ...state,

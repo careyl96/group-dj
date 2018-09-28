@@ -121,3 +121,9 @@
   font-size: 14px;
   padding-left: 5px;
 }
+
+.queue-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}

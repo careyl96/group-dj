@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { arrayMove } from 'react-sortable-hoc';
 import * as types from '../actions/types';
+import { updateQueueSuccess } from '../actions/queueActions';
 import {
   updateViewSuccess,
   fetchQueueSuccess,
@@ -63,12 +65,19 @@ const fetchMySongs = () => (dispatch, getState) => {
       console.log(error);
     });
 };
+const updateQueue = (oldIndex, newIndex) => (dispatch, getState) => {
+  const queue = arrayMove(getState().view.queue, oldIndex, newIndex);
+  dispatch(updateQueueSuccess(queue));
+};
 
 export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
     case types.UPDATE_VIEW:
       store.dispatch(updateView(action.view, action.item));
+      break;
+    case types.UPDATE_QUEUE:
+      store.dispatch(updateQueue(action.oldIndex, action.newIndex));
       break;
     case types.FETCH_QUEUE:
       store.dispatch(fetchQueue());

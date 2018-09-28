@@ -31,7 +31,6 @@ const resumePlayback = () => (dispatch, getState) => {
         headers: { Authorization: `Bearer ${getState().session.accessToken}` },
       })
         .then(() => {
-          console.log('Resumed playback');
           dispatch(resumePlaybackSuccess());
         })
         .catch((error) => {
@@ -49,7 +48,6 @@ const pausePlayback = () => (dispatch, getState) => {
     headers: { Authorization: `Bearer ${getState().session.accessToken}` },
   })
     .then(() => {
-      console.log('Paused playback');
       dispatch(pausePlaybackSuccess());
     })
     .catch((error) => {

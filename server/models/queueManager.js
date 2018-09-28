@@ -1,3 +1,4 @@
+const { arrayMove } = require('react-sortable-hoc');
 const DoublyLinkedList = require('../../helpers/history');
 
 class QueueManager {
@@ -13,6 +14,7 @@ class QueueManager {
     this.beginTrack = options.beginTrack;
     this.updatePlayingContext = options.updatePlayingContext;
     this.updateRecentlyPlayed = options.updateRecentlyPlayed;
+    this.updateQueue = options.updateQueue;
     this.playNext = options.playNext;
     this.playPrev = options.playPrev;
     this.playHistory = new DoublyLinkedList();

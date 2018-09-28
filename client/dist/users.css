@@ -4,7 +4,7 @@
 }
 
 @media screen and (max-width: 1024px) {
-  #users-container {
+  .users-container {
     display: none !important;
   }
   .main-view-container {
@@ -19,7 +19,6 @@
   height: 100vh;
   padding: 24px 24px 90px 24px;
   background-color: rgba(0, 0, 0, .4);
-  user-select: none;
   color: white;
 }
 
@@ -73,6 +72,29 @@
   border: 1px solid hsla(0, 0%, 100%, .6);
 }
 
+.action-overlay {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid white;
+  opacity: 0;
+}
+
 .icon-user-track {
   padding: 6px;
+}
+
+.flash {
+  animation: fadeOut 0.5s ease-in-out 0s;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 0;
+  }
 }

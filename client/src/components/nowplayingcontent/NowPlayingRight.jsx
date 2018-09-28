@@ -77,16 +77,16 @@ class NowPlayingRight extends Component {
   }
 
   render() {
-    const { devices, fetchAvailableDevices } = this.props;
+    const { devices, fetchAvailableDevices, fetching } = this.props;
     return (
       <div className="now-playing-right">
         <button className="btn-clear btn-devices">
-          {devices.length
+          {devices.length || fetching
             ? <i className="material-icons md-light md-24 icon-devices">devices</i>
             : <i className="material-icons md-light md-24 icon-error">error_outline</i>
           }
         </button>
-        <div className="devices-menu" style={{ display: 'none' }}>
+        <div className="devices-menu" style={devices.length || fetching ? { display: 'none' } : { display: 'block' }}>
           <h3 className="devices-menu-header"> Connect to a Device </h3>
           <button className="btn-clear md-18 refresh" onClick={fetchAvailableDevices}>
             <i className="material-icons md-light md-18 icon-refresh">refresh</i>
@@ -116,6 +116,7 @@ const mapStateToProps = state => ({
   devices: state.devices,
   muted: state.audio.muted,
   volume: state.audio.volume,
+  fetching: state.session.fetching,
 });
 
 const mapDispatchToProps = dispatch => ({

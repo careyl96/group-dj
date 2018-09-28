@@ -1,4 +1,5 @@
 const express = require('express');
+const { arrayMove } = require('react-sortable-hoc');
 const QueueManager = require('./models/queueManager');
 const QueueItem = require('./models/queueItem');
 
@@ -108,28 +109,99 @@ const queueManager = new QueueManager({
 
     queueManager.handleRecentlyPlayedChanged();
   },
+  updateQueue: (oldIndex, newIndex) => {
+    queueManager.queue = arrayMove(queueManager.queue, oldIndex, newIndex);
+    queueManager.handleQueueChanged();
+  },
 });
+
+
+const userActions = (client) => {
+  client.on('override playing context', (track, user) => {
+    queueManager.updatePlayingContext('override', track, user);
+  });
+  client.on('pause playback', () => {
+    queueManager.updatePlayingContext('pause');
+  });
+  client.on('resume playback', () => {
+    queueManager.updatePlayingContext('resume');
+  });
+  client.on('seek track', (newTrackPosition) => {
+    queueManager.updatePlayingContext('seek', null, null, newTrackPosition);
+  });
+  client.on('back track', () => {
+    queueManager.playPrev();
+  });
+  client.on('skip track', () => {
+    queueManager.playNext();
+  });
+  client.on('queue track', (track, user) => {
+    queueManager.queueTrack(track, user);
+  });
+  client.on('remove track', (trackID) => {
+    queueManager.removeFromQueue(trackID);
+  });
+  client.on('update queue', (oldIndex, newIndex) => {
+    queueManager.updateQueue(oldIndex, newIndex);
+  });
+};
 
 const socketApi = (io) => {
   const api = Router();
   api.get('/queue', (req, res) => {
     res.json(queueManager.getQueue());
   });
-
   api.get('/users', (req, res) => {
     res.json(users);
   });
-
   api.get('/playing-context', (req, res) => {
     res.json(queueManager.getPlayingContext());
   });
-
   api.get('/recently-played', (req, res) => {
     res.json(queueManager.getRecentlyPlayed());
   });
-
   api.get('/server-track-progress', (req, res) => {
     res.json(queueManager.getTrackProgress());
+  });
+
+  io.use((client, next) => {
+    client.on('override playing context', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('override playing context');
+    });
+    client.on('pause playback', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('pause playback');
+    });
+    client.on('resume playback', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('resume playback');
+    });
+    client.on('seek track', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('seek track');
+    });
+    client.on('back track', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('back track');
+    });
+    client.on('skip track', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('skip track');
+    });
+    client.on('queue track', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('queue track');
+    });
+    client.on('remove track', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('remove track');
+    });
+    client.on('update queue', () => {
+      client.broadcast.emit('user action', client.id);
+      console.log('update queue');
+    });
+    next();
   });
 
   io.on('connection', (client) => {
@@ -144,40 +216,19 @@ const socketApi = (io) => {
       if (!users.find(user => user.id === data.id)) {
         const newUser = data;
         newUser.socketID = client.id;
+        newUser.banned = false;
+        console.log(`${newUser.username} has connected!`);
         users.push(newUser);
       }
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
-    });
-    client.on('override playing context', (track, user) => {
-      queueManager.updatePlayingContext('override', track, user);
-    });
-    client.on('pause playback', () => {
-      queueManager.updatePlayingContext('pause');
-    });
-    client.on('resume playback', () => {
-      queueManager.updatePlayingContext('resume');
-    });
-    client.on('seek track', (newTrackPosition) => {
-      queueManager.updatePlayingContext('seek', null, null, newTrackPosition);
-    });
-    client.on('back track', () => {
-      queueManager.playPrev();
-    });
-    client.on('skip track', () => {
-      queueManager.playNext();
-    });
-    client.on('queue track', (track, user) => {
-      queueManager.queueTrack(track, user);
-    });
-    client.on('remove track', (trackID) => {
-      queueManager.removeFromQueue(trackID);
     });
     client.on('disconnect', () => {
       users = users.filter(user => user.socketID !== client.id);
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });
+    userActions(client);
   });
 
   return api;

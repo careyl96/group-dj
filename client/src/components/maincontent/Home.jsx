@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import QueueItem from './QueueItem';
+import Queue from './draggablequeuelist/Queue';
 import { removeTrack } from '../../../../actions/queueActions';
 import { fetchQueue } from '../../../../actions/viewActions';
 import { resumePlayback, pausePlayback } from '../../../../actions/trackActions';
@@ -35,7 +35,8 @@ class Home extends Component {
           }
         </div>
         <div className="queue">Queue</div>
-        {queue.length
+        <Queue />
+        {/* {queue.length
           ? queue.map((queueItem, index) => (
             <QueueItem
               key={index}
@@ -45,7 +46,6 @@ class Home extends Component {
               duration={queueItem.track.duration_ms}
               removeTrack={removeTrack}
               user={queueItem.user}
-            // queueItem.track.user = id of user who queued the song
             />
           ))
           : (
@@ -54,7 +54,7 @@ class Home extends Component {
               <span>Use the search bar to search for songs</span>
             </h2>
           )
-        }
+        } */}
       </div>
     );
   }

@@ -6,6 +6,7 @@ const initState = {
   id: null,
   username: null,
   avatar: null,
+  fetching: true,
 };
 
 const sessionReducer = (state = initState, action) => {
@@ -33,6 +34,21 @@ const sessionReducer = (state = initState, action) => {
       return {
         ...state,
         id: action.id,
+      };
+    case types.FETCH_AVAILABLE_DEVICES:
+      return {
+        ...state,
+        fetching: true,
+      };
+    case types.FETCH_AVAILABLE_DEVICES_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+      };
+    case types.UPDATE_AVAILABLE_DEVICES_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
       };
     default:
       return state;

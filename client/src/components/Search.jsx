@@ -18,6 +18,7 @@ class Search extends Component {
   }
 
   delayedSearch = () => {
+    if (!this.state.query) return;
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
