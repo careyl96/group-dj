@@ -2,14 +2,11 @@ const express = require('express');
 const request = require('request');
 const queryString = require('query-string');
 const rand = require('random-key');
-const config = require('../auth/config');
+const { HOST, REDIRECT_URI, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('../auth/config');
 
 const { Router } = express;
-const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('../auth/config');
 
 const auth = Router();
-
-const redirect_uri = process.env.REDIRECT_URI || `${config.HOST}/auth/callback`;
 
 auth.get('/login', (req, res) => {
   const state = rand.generate();
@@ -25,7 +22,7 @@ auth.get('/login', (req, res) => {
     response_type: 'code',
     client_id: SPOTIFY_CLIENT_ID,
     scope,
-    redirect_uri,
+    redirect_uri: REDIRECT_URI,
     state,
   });
   res.redirect(`https://accounts.spotify.com/authorize?${params}`);
@@ -38,7 +35,7 @@ auth.get('/callback', (req, res) => {
     url: 'https://accounts.spotify.com/api/token',
     form: {
       code,
-      redirect_uri,
+      redirect_uri: REDIRECT_URI,
       grant_type: 'authorization_code',
     },
     headers: {
@@ -54,7 +51,7 @@ auth.get('/callback', (req, res) => {
       res.cookie('refresh_token', refresh_token, { httpOnly: true });
       res.cookie('expires_in', Date.now() + expires_in * 1000, { httpOnly: true });
       res.cookie('user_id', rand.generate(), { httpOnly: true });
-      res.redirect(config.HOST);
+      res.redirect(HOST);
     });
   }
 });

@@ -56,3 +56,4 @@ Thumbs.db
 
 auth/config.js
 client/dist/bundle.js
+Dockerfile

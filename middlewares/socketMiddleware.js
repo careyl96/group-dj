@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import * as types from '../actions/types';
-import config from '../auth/config';
+import { HOST } from '../auth/config';
 import ServerDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
@@ -17,7 +17,7 @@ let interval = null;
 let serverDate = null;
 
 const initSocket = (store) => {
-  socket = io(config.HOST);
+  socket = io(HOST);
   serverDate = new ServerDate(socket);
   socket.on('connect', () => {
     interval = setInterval(() => { socket.emit('time'); }, 300);

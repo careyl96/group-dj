@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-// import axios from 'axios';
 import { connect } from 'react-redux';
 import Login from './Login';
 import Layout from './Layout';
 import { load } from '../../../actions/sessionActions';
-// import config from '../../../auth/config';
 
 class App extends Component {
   componentDidMount() {

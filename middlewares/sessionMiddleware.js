@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from '../auth/config';
+import { HOST } from '../auth/config';
 import * as types from '../actions/types';
 import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
 
@@ -20,7 +20,7 @@ const parseMs = (ms) => {
 };
 
 const updateToken = () => (dispatch) => {
-  return axios.get(`${config.HOST}/auth/token`)
+  return axios.get(`${HOST}/auth/token`)
     .then((response) => {
       if (!response.data) return;
       const { access_token, expires_in } = response.data;
@@ -49,7 +49,7 @@ export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
     case types.LOGIN:
-      window.location = `${config.HOST}/auth/login`;
+      window.location = `${HOST}/auth/login`;
       break;
     case types.LOAD:
       store.dispatch(updateToken())
