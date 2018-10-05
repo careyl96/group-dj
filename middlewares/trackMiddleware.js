@@ -51,8 +51,6 @@ const pausePlayback = () => (dispatch, getState) => {
       dispatch(pausePlaybackSuccess());
     })
     .catch((error) => {
-      // console.log(error.config);
-      // console.log(error.request);
       console.log(error.response.data.error.message);
     });
 };

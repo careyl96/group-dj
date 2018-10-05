@@ -4,8 +4,6 @@ const QueueManager = require('./models/queueManager');
 const QueueItem = require('./models/queueItem');
 
 const { Router } = express;
-// const request = require('request');
-// const queryString = require('query-string');
 
 let users = [];
 

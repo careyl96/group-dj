@@ -54,5 +54,5 @@ Thumbs.db
 !.gitignore
 !.editorconfig
 
-/auth
+auth/config.js
 client/dist/bundle.js

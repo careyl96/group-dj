@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/index.js",
-    "build": "webpack -d --watch"
+    "build": "webpack -p"
   },
   "repository": {
     "type": "git",
@@ -51,7 +51,6 @@
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.3.0",
     "request": "^2.87.0",
-    "serverdate": "^3.1.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
     "uuid": "^3.3.0"
