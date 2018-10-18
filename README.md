@@ -1,6 +1,5 @@
 # Group DJ
 > DJ with friends virtually, listening to music together in real time (Spotify Premium required).
-> Demo @ https://group-dj-spotify.herokuapp.com/
 
 Group DJ is a personal project to make listening to music together with friends in real time over the internet possible through the use of Spotify's API. Unlike other DJing apps, each user has full control over the player, meaning that performing actions that would affect the playback for one person, such as pausing or resuming the player, will affect the playback of everyone connected.
 
