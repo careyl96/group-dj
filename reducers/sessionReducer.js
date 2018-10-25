@@ -6,6 +6,7 @@ const initState = {
   id: null,
   username: null,
   avatar: null,
+  fetchingUser: true,
   fetching: true,
 };
 
@@ -22,6 +23,12 @@ const sessionReducer = (state = initState, action) => {
         ...state,
         accessToken: action.accessToken,
         expiresIn: action.expiresIn,
+        fetchingUser: false,
+      };
+    case types.UPDATE_TOKEN_FAILED:
+      return {
+        ...state,
+        fetchingUser: false,
       };
     case types.LOGIN_SUCCESS:
       return {

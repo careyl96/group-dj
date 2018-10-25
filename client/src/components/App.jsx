@@ -10,11 +10,13 @@ class App extends Component {
   }
 
   renderView() {
-    const { accessToken } = this.props;
-    if (!accessToken) {
+    if (!this.props.fetchingUser && localStorage.getItem('user')) {
+      return <Layout />;
+    }
+    if (!this.props.fetchingUser && !localStorage.getItem('user')) {
       return <Login />;
     }
-    return <Layout />;
+    return null;
   }
 
   render() {
@@ -25,7 +27,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  accessToken: state.session.accessToken,
+  fetchingUser: state.session.fetchingUser,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -20,7 +20,7 @@
 }
 
 #now-playing-home-album-art {
-  flex-basis: 120px;
+  flex-basis: 150px;
   height: 100%;
   margin-right: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, .3);

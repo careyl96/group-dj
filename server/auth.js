@@ -4,6 +4,9 @@ const queryString = require('query-string');
 const rand = require('random-key');
 const { HOST, REDIRECT_URI, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('../auth/config');
 
+console.log(`HOST: ${HOST}`);
+console.log(`REDIRECT_URI: ${REDIRECT_URI}`);
+
 const { Router } = express;
 
 const auth = Router();
@@ -57,7 +60,8 @@ auth.get('/callback', (req, res) => {
 });
 
 auth.get('/token', (req, res) => {
-  if (!req.cookies) return;
+  console.log('getting /token');
+  if (!Object.keys(req.cookies).length) res.status(401).send('not logged in');
   const { expires_in, refresh_token } = req.cookies;
   // if (Date.now() > expires_in) {
   const authOptions = {

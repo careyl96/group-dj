@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 const port = 3006;
 server.listen(process.env.PORT || port, (error) => {
   if (error) throw error;
-  console.log(`Listening on ${HOST}${process.env.PORT || port}`);
+  console.log(`Listening on ${HOST}`);
 });
 
 module.exports = io;

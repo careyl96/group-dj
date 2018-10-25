@@ -13,5 +13,8 @@ export const updateTokenSuccess = (accessToken, expiresIn) => ({
   accessToken,
   expiresIn,
 });
+export const updateTokenFailed = () => ({
+  type: types.UPDATE_TOKEN_FAILED,
+});
 
 export const load = () => ({ type: types.LOAD });

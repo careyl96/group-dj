@@ -3,6 +3,7 @@ export const UPDATE_TIME = 'UPDATE_TIME';
 export const LOGIN = 'LOGIN';
 export const LOAD = 'LOAD';
 export const UPDATE_TOKEN_SUCCESS = 'UPDATE_TOKEN_SUCCESS';
+export const UPDATE_TOKEN_FAILED = 'UPDATE_TOKEN_FAILED';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
 

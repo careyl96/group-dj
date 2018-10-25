@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { HOST } from '../auth/config';
 import * as types from '../actions/types';
-import { updateTokenSuccess, loginSuccess } from '../actions/sessionActions';
+import { updateTokenSuccess, updateTokenFailed, loginSuccess } from '../actions/sessionActions';
 
 const parseMs = (ms) => {
   let result = '';
@@ -22,7 +22,7 @@ const parseMs = (ms) => {
 const updateToken = () => (dispatch) => {
   return axios.get(`${HOST}/auth/token`)
     .then((response) => {
-      if (!response.data) return;
+      localStorage.setItem('user', true);
       const { access_token, expires_in } = response.data;
       dispatch(updateTokenSuccess(access_token, expires_in));
     });
@@ -54,8 +54,11 @@ export default store => next => (action) => {
     case types.LOAD:
       store.dispatch(updateToken())
         .then(() => {
-          store.dispatch(getCurrentUserInfo());
           setInterval(() => store.dispatch(updateToken()), 3000000);
+          store.dispatch(getCurrentUserInfo());
+        })
+        .catch((error) => {
+          store.dispatch(updateTokenFailed());
         });
       break;
     default:
