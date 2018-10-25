@@ -9,7 +9,7 @@ Group DJ features a fully fleshed out playing bar, allowing the user to pause, p
 
 1. Create an application on [Spotify's Developer Site](https://developer.spotify.com/my-applications/).
 
-2. Add http://localhost:3006/auth/callback as a redirect URI
+2. Add localhost:3006/auth/callback as a redirect URI
 
 3. Rename auth/config-example.js to auth/config.js
 
