@@ -11,7 +11,7 @@ const adjustVolume = volume => (dispatch, getState) => {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/volume',
     params: { volume_percent: volume },
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   })
     .then(() => {
       dispatch(adjustVolumeSuccess(volume));

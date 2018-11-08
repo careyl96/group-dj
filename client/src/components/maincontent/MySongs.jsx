@@ -14,13 +14,10 @@ class MySongs extends Component {
       <div className="my-songs-tab">
         <div className="main-header">My Songs</div>
         {results
-          ? results.map((searchResult, index) => (
+          ? results.map(mySongsResult => (
             <TrackListItem
-              key={index}
-              track={searchResult}
-              name={searchResult.name}
-              artists={searchResult.artists.map(artist => artist.name).join(', ')}
-              duration={searchResult.duration_ms}
+              key={mySongsResult.uri}
+              track={mySongsResult}
             />
           ))
           : null}

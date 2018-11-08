@@ -40,7 +40,7 @@
 
 .home-header-play-button {
   font-size: 14px;
-  background-color: #1db954;
+  background-color: #1ed760;
   color: white;
   letter-spacing: 0.1em;
   border: none;
@@ -58,7 +58,13 @@
   transition: none 33ms cubic-bezier(.3, 0, 0, 1);
   transition-property: all;
   transform: scale(1.06);
-  background-color: #1ed760;
+}
+
+.home-header-play-button:active {
+  transition: none 33ms cubic-bezier(.3, 0, 0, 1);
+  transition-property: all;
+  transform: scale(1);
+  background-color: #1db954;
 }
 
 .remove-track {

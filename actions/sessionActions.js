@@ -8,13 +8,7 @@ export const loginSuccess = (id, username, avatar) => ({
   username,
   avatar,
 });
-export const updateTokenSuccess = (accessToken, expiresIn) => ({
-  type: types.UPDATE_TOKEN_SUCCESS,
-  accessToken,
-  expiresIn,
-});
-export const updateTokenFailed = () => ({
-  type: types.UPDATE_TOKEN_FAILED,
-});
+export const updateTokenSuccess = () => ({ type: types.UPDATE_TOKEN_SUCCESS });
+export const updateTokenFailed = () => ({ type: types.UPDATE_TOKEN_FAILED });
 
 export const load = () => ({ type: types.LOAD });

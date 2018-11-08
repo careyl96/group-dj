@@ -13,9 +13,6 @@ class SearchResults extends Component {
             <TrackListItem
               key={index}
               track={searchResult}
-              name={searchResult.name}
-              artists={searchResult.artists.map(artist => artist.name).join(', ')}
-              duration={searchResult.duration_ms}
             />
           ))
           : null}

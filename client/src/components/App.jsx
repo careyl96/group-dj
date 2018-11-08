@@ -10,10 +10,10 @@ class App extends Component {
   }
 
   renderView() {
-    if (!this.props.fetchingUser && localStorage.getItem('user')) {
+    if (!this.props.fetchingUser && localStorage.getItem('user') && localStorage.getItem('expires_in') - Date.now() > 0) {
       return <Layout />;
     }
-    if (!this.props.fetchingUser && !localStorage.getItem('user')) {
+    if (!this.props.fetchingUser && (!localStorage.getItem('user') || localStorage.getItem('expires_in') - Date.now() < 0)) {
       return <Login />;
     }
     return null;
@@ -28,6 +28,7 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   fetchingUser: state.session.fetchingUser,
+  accessToken: state.session.accessToken,
 });
 
 const mapDispatchToProps = dispatch => ({

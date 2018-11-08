@@ -43,20 +43,19 @@ const fetchRecentlyPlayed = () => (dispatch) => {
     });
 };
 const fetchMostPlayed = () => (dispatch) => {
-  axios.get('/api/most-played')
+  axios.get('/saved')
     .then((response) => {
-      dispatch(fetchMostPlayedSuccess(response.data));
+      dispatch(fetchMostPlayedSuccess(response.data.sort((a, b) => b.saved_tracks_play_count - a.saved_tracks_play_count)));
     })
     .catch((error) => {
       console.log(error);
     });
 };
-const fetchMySongs = () => (dispatch, getState) => {
-  return axios({
+const fetchMySongs = () => (dispatch, getState) => axios({
     method: 'GET',
     url: 'https://api.spotify.com/v1/me/top/tracks',
     params: { limit: 50 },
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   })
     .then((response) => {
       dispatch(fetchMySongsSuccess(response.data.items));
@@ -64,7 +63,6 @@ const fetchMySongs = () => (dispatch, getState) => {
     .catch((error) => {
       console.log(error);
     });
-};
 const updateQueue = (oldIndex, newIndex) => (dispatch, getState) => {
   const queue = arrayMove(getState().view.queue, oldIndex, newIndex);
   dispatch(updateQueueSuccess(queue));

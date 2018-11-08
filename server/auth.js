@@ -2,10 +2,7 @@ const express = require('express');
 const request = require('request');
 const queryString = require('query-string');
 const rand = require('random-key');
-const { HOST, REDIRECT_URI, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('../auth/config');
-
-console.log(`HOST: ${HOST}`);
-console.log(`REDIRECT_URI: ${REDIRECT_URI}`);
+const config = require('../auth/config');
 
 const { Router } = express;
 
@@ -23,9 +20,9 @@ auth.get('/login', (req, res) => {
   user-top-read`;
   const params = queryString.stringify({
     response_type: 'code',
-    client_id: SPOTIFY_CLIENT_ID,
+    client_id: config.SPOTIFY_CLIENT_ID,
     scope,
-    redirect_uri: REDIRECT_URI,
+    redirect_uri: config.REDIRECT_URI,
     state,
   });
   res.redirect(`https://accounts.spotify.com/authorize?${params}`);
@@ -38,11 +35,11 @@ auth.get('/callback', (req, res) => {
     url: 'https://accounts.spotify.com/api/token',
     form: {
       code,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: config.REDIRECT_URI,
       grant_type: 'authorization_code',
     },
     headers: {
-      Authorization: `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`${config.SPOTIFY_CLIENT_ID}:${config.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
     },
     json: true,
   };
@@ -54,7 +51,7 @@ auth.get('/callback', (req, res) => {
       res.cookie('refresh_token', refresh_token, { httpOnly: true });
       res.cookie('expires_in', Date.now() + expires_in * 1000, { httpOnly: true });
       res.cookie('user_id', rand.generate(), { httpOnly: true });
-      res.redirect(HOST);
+      res.redirect(config.HOST);
     });
   }
 });
@@ -71,7 +68,7 @@ auth.get('/token', (req, res) => {
       grant_type: 'refresh_token',
     },
     headers: {
-      Authorization: `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`${config.SPOTIFY_CLIENT_ID}:${config.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
     },
     json: true,
   };
@@ -87,11 +84,6 @@ auth.get('/token', (req, res) => {
       });
     }
   });
-  // } else {
-  // res.send(req.cookies);
-  // }
-  // check expiration time for access token
-  // if access token is expired, get a new token
 });
 
 module.exports = auth;

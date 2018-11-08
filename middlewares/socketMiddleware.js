@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import * as types from '../actions/types';
-import { HOST } from '../auth/config';
+import config from '../auth/config';
 import ServerDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
@@ -9,6 +9,7 @@ import {
   fetchQueueSuccess,
   fetchRecentlyPlayed,
   fetchPlayHistorySuccess,
+  fetchMostPlayed,
 } from '../actions/viewActions';
 import { fetchAvailableDevices } from '../actions/devicesActions';
 
@@ -17,7 +18,7 @@ let interval = null;
 let serverDate = null;
 
 const initSocket = (store) => {
-  socket = io(HOST);
+  socket = io(config.HOST);
   serverDate = new ServerDate(socket);
   socket.on('connect', () => {
     interval = setInterval(() => { socket.emit('time'); }, 300);
@@ -45,6 +46,9 @@ const initSocket = (store) => {
   socket.on('fetch play history', (playHistory) => {
     store.dispatch(fetchPlayHistorySuccess(playHistory));
   });
+  socket.on('fetch most played', () => {
+    store.dispatch(fetchMostPlayed());
+  });
   socket.on('fetch queue', (queue) => {
     store.dispatch(fetchQueueSuccess(queue));
   });
@@ -69,6 +73,7 @@ export default store => next => (action) => {
       initSocket(store);
       break;
     case types.OVERRIDE_PLAYING_CONTEXT:
+      // console.log(JSON.stringify(action.track));
       socket.emit('override playing context', action.track, action.user);
       break;
     case types.RESUME_PLAYBACK:

@@ -2,6 +2,7 @@ const express = require('express');
 const { arrayMove } = require('react-sortable-hoc');
 const QueueManager = require('./models/queueManager');
 const QueueItem = require('./models/queueItem');
+const dbHelper = require('./helpers/dbHelper');
 
 const { Router } = express;
 
@@ -21,8 +22,10 @@ const queueManager = new QueueManager({
     queueManager.handlePlayingContextChanged();
   },
   playNext: () => {
+    dbHelper.update(queueManager.playingContext.track);
     queueManager.serverSideTrackProgress = 0;
     queueManager.updateRecentlyPlayed();
+    queueManager.updateMostPlayed();
     let nextItem = null;
     if (queueManager.playHistory.node.next) {
       nextItem = queueManager.playHistory.getNext().item;
@@ -65,6 +68,10 @@ const queueManager = new QueueManager({
     globalSocket.emit('fetch play history', queueManager.getPlayHistory());
     globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
   },
+  handleMostPlayedChanged: () => {
+    globalSocket.emit('fetch most played');
+    globalSocket.broadcast.emit('fetch most played');
+  },
   handleQueueChanged: () => {
     globalSocket.emit('fetch queue', queueManager.getQueue());
     globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
@@ -106,6 +113,9 @@ const queueManager = new QueueManager({
     }
 
     queueManager.handleRecentlyPlayedChanged();
+  },
+  updateMostPlayed: () => {
+    queueManager.handleMostPlayedChanged();
   },
   updateQueue: (oldIndex, newIndex) => {
     queueManager.queue = arrayMove(queueManager.queue, oldIndex, newIndex);

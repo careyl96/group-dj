@@ -11,7 +11,7 @@ const fetchAvailableDevices = () => (dispatch, getState) => {
   return axios({
     method: 'GET',
     url: 'https://api.spotify.com/v1/me/player/devices',
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   })
     .then((response) => {
       dispatch(fetchAvailableDevicesSuccess(response.data.devices));
@@ -26,7 +26,7 @@ const transferPlaybackToDevice = deviceID => (dispatch, getState) => {
     data: {
       device_ids: [deviceID],
     },
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   })
     .then(() => {
       const devices = getState().devices.map(device => ((device.id === deviceID) ? { ...device, is_active: true } : { ...device, is_active: false }));

@@ -28,7 +28,7 @@ const resumePlayback = () => (dispatch, getState) => {
           uris: [`spotify:track:${id}`],
           position_ms: trackProgress,
         },
-        headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
       })
         .then(() => {
           dispatch(resumePlaybackSuccess());
@@ -45,7 +45,7 @@ const pausePlayback = () => (dispatch, getState) => {
   return axios({
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/pause',
-    headers: { Authorization: `Bearer ${getState().session.accessToken}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   })
     .then(() => {
       dispatch(pausePlaybackSuccess());

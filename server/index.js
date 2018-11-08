@@ -7,15 +7,19 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const { HOST } = require('../auth/config');
+const config = require('../auth/config');
 
-const authRouter = require('./auth');
 const socketApi = require('./api');
+const authRouter = require('./auth');
+const savedRouter = require('./saved');
+
+const apiRouter = socketApi(io);
 
 app.use(cookieParser());
 app.use(cors());
 app.use('/auth', authRouter); // authentication routes
-app.use('/api', socketApi(io)); // other routes
+app.use('/api', apiRouter); // other routes
+app.use('/saved', savedRouter); // other routes
 
 // app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, '../client/dist')));
@@ -23,7 +27,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 const port = 3006;
 server.listen(process.env.PORT || port, (error) => {
   if (error) throw error;
-  console.log(`Listening on ${HOST}`);
+  console.log(`Listening on ${config.HOST}`);
 });
 
 module.exports = io;

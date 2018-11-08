@@ -11,14 +11,10 @@ class RecentlyPlayed extends Component {
         <div className="main-header">Recently Played</div>
         {recentlyPlayed
           ?
-          recentlyPlayed.map(recentlyPlayed => (
+          recentlyPlayed.map(recentlyPlayedResult => (
             <TrackListItem
-              key={recentlyPlayed.track.uri}
-              track={recentlyPlayed.track}
-              name={recentlyPlayed.track.name}
-              artists={recentlyPlayed.track.artists.map(artist => artist.name).join(', ')}
-              duration={recentlyPlayed.track.duration_ms}
-              overridePlayingContext={this.props.overridePlayingContext}
+              key={recentlyPlayedResult.track.uri}
+              track={recentlyPlayedResult.track}
             />
           ))
           : null}

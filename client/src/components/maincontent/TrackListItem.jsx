@@ -19,7 +19,7 @@ const parseMs = (ms) => {
   return result;
 };
 
-const TrackListItem = ({ track, name, artists, duration, playingContext, user, queue, overridePlayingContext, queueTrack, removeTrack, resumePlayback, pausePlayback }) => (
+const TrackListItem = ({ track, playingContext, user, queue, overridePlayingContext, queueTrack, removeTrack, resumePlayback, pausePlayback }) => (
   track.id !== playingContext.id // if this item is not the track that is currently playing
     ? (
       <div className="track-container">
@@ -39,11 +39,11 @@ const TrackListItem = ({ track, name, artists, duration, playingContext, user, q
             </button>
           )}
         <div className="track-info tracklist-item">
-          <div className="track-name"> {name} </div>
-          <div className="track-artist"> {artists} </div>
+          <div className="track-name"> {track.name} </div>
+          <div className="track-artist"> {track.artists.map(artist => artist.name).join(', ')} </div>
         </div>
         <div className="track-time">
-          <span> {parseMs(duration)} </span>
+          <span> {parseMs(track.duration_ms)} </span>
         </div>
       </div>
     ) : ( // if this track list item is the currently playing track
@@ -67,11 +67,11 @@ const TrackListItem = ({ track, name, artists, duration, playingContext, user, q
           )
         }
         <div className="track-info tracklist-item">
-          <div className="track-name highlighted"> {name} </div>
-          <div className="track-artist"> {artists} </div>
+          <div className="track-name highlighted"> {track.name} </div>
+          <div className="track-artist"> {track.artists.map(artist => artist.name).join(', ')} </div>
         </div>
         <div className="track-time highlighted">
-          <span> {parseMs(duration)} </span>
+          <span> {parseMs(track.duration_ms)} </span>
         </div>
       </div>
     )

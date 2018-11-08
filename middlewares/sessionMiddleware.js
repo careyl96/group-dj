@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { HOST } from '../auth/config';
+import config from '../auth/config';
 import * as types from '../actions/types';
 import { updateTokenSuccess, updateTokenFailed, loginSuccess } from '../actions/sessionActions';
 
@@ -20,17 +20,19 @@ const parseMs = (ms) => {
 };
 
 const updateToken = () => (dispatch) => {
-  return axios.get(`${HOST}/auth/token`)
+  return axios.get(`${config.HOST}/auth/token`)
     .then((response) => {
-      localStorage.setItem('user', true);
       const { access_token, expires_in } = response.data;
-      dispatch(updateTokenSuccess(access_token, expires_in));
+      localStorage.setItem('user', true);
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('expires_in', expires_in);
+      dispatch(updateTokenSuccess());
     });
 };
 const getCurrentUserInfo = () => (dispatch, getState) => {
   const params = {
     headers: {
-      Authorization: `Bearer ${getState().session.accessToken}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   };
   return axios.get('https://api.spotify.com/v1/me', params)
@@ -49,7 +51,7 @@ export default store => next => (action) => {
   const result = next(action);
   switch (action.type) {
     case types.LOGIN:
-      window.location = `${HOST}/auth/login`;
+      window.location = `${config.HOST}/auth/login`;
       break;
     case types.LOAD:
       store.dispatch(updateToken())
