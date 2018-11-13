@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-// const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -21,7 +20,6 @@ app.use('/auth', authRouter); // authentication routes
 app.use('/api', apiRouter); // other routes
 app.use('/saved', savedRouter); // other routes
 
-// app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const port = 3006;

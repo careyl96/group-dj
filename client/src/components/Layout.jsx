@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Main from './Main';
+import ViewHandler from './ViewHandler';
 import Navbar from './Navbar';
 import Users from './Users';
 import NowPlayingBar from './NowPlayingBar';
@@ -12,7 +11,7 @@ class Layout extends Component {
         {/* <Header /> */}
         <Navbar />
         <Users />
-        <Main />
+        <ViewHandler />
         <NowPlayingBar />
       </div>
     );

@@ -19,60 +19,59 @@ const queueManager = new QueueManager({
       user,
     });
     queueManager.serverSideTrackProgress = 0;
-    queueManager.handlePlayingContextChanged();
+    queueManager.emitPlayingContextChanged();
   },
   playNext: () => {
-    dbHelper.update(queueManager.playingContext.track);
+    queueManager.updateMostPlayed();
     queueManager.serverSideTrackProgress = 0;
     queueManager.updateRecentlyPlayed();
-    queueManager.updateMostPlayed();
     let nextItem = null;
     if (queueManager.playHistory.node.next) {
       nextItem = queueManager.playHistory.getNext().item;
       queueManager.beginTrack(nextItem.track, nextItem.user);
-      queueManager.handlePlayHistoryChanged();
+      queueManager.emitPlayHistoryChanged();
     } else if (queueManager.queue.length > 0) {
       nextItem = queueManager.getQueue().shift();
-      queueManager.handleQueueChanged();
+      queueManager.emitQueueChanged();
       queueManager.beginTrack(nextItem.track, nextItem.user);
 
       queueManager.playHistory.addNode({
         track: nextItem.track,
         user: nextItem.user,
       });
-      queueManager.handlePlayHistoryChanged();
+      queueManager.emitPlayHistoryChanged();
     } else {
       queueManager.playingContext = null;
-      queueManager.handlePlayingContextChanged();
+      queueManager.emitPlayingContextChanged();
     }
   },
   playPrev: () => {
     if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.node.prev) {
       const prevItem = queueManager.playHistory.getPrev().item;
       queueManager.beginTrack(prevItem.track, prevItem.user);
-      queueManager.handlePlayHistoryChanged();
+      queueManager.emitPlayHistoryChanged();
     } else {
       queueManager.updatePlayingContext('seek', null, null, 0);
     }
   },
 
-  handlePlayingContextChanged: () => {
+  emitPlayingContextChanged: () => {
     globalSocket.emit('fetch playing context', queueManager.getPlayingContext());
     globalSocket.broadcast.emit('fetch playing context', queueManager.getPlayingContext());
   },
-  handleRecentlyPlayedChanged: () => {
+  emitRecentlyPlayedChanged: () => {
     globalSocket.emit('fetch recently played', queueManager.getRecentlyPlayed());
     globalSocket.broadcast.emit('fetch recently played', queueManager.getRecentlyPlayed());
   },
-  handlePlayHistoryChanged: () => {
+  emitPlayHistoryChanged: () => {
     globalSocket.emit('fetch play history', queueManager.getPlayHistory());
     globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
   },
-  handleMostPlayedChanged: () => {
+  emitMostPlayedChanged: () => {
     globalSocket.emit('fetch most played');
     globalSocket.broadcast.emit('fetch most played');
   },
-  handleQueueChanged: () => {
+  emitQueueChanged: () => {
     globalSocket.emit('fetch queue', queueManager.getQueue());
     globalSocket.broadcast.emit('fetch queue', queueManager.getQueue());
   },
@@ -84,45 +83,48 @@ const queueManager = new QueueManager({
         track,
         user,
       });
-      queueManager.handlePlayHistoryChanged();
+      queueManager.emitPlayHistoryChanged();
     } else if (option === 'pause' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: false,
         lastPausedAt: Date.now(),
       });
-      queueManager.handlePlayingContextChanged();
+      queueManager.emitPlayingContextChanged();
     } else if (option === 'resume' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: true,
         totalTimePaused: queueManager.getPlayingContext().totalTimePaused + Date.now() - queueManager.getPlayingContext().lastPausedAt,
       });
-      queueManager.handlePlayingContextChanged();
+      queueManager.emitPlayingContextChanged();
     } else if (option === 'seek' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: true,
         seekDistance: queueManager.getPlayingContext().seekDistance + (newTrackPosition - (Date.now() - queueManager.getPlayingContext().startTimestamp - queueManager.getPlayingContext().totalTimePaused + queueManager.getPlayingContext().seekDistance)),
       });
-      queueManager.handlePlayingContextChanged();
+      queueManager.emitPlayingContextChanged();
     }
   },
   updateRecentlyPlayed: () => {
     if (!queueManager.getPlayingContext()) return;
     const { track } = queueManager.getPlayingContext();
-    if (queueManager.recentlyPlayed.findIndex(recentTrack => recentTrack.track.uri === track.uri) === -1) {
-      queueManager.recentlyPlayed.unshift(queueManager.getPlayingContext());
+    const index = queueManager.getRecentlyPlayed().findIndex(recentTrack => recentTrack.track.uri === track.uri);
+    if (index !== -1) {
+      queueManager.recentlyPlayed.splice(index, 1);
     }
-
-    queueManager.handleRecentlyPlayedChanged();
+    queueManager.recentlyPlayed.unshift(queueManager.getPlayingContext());
+    queueManager.emitRecentlyPlayedChanged();
   },
   updateMostPlayed: () => {
-    queueManager.handleMostPlayedChanged();
+    if (queueManager.getTotalPlayTime() > 30000) {
+      dbHelper.update(queueManager.playingContext.track);
+      queueManager.emitMostPlayedChanged();
+    }
   },
   updateQueue: (oldIndex, newIndex) => {
     queueManager.queue = arrayMove(queueManager.queue, oldIndex, newIndex);
-    queueManager.handleQueueChanged();
+    queueManager.emitQueueChanged();
   },
 });
-
 
 const userActions = (client) => {
   client.on('override playing context', (track, user) => {
@@ -233,6 +235,9 @@ const socketApi = (io) => {
     });
     client.on('disconnect', () => {
       users = users.filter(user => user.socketID !== client.id);
+      if (!users.length) {
+        queueManager.updatePlayingContext('pause');
+      }
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });

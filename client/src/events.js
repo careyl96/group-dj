@@ -1,5 +1,0 @@
-module.exports = {
-  USER_CONNECTED: 'USER_CONNECTED',
-  ADD_USER: 'ADD_USER',
-  LOGOUT: 'LOGOUT',
-};

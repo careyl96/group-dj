@@ -1,5 +1,5 @@
+import axios from 'axios';
 import store from '../../../../store/store';
-import { serverDate } from '../../../../middlewares/socketMiddleware';
 import { seekTrack } from '../../../../actions/trackActions';
 import { adjustVolume } from '../../../../actions/audioActions';
 
@@ -149,24 +149,15 @@ export const addNowPlayingRightEventListeners = (context) => {
   devicesMenuHandler();
 };
 
-export const updateProgressBar = (context) => {
-  const progressBar = document.querySelector('.progress-bar-progress');
-  const progressBarSlider = document.querySelector('.progress-bar-slider');
-  if (context.props.playingContext) {
-    const { startTimestamp, totalTimePaused, seekDistance, length } = context.props.playingContext;
-    const progressPercentage = context.props.currentlyPlaying
-      ? (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100
-      : context.state.trackProgress / length * 100;
-
-    if (progressPercentage < 100 && !context.state.mouseDown) {
-      progressBar.style.width = (`${progressPercentage}%`);
-      progressBarSlider.style.left = (`${progressPercentage}%`);
-      const trackProgress = (length * progressPercentage) / 100;
-      context.setState({ trackProgress });
-    } else if (progressPercentage >= 100 && !context.state.mouseDown) {
-      progressBar.style.width = ('0%');
-      progressBarSlider.style.left = ('0%');
-      context.setState({ trackProgress: 0 });
-    }
-  }
+export const setTrackProgress = (context) => {
+  axios.get('/api/server-track-progress')
+    .then((response) => {
+      const trackProgress = response.data;
+      context.setState({ trackProgress }, () => {
+        setInterval(context.updateProgressBar, 300);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };

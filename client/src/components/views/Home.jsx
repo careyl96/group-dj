@@ -36,25 +36,6 @@ class Home extends Component {
         </div>
         <div className="queue">Queue</div>
         <Queue />
-        {/* {queue.length
-          ? queue.map((queueItem, index) => (
-            <QueueItem
-              key={index}
-              track={queueItem.track}
-              name={queueItem.track.name}
-              artists={queueItem.track.artists.map(artist => artist.name).join(', ')}
-              duration={queueItem.track.duration_ms}
-              removeTrack={removeTrack}
-              user={queueItem.user}
-            />
-          ))
-          : (
-            <h2 className="queue-empty-container">
-              <span>The queue is empty!</span>
-              <span>Use the search bar to search for songs</span>
-            </h2>
-          )
-        } */}
       </div>
     );
   }

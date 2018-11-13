@@ -73,7 +73,6 @@ export default store => next => (action) => {
       initSocket(store);
       break;
     case types.OVERRIDE_PLAYING_CONTEXT:
-      // console.log(JSON.stringify(action.track));
       socket.emit('override playing context', action.track, action.user);
       break;
     case types.RESUME_PLAYBACK:

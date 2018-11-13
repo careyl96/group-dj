@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addNowPlayingCenterEventListeners, updateProgressBar } from '../event-listeners/now-playing-bar-events';
+import { serverDate } from '../../../../middlewares/socketMiddleware';
+import { addNowPlayingCenterEventListeners, setTrackProgress } from '../event-listeners/now-playing-bar-events';
 import {
   fetchPlayingContext,
   resumePlayback,
@@ -26,17 +27,46 @@ const parseMs = (ms) => {
 };
 
 class NowPlayingCenter extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       trackProgress: 0,
       mouseDown: false,
     };
 
-    this.interval = setInterval(() => updateProgressBar(this), 300);
+    this.interval = null;
+
+    this.updateProgressBar = () => {
+      const progressBar = document.querySelector('.progress-bar-progress');
+      const progressBarSlider = document.querySelector('.progress-bar-slider');
+
+      const { playingContext, currentlyPlaying } = this.props;
+      const { startTimestamp, totalTimePaused, seekDistance, length } = playingContext;
+      let { trackProgress, mouseDown } = this.state;
+      let progressPercentage = 0;
+
+      if (currentlyPlaying) {
+        progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
+        if (progressPercentage < 100 && !mouseDown) {
+          progressBar.style.width = (`${progressPercentage}%`);
+          progressBarSlider.style.left = (`${progressPercentage}%`);
+          trackProgress = length * progressPercentage / 100;
+          this.setState({ trackProgress });
+        } else if (progressPercentage >= 100 && !mouseDown) {
+          progressBar.style.width = ('0%');
+          progressBarSlider.style.left = ('0%');
+          this.setState({ trackProgress: 0 });
+        }
+      } else {
+        progressPercentage = trackProgress / length * 100;
+        progressBar.style.width = (`${progressPercentage}%`);
+        progressBarSlider.style.left = (`${progressPercentage}%`);
+      }
+    };
   }
 
   componentDidMount() {
+    setTrackProgress(this);
     addNowPlayingCenterEventListeners(this);
   }
 

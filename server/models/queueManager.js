@@ -5,23 +5,25 @@ class QueueManager {
     this.queue = [];
     this.playingContext = null;
 
-    this.handleQueueChanged = options.handleQueueChanged;
-    this.handlePlayingContextChanged = options.handlePlayingContextChanged;
-    this.handlePlayHistoryChanged = options.handlePlayHistoryChanged;
-    this.handleRecentlyPlayedChanged = options.handleRecentlyPlayedChanged;
-    this.handleMostPlayedChanged = options.handleMostPlayedChanged;
+    this.emitQueueChanged = options.emitQueueChanged;
+    this.emitPlayingContextChanged = options.emitPlayingContextChanged;
+    this.emitPlayHistoryChanged = options.emitPlayHistoryChanged;
+    this.emitRecentlyPlayedChanged = options.emitRecentlyPlayedChanged;
+    this.emitMostPlayedChanged = options.emitMostPlayedChanged;
 
     this.beginTrack = options.beginTrack;
     this.updatePlayingContext = options.updatePlayingContext;
     this.updateRecentlyPlayed = options.updateRecentlyPlayed;
     this.updateMostPlayed = options.updateMostPlayed;
     this.updateQueue = options.updateQueue;
-    
+
     this.playNext = options.playNext;
     this.playPrev = options.playPrev;
     this.playHistory = new DoublyLinkedList();
 
     this.recentlyPlayed = [];
+
+    this.serverSideTrackProgress = 0;
 
     this.interval = setInterval(() => {
       if (this.playingContext) {
@@ -35,7 +37,6 @@ class QueueManager {
           : this.playingContext.lastPausedAt - this.playingContext.startTimestamp - this.playingContext.totalTimePaused + this.playingContext.seekDistance;
       }
     }, 300);
-    this.serverSideTrackProgress = 0;
   }
 
   queueTrack(track, user) {
@@ -47,7 +48,7 @@ class QueueManager {
         user,
       };
       this.queue.push(queueItem);
-      this.handleQueueChanged();
+      this.emitQueueChanged();
     }
   }
 
@@ -55,7 +56,7 @@ class QueueManager {
     const index = this.queue.findIndex(item => item.track.id === id);
     if (index !== -1) {
       this.queue.splice(index, 1);
-      this.handleQueueChanged();
+      this.emitQueueChanged();
     }
   }
 
@@ -86,6 +87,13 @@ class QueueManager {
 
   getTrackProgress() {
     return this.serverSideTrackProgress;
+  }
+
+  getTotalPlayTime() {
+    if (this.playingContext) {
+      return this.serverSideTrackProgress - this.playingContext.seekDistance + this.playingContext.totalTimePaused;
+    }
+    return 0;
   }
 }
 

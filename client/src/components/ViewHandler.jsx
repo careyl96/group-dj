@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Search from './Search';
-import Home from './maincontent/Home';
-import RecentlyPlayed from './maincontent/RecentlyPlayed';
-import MostPlayed from './maincontent/MostPlayed';
-import MySongs from './maincontent/MySongs';
-import SearchResults from './maincontent/SearchResults';
+import Home from './views/Home';
+import RecentlyPlayed from './views/RecentlyPlayed';
+import MostPlayed from './views/MostPlayed';
+import MySongs from './views/MySongs';
+import SearchResults from './views/SearchResults';
 
-class Main extends Component {
+class ViewHandler extends Component {
   renderView = () => {
     const { view } = this.props;
     if (view === 'home') return <Home />;
@@ -24,9 +24,6 @@ class Main extends Component {
         <div className="main-content-spacing">
           <Search />
           {this.renderView()}
-          {/* <RecentlyPlayed /> */}
-          {/* <MostPlayed /> */}
-          {/* YourSongs */}
         </div>
       </div>
     );
@@ -37,4 +34,4 @@ const mapStateToProps = state => ({
   view: state.view.pageHistory.item,
 });
 
-export default connect(mapStateToProps, null)(Main);
+export default connect(mapStateToProps, null)(ViewHandler);
