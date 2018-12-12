@@ -13,10 +13,8 @@ class Home extends Component {
       artists,
       user,
       currentlyPlaying,
-      removeTrack,
       pausePlayback,
       resumePlayback,
-      queue,
     } = this.props;
     return (
       <div className="home-tab">

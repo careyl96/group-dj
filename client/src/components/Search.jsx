@@ -10,6 +10,8 @@ class Search extends Component {
       query: '',
     };
     this.timeout = null;
+    console.log('from search: ');
+    console.log(this);
   }
 
   handleSearchChange = (e) => {

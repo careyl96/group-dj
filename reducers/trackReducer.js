@@ -31,7 +31,7 @@ const initState = {
   name: null,
   artists: null,
   length: 0,
-  albumArt: 'https://img.clipartxtras.com/4b0119488ad3c9a7aca68a3759b234ed_music-notes-no-background-music-note-clipart-transparent-background_512-512.png',
+  albumArt: 'https://cdn2.iconfinder.com/data/icons/music-sound-2/512/Music_14-512.png',
   popularity: 0,
   id: null,
 };

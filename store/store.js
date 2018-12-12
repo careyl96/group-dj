@@ -24,7 +24,6 @@ const middleware = applyMiddleware(
   thunk,
 );
 
-
 const store = createStore(
   rootReducer,
   composeWithDevTools(middleware),

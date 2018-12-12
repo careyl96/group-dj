@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
-class NowPlayingItem extends Component {
-  render() {
-    return (
-      <div className="now-playing-item-container">
-        <div className="now-playing-item-album-art-container">
-          <img id="album-art-thumbnail" src="https://i.scdn.co/image/1b67f48284538f23ff5a9a96cf3296e6d4fb7606" />
-        </div>
-      </div>
-    );
-  }
-}
+const NowPlayingItem = ({ albumArt }) => (
+  <div className="now-playing-item-container">
+    <div className="now-playing-item-album-art-container">
+      <img id="album-art-thumbnail" alt="album-art-thumbnail" src={albumArt} />
+    </div>
+  </div>
+);
 
-export default NowPlayingItem;
+const mapStateToProps = state => ({
+  albumArt: state.playingContext.albumArt,
+});
+
+export default connect(mapStateToProps, null)(NowPlayingItem);
