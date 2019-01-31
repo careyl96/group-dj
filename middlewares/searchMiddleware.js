@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as types from '../actions/types';
 import { searchTracksSuccess, clearTracks } from '../actions/searchActions';
 
-const searchTracks = query => (dispatch, getState) => {
+const searchTracks = query => (dispatch) => {
   const params = {
     method: 'GET',
     url: 'https://api.spotify.com/v1/search',
@@ -13,7 +13,6 @@ const searchTracks = query => (dispatch, getState) => {
     },
     headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   };
-
   axios(params)
     .then((response) => {
       dispatch(searchTracksSuccess(response.data.tracks.items));

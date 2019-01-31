@@ -3,7 +3,7 @@ import * as types from '../actions/types';
 import config from '../auth/config';
 import ServerDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
-import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/trackActions';
+import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/playerActions';
 import {
   fetchQueue,
   fetchQueueSuccess,
@@ -14,14 +14,14 @@ import {
 import { fetchAvailableDevices } from '../actions/devicesActions';
 
 let socket = null;
-let interval = null;
+// let serverSynchronizer = null;
 let serverDate = null;
 
 const initSocket = (store) => {
   socket = io(config.HOST);
   serverDate = new ServerDate(socket);
   socket.on('connect', () => {
-    interval = setInterval(() => { socket.emit('time'); }, 300);
+    // serverSynchronizer = setInterval(() => { socket.emit('time'); }, 300);
     const newUser = {};
     const { id, username, avatar } = store.getState().session;
     newUser.id = id;
@@ -53,16 +53,18 @@ const initSocket = (store) => {
     store.dispatch(fetchQueueSuccess(queue));
   });
   socket.on('user action', (socketID) => {
-    const avatar = document.querySelector(`.${socketID}`);
-    if (avatar.classList.contains('flash')) avatar.classList.remove('flash');
-    avatar.classList.add('flash');
-    setTimeout(() => { avatar.classList.remove('flash'); }, 500);
+    if (document.querySelector(`.${socketID}`) !== null) {
+      const avatar = document.querySelector(`.${socketID}`);
+      if (avatar.classList.contains('flash')) avatar.classList.remove('flash');
+      avatar.classList.add('flash');
+      setTimeout(() => { avatar.classList.remove('flash'); }, 500);
+    }
   });
   socket.on('error', (error) => {
     console.log(error);
   });
   socket.on('disconnect', () => {
-    clearInterval(interval);
+    // clearInterval(serverSynchronizer);
   });
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { transferPlaybackToDevice } from '../../../../actions/devicesActions';
 
-const Device = ({ deviceID, isActive, name, volume, transferPlaybackToDevice, context }) => {
+const Device = ({ deviceID, isActive, name, transferPlaybackToDevice }) => {
   if (isActive) {
     return (
       <li className="available-device">

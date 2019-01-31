@@ -13,8 +13,8 @@ const pgPool = new Pool({
   database: 'groupdj',
 });
 
-pgPool.connect((err, client, release) => {
-  if (err) throw err;
+pgPool.connect((error) => {
+  if (error) throw error;
   console.log('successfully connected to database');
 });
 

@@ -10,6 +10,7 @@ import '../dist/users.css';
 import '../dist/navbar.css';
 import '../dist/main.css';
 import '../dist/home.css';
+import '../dist/myplaylists.css';
 import '../dist/icons.css';
 
 ReactDOM.render(

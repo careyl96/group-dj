@@ -5,7 +5,7 @@ import rootReducer from '../reducers/index';
 import sessionMiddleware from '../middlewares/sessionMiddleware';
 import socketMiddleware from '../middlewares/socketMiddleware';
 import searchMiddleware from '../middlewares/searchMiddleware';
-import trackMiddleware from '../middlewares/trackMiddleware';
+import playerMiddleware from '../middlewares/playerMiddleware';
 import viewMiddleware from '../middlewares/viewMiddleware';
 import devicesMiddleware from '../middlewares/devicesMiddleware';
 import audioMiddleware from '../middlewares/audioMiddleware';
@@ -16,7 +16,7 @@ const middleware = applyMiddleware(
   loggingMiddleware,
   sessionMiddleware,
   socketMiddleware,
-  trackMiddleware,
+  playerMiddleware,
   devicesMiddleware,
   audioMiddleware,
   searchMiddleware,

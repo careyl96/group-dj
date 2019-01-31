@@ -6,6 +6,8 @@ import RecentlyPlayed from './views/RecentlyPlayed';
 import MostPlayed from './views/MostPlayed';
 import MySongs from './views/MySongs';
 import SearchResults from './views/SearchResults';
+import MyPlaylists from './views/MyPlaylists';
+import PlaylistPage from './views/PlaylistPage';
 
 class ViewHandler extends Component {
   renderView = () => {
@@ -14,7 +16,9 @@ class ViewHandler extends Component {
     if (view === 'recently played') return <RecentlyPlayed />;
     if (view === 'most played') return <MostPlayed />;
     if (view === 'my songs') return <MySongs />;
+    if (view === 'my playlists') return <MyPlaylists />;
     if (view === 'search results') return <SearchResults />;
+    if (typeof view === 'string') return <PlaylistPage />;
     return null;
   };
 

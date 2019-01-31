@@ -7,7 +7,7 @@ class SearchResults extends Component {
     const { results } = this.props;
     return (
       <div className="home-tab">
-        <div className="main-header">Results</div>
+        <div className="view-header">Results</div>
         {results
           ? results.map((searchResult, index) => (
             <TrackListItem

@@ -1,7 +1,8 @@
 .layout {
-  background: linear-gradient(45deg, #07348e40 0%, rgba(83,159,225,0.92) 25%, rgba(171,65,224,0.75) 75%, rgba(99,7,142,0.5) 100%);
+  background: linear-gradient(45deg, #07348e40 0%, rgba(83,159,225,0.92) 25%, rgba(171,65,224,0.75) 75%, rgba(99,7,142,0.5) 100%) no-repeat center center fixed;
+  background-attachment: fixed;
   position: relative;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   opacity: 0;
   animation-name: fadeIn;
@@ -20,7 +21,7 @@
 
 .main-view-container {
   box-sizing: border-box;
-  padding: 0px 200px 90px 200px;
+  padding: 0px 200px 91px 200px;
   width: 100%;
   height: 100%;
   color: white;
@@ -28,11 +29,11 @@
 
 .main-content-spacing {
   min-width: 300px;
-  padding: 0px 24px 91px 24px;
+  padding: 0px 24px 0px 24px;
   overflow: hidden;
 }
 
-.main-header {
+.view-header {
   font-size: 48px;
   font-weight: 500;
   padding-bottom: 0.5em;

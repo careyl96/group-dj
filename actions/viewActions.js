@@ -31,7 +31,22 @@ export const fetchMostPlayedSuccess = mostPlayed => ({
 export const fetchMySongs = () => ({ type: types.FETCH_MY_SONGS });
 export const fetchMySongsSuccess = mySongs => ({
   type: types.FETCH_MY_SONGS_SUCCESS,
-  mySongs,
+  mySongs: mySongs.filter((track, index, self) => self.findIndex(t => t.track.id === track.track.id) === index),
+});
+
+export const fetchMyPlaylists = () => ({ type: types.FETCH_MY_PLAYLISTS });
+export const fetchMyPlaylistsSuccess = myPlaylists => ({
+  type: types.FETCH_MY_PLAYLISTS_SUCCESS,
+  myPlaylists,
+});
+
+export const fetchPlaylistTracks = playlistId => ({
+  type: types.FETCH_PLAYLIST_TRACKS,
+  playlistId,
+});
+export const fetchPlaylistTracksSuccess = playlistId => ({
+  type: types.FETCH_PLAYLIST_TRACKS_SUCCESS,
+  playlistHash: playlistId,
 });
 
 export const fetchPlayHistorySuccess = playHistory => ({

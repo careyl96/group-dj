@@ -9,15 +9,15 @@ class MySongs extends Component {
   }
 
   render() {
-    const { results } = this.props;
+    const { mySongs } = this.props;
     return (
       <div className="my-songs-tab">
-        <div className="main-header">My Songs</div>
-        {results
-          ? results.map(mySongsResult => (
+        <div className="view-header">My Songs</div>
+        {mySongs
+          ? mySongs.map(mySongsResult => (
             <TrackListItem
-              key={mySongsResult.uri}
-              track={mySongsResult}
+              key={mySongsResult.track.uri}
+              track={mySongsResult.track}
             />
           ))
           : null}
@@ -27,7 +27,7 @@ class MySongs extends Component {
 }
 
 const mapStateToProps = state => ({
-  results: state.view.mySongs,
+  mySongs: state.view.mySongs,
 });
 
 const mapDispatchToProps = dispatch => ({

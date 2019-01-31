@@ -95,7 +95,7 @@ class NowPlayingRight extends Component {
             {this.renderDevices()}
           </ul>
         </div>
-        <div className={`volume-container ${devices.length ? null : 'disabled'}`}>
+        <div className={`volume-container ${devices.length ? 'active' : 'disabled'}`}>
           <button className="btn-clear btn-volume" onClick={this.props.muted ? this.props.unmute : () => this.props.mute(this.state.volume)}>
             {this.renderVolumeIcon()}
           </button>

@@ -6,13 +6,14 @@ import {
   unmuteSuccess,
 } from '../actions/audioActions';
 
-const adjustVolume = volume => (dispatch, getState) => {
-  return axios({
+const adjustVolume = volume => (dispatch) => {
+  const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player/volume',
     params: { volume_percent: volume },
     headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
-  })
+  };
+  return axios(params)
     .then(() => {
       dispatch(adjustVolumeSuccess(volume));
     })

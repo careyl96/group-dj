@@ -1,7 +1,7 @@
 import React from 'react';
-import NowPlayingLeft from './nowplayingbar/NowPlayingLeft';
-import NowPlayingCenter from './nowplayingbar/NowPlayingCenter';
-import NowPlayingRight from './nowplayingbar/NowPlayingRight';
+import NowPlayingLeft from './NowPlayingLeft';
+import NowPlayingCenter from './NowPlayingCenter';
+import NowPlayingRight from './NowPlayingRight';
 
 const NowPlayingBar = () => (
   <div className="now-playing-wrapper">

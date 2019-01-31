@@ -9,7 +9,7 @@ class App extends Component {
     this.props.load();
   }
 
-  renderView() {
+  renderInitView() {
     if (!this.props.fetchingUser && localStorage.getItem('user') && localStorage.getItem('expires_in') - Date.now() > 0) {
       return <Layout />;
     }
@@ -21,7 +21,7 @@ class App extends Component {
 
   render() {
     return (
-      this.renderView()
+      this.renderInitView()
     );
   }
 }

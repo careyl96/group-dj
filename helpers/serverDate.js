@@ -3,13 +3,13 @@ class ServerDate {
     this.socket = socket;
     this.timeDifference = 0;
     this.socket.on('fetch server time', (data) => {
-      this.timeDifference = Date.now() - data.time;
+      this.timeDifference = Date.now() > data.time ? Date.now() - data.time : data.time - Date.now();
       this.trackProgress = data.trackProgress;
     });
   }
 
   now() {
-    return Date.now() + this.timeDifference + 100;
+    return Date.now() + this.timeDifference;
   }
 
   getTrackProgress() {

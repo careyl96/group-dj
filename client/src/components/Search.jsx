@@ -10,8 +10,6 @@ class Search extends Component {
       query: '',
     };
     this.timeout = null;
-    console.log('from search: ');
-    console.log(this);
   }
 
   handleSearchChange = (e) => {
@@ -31,19 +29,19 @@ class Search extends Component {
     return (
       <div className="search-container">
         {this.props.hasPreviousPage
-          ? <button className="view-nav back-button" onClick={() => this.props.updateView('prev')}>&lt;</button>
-          : <button className="view-nav back-button disabled">&lt;</button>
+          ? <button className="view-nav back-btn" onClick={() => this.props.updateView('prev')}>&lt;</button>
+          : <button className="view-nav back-btn disabled">&lt;</button>
         }
         {this.props.hasNextPage
-          ? <button className="view-nav forward-button" onClick={() => this.props.updateView('next')}>&gt;</button>
-          : <button className="view-nav forward-button disabled">&gt;</button>
+          ? <button className="view-nav forward-btn" onClick={() => this.props.updateView('next')}>&gt;</button>
+          : <button className="view-nav forward-btn disabled">&gt;</button>
         }
         <input type="text" placeholder="Search" className="search-bar"
           onClick={() => this.props.updateView('search results')}
           onChange={this.handleSearchChange}
           onKeyUp={this.delayedSearch}
         />
-        {/* <button className="search-button" onClick={() => this.props.searchTracks(this.state.query)}>Go</button> */}
+        {/* <button className="search-btn" onClick={() => this.props.searchTracks(this.state.query)}>Go</button> */}
       </div>
     );
   }

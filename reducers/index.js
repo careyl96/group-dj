@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import sessionReducer from './sessionReducer';
-import trackReducer from './trackReducer';
+import playerReducer from './playerReducer';
 import usersReducer from './usersReducer';
 import searchReducer from './searchReducer';
 import viewReducer from './viewReducer';
@@ -9,7 +9,7 @@ import audioReducer from './audioReducer';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
-  playingContext: trackReducer,
+  playingContext: playerReducer,
   users: usersReducer,
   search: searchReducer,
   view: viewReducer,

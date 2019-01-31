@@ -11,6 +11,8 @@ const initState = {
   recentlyPlayed: [],
   mostPlayed: [],
   mySongs: [],
+  myPlaylists: [],
+  playlistHash: {},
 };
 
 const viewReducer = (state = initState, action) => {
@@ -45,11 +47,21 @@ const viewReducer = (state = initState, action) => {
         ...state,
         mySongs: action.mySongs,
       };
+    case types.FETCH_MY_PLAYLISTS_SUCCESS:
+      return {
+        ...state,
+        myPlaylists: action.myPlaylists,
+      };
     case types.FETCH_PLAY_HISTORY_SUCCESS:
       return {
         ...state,
         playHistory: action.playHistory,
       };
+    case types.FETCH_PLAYLIST_TRACKS_SUCCESS:
+      return {
+        ...state,
+        playlistHash: { ...state.playlistHash, ...action.playlistHash }
+      }
     default:
       return state;
   }

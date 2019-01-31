@@ -63,13 +63,12 @@ body {
 .welcome-message {
   position: relative;
   display: block;
-  vertical-align: middle;
   font-size: 4rem;
   font-weight: 700;
   color: white;
 }
 
-.login-button {
+.login-btn {
   position: relative;
   background-color: transparent;
   border: 1.5px solid #fff;
@@ -89,10 +88,10 @@ body {
   width: 100%;
 }
 
-.login-button:hover {
+.login-btn:hover {
   cursor: pointer;
 }
 
-.login-button:focus {
+.login-btn:focus {
   outline: 0;
 }

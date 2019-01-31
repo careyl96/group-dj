@@ -7,10 +7,10 @@ const saved = Router();
 
 saved.get('/', (req, res) => {
   const savedQuery = `SELECT saved_tracks_play_count, saved_tracks_info::json FROM saved_tracks`;
-  pgPool.query(savedQuery, (err, results) => {
-    if (err) {
+  pgPool.query(savedQuery, (error, results) => {
+    if (error) {
       res.status(500);
-      res.send(err);
+      res.send(error);
       return;
     }
     res.send(results.rows);

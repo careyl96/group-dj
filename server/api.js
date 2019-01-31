@@ -126,6 +126,7 @@ const queueManager = new QueueManager({
   },
 });
 
+// events that affect all connected clients
 const userActions = (client) => {
   client.on('override playing context', (track, user) => {
     queueManager.updatePlayingContext('override', track, user);
@@ -174,46 +175,6 @@ const socketApi = (io) => {
     res.json(queueManager.getTrackProgress());
   });
 
-  io.use((client, next) => {
-    client.on('override playing context', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('override playing context');
-    });
-    client.on('pause playback', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('pause playback');
-    });
-    client.on('resume playback', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('resume playback');
-    });
-    client.on('seek track', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('seek track');
-    });
-    client.on('back track', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('back track');
-    });
-    client.on('skip track', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('skip track');
-    });
-    client.on('queue track', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('queue track');
-    });
-    client.on('remove track', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('remove track');
-    });
-    client.on('update queue', () => {
-      client.broadcast.emit('user action', client.id);
-      console.log('update queue');
-    });
-    next();
-  });
-
   io.on('connection', (client) => {
     globalSocket = client;
     client.on('time', () => {
@@ -222,6 +183,7 @@ const socketApi = (io) => {
         trackProgress: queueManager.serverSideTrackProgress,
       });
     });
+    
     client.on('add user', (data) => {
       if (!users.find(user => user.id === data.id)) {
         const newUser = data;
@@ -233,6 +195,7 @@ const socketApi = (io) => {
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });
+
     client.on('disconnect', () => {
       users = users.filter(user => user.socketID !== client.id);
       if (!users.length) {
@@ -241,6 +204,7 @@ const socketApi = (io) => {
       client.emit('update users', users);
       client.broadcast.emit('update users', users);
     });
+
     userActions(client);
   });
 

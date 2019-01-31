@@ -1,0 +1,19 @@
+add songs back to queue when back button is pressed
+add add playlist functionality
+add select songs functionality
+add starred songs per user
+  refactor back end to have users
+  map users to favorite songs
+
+my songs should be all songs
+  sort by recently added by default
+
+
+click bar
+set width to clicked location on client
+emit event to server indicating bar was clicked
+calculate server side track progress
+after server side track progress is calculated
+emit new playingContext with updated serversidetrackprogress
+when new playingcontext is received by client
+  restart interval

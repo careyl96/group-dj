@@ -1,6 +1,5 @@
-import axios from 'axios';
 import store from '../../../../store/store';
-import { seekTrack } from '../../../../actions/trackActions';
+import { seekTrack } from '../../../../actions/playerActions';
 import { adjustVolume } from '../../../../actions/audioActions';
 
 function draggable(element, context) {
@@ -60,11 +59,11 @@ function draggable(element, context) {
 
     let newTrackPosition = Math.floor(length * percentBuffered / 100);
     if (newTrackPosition < 0) newTrackPosition = 0;
+    store.dispatch(seekTrack(newTrackPosition));
     context.setState({
       trackProgress: newTrackPosition,
       mouseDown: false,
     });
-    store.dispatch(seekTrack(newTrackPosition));
     isMouseDown = false;
   }
 
@@ -72,6 +71,7 @@ function draggable(element, context) {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 }
+
 function draggableVolume(element, context) {
   const volumeBar = element;
   const volumeBarProgress = volumeBar.children[0].children[0];
@@ -149,15 +149,3 @@ export const addNowPlayingRightEventListeners = (context) => {
   devicesMenuHandler();
 };
 
-export const setTrackProgress = (context) => {
-  axios.get('/api/server-track-progress')
-    .then((response) => {
-      const trackProgress = response.data;
-      context.setState({ trackProgress }, () => {
-        setInterval(context.updateProgressBar, 300);
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};

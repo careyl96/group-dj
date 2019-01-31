@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { queueTrack, removeTrack } from '../../../../actions/queueActions';
-import { overridePlayingContext, pausePlayback, resumePlayback } from '../../../../actions/trackActions';
+import { overridePlayingContext, pausePlayback, resumePlayback } from '../../../../actions/playerActions';
 
 const parseMs = (ms) => {
   let result = '';
@@ -22,7 +22,7 @@ const parseMs = (ms) => {
 const TrackListItem = ({ track, playingContext, user, queue, overridePlayingContext, queueTrack, removeTrack, resumePlayback, pausePlayback }) => (
   track.id !== playingContext.id // if this item is not the track that is currently playing
     ? (
-      <div className="track-container">
+      <div className="track-container" onDoubleClick={() => overridePlayingContext(track, user)}>
         <button className="btn-tracklist-item" onClick={() => overridePlayingContext(track, user)}>
           <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
         </button>
@@ -46,7 +46,7 @@ const TrackListItem = ({ track, playingContext, user, queue, overridePlayingCont
           <span> {parseMs(track.duration_ms)} </span>
         </div>
       </div>
-    ) : ( // if this track list item is the currently playing track
+    ) : ( // if this track list item IS the currently playing track
       <div className="track-container selected-track">
         <button className="btn-tracklist-item" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
           {playingContext.currentlyPlaying

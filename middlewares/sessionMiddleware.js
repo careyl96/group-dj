@@ -3,43 +3,36 @@ import config from '../auth/config';
 import * as types from '../actions/types';
 import { updateTokenSuccess, updateTokenFailed, loginSuccess } from '../actions/sessionActions';
 
-const parseMs = (ms) => {
-  let result = '';
-  let minutes = 0;
-  let seconds = 0;
-
-  minutes = Math.floor(ms / 1000 / 60);
-  seconds = Math.floor((ms / 1000) % 60);
-
-  if (seconds < 10) {
-    seconds = `0${seconds}`;
-  }
-
-  result += `${minutes}:${seconds}`;
-  return result;
-};
-
 const updateToken = () => (dispatch) => {
-  return axios.get(`${config.HOST}/auth/token`)
+  dispatch({ type: types.UPDATE_TOKEN });
+  axios.get(`${config.HOST}/auth/token`)
     .then((response) => {
       const { access_token, expires_in } = response.data;
       localStorage.setItem('user', true);
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('expires_in', expires_in);
       dispatch(updateTokenSuccess());
+      setTimeout(() => updateToken()(dispatch), 3000000);
+    })
+    .catch((error) => {
+      localStorage.setItem('user', false);
+      dispatch(updateTokenFailed());
     });
 };
-const getCurrentUserInfo = () => (dispatch, getState) => {
+
+const getCurrentUserInfo = () => (dispatch) => {
   const params = {
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/me',
     headers: {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   };
-  return axios.get('https://api.spotify.com/v1/me', params)
+  return axios(params)
     .then((response) => {
       const { id } = response.data;
       const username = response.data.display_name;
-      const avatar = response.data.images[0].url;
+      const avatar = response.data.images[0] ? response.data.images[0].url : 'https://cdn.drawception.com/images/panels/2017/1-2/AWGwyTG2QZ-8.png';
       dispatch(loginSuccess(id, username, avatar));
     })
     .catch((error) => {
@@ -54,14 +47,10 @@ export default store => next => (action) => {
       window.location = `${config.HOST}/auth/login`;
       break;
     case types.LOAD:
-      store.dispatch(updateToken())
-        .then(() => {
-          setInterval(() => store.dispatch(updateToken()), 3000000);
-          store.dispatch(getCurrentUserInfo());
-        })
-        .catch((error) => {
-          store.dispatch(updateTokenFailed());
-        });
+      store.dispatch(updateToken());
+      break;
+    case types.UPDATE_TOKEN_SUCCESS:
+      store.dispatch(getCurrentUserInfo());
       break;
     default:
       break;

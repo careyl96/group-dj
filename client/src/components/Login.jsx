@@ -7,7 +7,7 @@ const Login = props => (
     <div className="login-background" />
     <div className="login-wrapper">
       <div className="welcome-message">Welcome to Group DJ</div>
-      <div className="login-button" onClick={props.login}> Log in with Spotify </div>
+      <div className="login-btn" onClick={props.login}> Log in with Spotify </div>
     </div>
   </div>
 );

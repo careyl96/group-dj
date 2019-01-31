@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { serverDate } from '../../../../middlewares/socketMiddleware';
-import { addNowPlayingCenterEventListeners, setTrackProgress } from '../event-listeners/now-playing-bar-events';
+import { addNowPlayingCenterEventListeners } from '../event-listeners/now-playing-bar-events';
 import {
   fetchPlayingContext,
   resumePlayback,
   pausePlayback,
   skipTrack,
   backTrack,
-} from '../../../../actions/trackActions';
+} from '../../../../actions/playerActions';
 
 const parseMs = (ms) => {
   let result = '';
@@ -37,44 +36,48 @@ class NowPlayingCenter extends Component {
     this.interval = null;
 
     this.updateProgressBar = () => {
-      const progressBar = document.querySelector('.progress-bar-progress');
+      const progressBarProgress = document.querySelector('.progress-bar-progress');
       const progressBarSlider = document.querySelector('.progress-bar-slider');
 
-      const { playingContext, currentlyPlaying } = this.props;
-      const { startTimestamp, totalTimePaused, seekDistance, length } = playingContext;
-      let { trackProgress, mouseDown } = this.state;
+      const { playingContext } = this.props;
+      const { length, currentlyPlaying, fetching } = playingContext;
+      let { trackProgress } = this.state;
+      const { mouseDown } = this.state;
+
       let progressPercentage = 0;
 
       if (currentlyPlaying) {
-        progressPercentage = (serverDate.now() - startTimestamp - totalTimePaused + seekDistance) / length * 100;
-        if (progressPercentage < 100 && !mouseDown) {
-          progressBar.style.width = (`${progressPercentage}%`);
+        progressPercentage = trackProgress / length * 100;
+        if (progressPercentage < 100 && !mouseDown && !fetching) {
+          progressBarProgress.style.width = (`${progressPercentage}%`);
           progressBarSlider.style.left = (`${progressPercentage}%`);
           trackProgress = length * progressPercentage / 100;
-          this.setState({ trackProgress });
+          this.setState({ trackProgress: trackProgress + 300 });
         } else if (progressPercentage >= 100 && !mouseDown) {
-          progressBar.style.width = ('0%');
+          progressBarProgress.style.width = ('0%');
           progressBarSlider.style.left = ('0%');
           this.setState({ trackProgress: 0 });
         }
-      } else {
+      } else { // necessary to properly render progress bar on initial page load
         progressPercentage = trackProgress / length * 100;
-        progressBar.style.width = (`${progressPercentage}%`);
+        progressBarProgress.style.width = (`${progressPercentage}%`);
         progressBarSlider.style.left = (`${progressPercentage}%`);
       }
     };
   }
 
   componentDidMount() {
-    setTrackProgress(this);
+    this.interval = setInterval(this.updateProgressBar, 300);
     addNowPlayingCenterEventListeners(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ trackProgress: newProps.playingContext.trackProgress || 0 });
   }
 
   render() {
     const {
       playingContext,
-      currentlyPlaying,
-      length,
       queue,
       nextTrack,
       fetchPlayingContext,
@@ -83,6 +86,7 @@ class NowPlayingCenter extends Component {
       backTrack,
       skipTrack,
     } = this.props;
+
     const { trackProgress } = this.state;
 
     return (
@@ -90,32 +94,32 @@ class NowPlayingCenter extends Component {
         {playingContext.id
           ? (
             <div className="player-controls">
-              <button className="control-button back" onClick={backTrack}>
+              <button className="control-btn back" onClick={backTrack}>
                 <i className="material-icons md-light md-36">skip_previous</i>
               </button>
 
-              <button className="control-button play" onClick={currentlyPlaying ? pausePlayback : resumePlayback}>
-                {currentlyPlaying
+              <button className="control-btn play" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
+                {playingContext.currentlyPlaying
                   ? <i className="material-icons md-light md-36">pause_circle_outline</i>
                   : <i className="material-icons md-light md-36">play_circle_outline</i>
                 }
               </button>
 
-              <button className={`control-button skip ${nextTrack || queue.length > 0 ? null : 'disabled'}`} onClick={skipTrack}>
+              <button className={`control-btn skip ${nextTrack || queue.length > 0 ? null : 'disabled'}`} onClick={skipTrack}>
                 <i className="material-icons md-light md-36">skip_next</i>
               </button>
             </div>
           ) : (
             <div className="player-controls">
-              <button className="control-button back disabled">
+              <button className="control-btn back disabled">
                 <i className="material-icons md-light md-36">skip_previous</i>
               </button>
 
-              <button className="control-button play disabled">
+              <button className="control-btn play disabled">
                 <i className="material-icons md-light md-36">play_circle_outline</i>
               </button>
 
-              <button className="control-button skip disabled">
+              <button className="control-btn skip disabled">
                 <i className="material-icons md-light md-36">skip_next</i>
               </button>
             </div>
@@ -132,7 +136,7 @@ class NowPlayingCenter extends Component {
               <div className="progress-bar-slider" />
             </div>
           </div>
-          <div className="progress-time">{parseMs(length)}</div>
+          <div className="progress-time">{parseMs(playingContext.length)}</div>
         </div>
       </div>
     );
@@ -141,8 +145,6 @@ class NowPlayingCenter extends Component {
 
 const mapStateToProps = state => ({
   playingContext: state.playingContext,
-  currentlyPlaying: state.playingContext.currentlyPlaying,
-  length: state.playingContext.length,
   queue: state.view.queue,
   nextTrack: state.view.playHistory.next,
 });

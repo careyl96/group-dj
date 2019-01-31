@@ -9,10 +9,10 @@ const insertDummyData = () => {
     ON CONFLICT (saved_tracks_id) 
     DO UPDATE SET saved_tracks_play_count = saved_tracks.saved_tracks_play_count + 1`;
 
-    pgPool.query(savedQuery, (err, res) => {
+    pgPool.query(savedQuery, (error, res) => {
       console.log(i);
-      if (err) {
-        console.log(err);
+      if (error) {
+        console.log(error);
       }
     });
   }
@@ -24,10 +24,10 @@ const insertDummyData = () => {
     ON CONFLICT (saved_tracks_id) 
     DO UPDATE SET saved_tracks_play_count = saved_tracks.saved_tracks_play_count + 1`;
 
-    pgPool.query(savedQuery, (err, res) => {
+    pgPool.query(savedQuery, (error, res) => {
       console.log(i);
-      if (err) {
-        console.log(err);
+      if (error) {
+        console.log(error);
       }
     });
   }
@@ -35,9 +35,9 @@ const insertDummyData = () => {
 
 const update = () => {
   const updateQuery = `UPDATE saved_tracks SET saved_tracks_play_count = saved_tracks_play_count + 1`;
-  pgPool.query(updateQuery, (err, res) => {
-    if (err) {
-      console.log(err);
+  pgPool.query(updateQuery, (error, res) => {
+    if (error) {
+      console.log(error);
     }
   });
 };

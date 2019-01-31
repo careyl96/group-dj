@@ -10,7 +10,7 @@ const NowPlayingLeft = ({ name, artists, albumArt }) => (
       <div className="track-name"> {name} </div>
       <div className="track-artist"> {artists} </div>
     </div>
-    <button className={`control-button add-song ${name ? null : 'disabled'}`} style={{ display: 'none' }}>
+    <button className={`control-btn add-song ${name ? null : 'disabled'}`} style={{ display: 'none' }}>
       <i className="material-icons md-light md-24">add</i>
     </button>
   </div>

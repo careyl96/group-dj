@@ -4,6 +4,7 @@
   width: 100%;
   border-top: 1px solid black;
   bottom: 0;
+  z-index: 100;
 }
 
 .now-playing-container {
@@ -88,9 +89,8 @@
   width: 124px;
 }
 
-.control-button {
+.control-btn {
   background-color: transparent;
-  color: hsla(0, 0%, 100%, .6);
   width: 32px;
   min-width: 32px;
   height: 32px;
@@ -100,21 +100,19 @@
   outline: none;
 }
 
-.control-button:hover .material-icons {
+.control-btn:hover .material-icons {
   transition: none 33ms cubic-bezier(.3, 0, 0, 1);
   transition-property: all;
   transform: scale(1.06);
   color: #fff;
 }
 
-.control-button:active .material-icons {
+.control-btn:active .material-icons {
   transition: none 33ms cubic-bezier(.3, 0, 0, 1);
   transition-property: all;
   transform: scale(1);
   color: hsla(0, 0%, 100%, .3);
 }
-
-.resync {}
 
 .resync:hover .material-icons {
   transition-property: all;

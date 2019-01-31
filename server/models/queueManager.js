@@ -70,7 +70,9 @@ class QueueManager {
   }
 
   getPlayingContext() {
-    return this.playingContext;
+    // if there's nothing playing return undefined
+    // if there is something playing return the playingContext along with server side track progress
+    return this.playingContext ? { ...this.playingContext, trackProgress: this.serverSideTrackProgress } : undefined;
   }
 
   getRecentlyPlayed() {

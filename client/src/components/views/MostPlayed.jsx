@@ -12,7 +12,7 @@ class MostPlayed extends Component {
     const { results } = this.props;
     return (
       <div className="most-played-tab">
-        <div className="main-header">Most Played</div>
+        <div className="view-header">Most Played</div>
         {results
           ? results.map(mostPlayedResult => (
             <TrackListItem

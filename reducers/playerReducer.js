@@ -16,6 +16,8 @@ const formatPlayingContext = (response) => {
       albumArt: response.track.album.images[1].url,
       popularity: response.track.popularity,
       id: response.track.id,
+      trackProgress: response.trackProgress,
+      fetching: false,
     };
   }
   return formattedTrackData;
@@ -23,10 +25,10 @@ const formatPlayingContext = (response) => {
 
 const initState = {
   currentlyPlaying: false,
-  startTimestamp: 0,
-  lastPausedAt: 0,
-  totalTimePaused: 0,
-  seekDistance: 0,
+  // startTimestamp: 0,
+  // lastPausedAt: 0,
+  // totalTimePaused: 0,
+  // seekDistance: 0,
   user: null,
   name: null,
   artists: null,
@@ -34,29 +36,26 @@ const initState = {
   albumArt: 'https://cdn2.iconfinder.com/data/icons/music-sound-2/512/Music_14-512.png',
   popularity: 0,
   id: null,
+  trackProgress: 0,
+  fetching: false,
 };
 
-const trackReducer = (state = initState, action) => {
+const playerReducer = (state = initState, action) => {
   switch (action.type) {
     case types.FETCH_PLAYING_CONTEXT_SUCCESS:
       return formatPlayingContext(action.playingContext) || initState;
-    case types.RESUME_PLAYBACK_SUCCESS:
-      return state;
-    case types.PAUSE_PLAYBACK_SUCCESS:
-      return state;
-    // case types.SEEK_TRACK_SUCCESS:
-    //   return {
-    //     ...state,
-    //     startTimestamp: action.newTrackPosition,
-    //   };
-    // case types.SKIP_TRACK_SUCCESS:
-    //   return {
-    //     ...state,
-    //     currentlyPlaying: true,
-    //   };
+    // case types.RESUME_PLAYBACK_SUCCESS:
+    // return state;
+    // case types.PAUSE_PLAYBACK_SUCCESS:
+    // return state;
+    case types.SEEK_TRACK:
+      return {
+        ...state,
+        fetching: true,
+      };
     default:
       return state;
   }
 };
 
-export default trackReducer;
+export default playerReducer;

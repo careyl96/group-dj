@@ -10,8 +10,9 @@ const auth = Router();
 
 auth.get('/login', (req, res) => {
   const state = rand.generate();
-  const scope = `user-read-private
-  user-read-email
+  const scope = `
+  user-read-private
+  user-read-recently-played
   user-read-currently-playing
   user-read-playback-state
   user-modify-playback-state
@@ -57,10 +58,8 @@ auth.get('/callback', (req, res) => {
 });
 
 auth.get('/token', (req, res) => {
-  console.log('getting /token');
   if (!Object.keys(req.cookies).length) res.status(401).send('not logged in');
-  const { expires_in, refresh_token } = req.cookies;
-  // if (Date.now() > expires_in) {
+  const { refresh_token } = req.cookies;
   const authOptions = {
     url: 'https://accounts.spotify.com/api/token',
     form: {
