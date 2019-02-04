@@ -18,7 +18,6 @@ class MyPlaylists extends Component {
 
   handleSearchChange = (e) => {
     this.setState({ query: e.target.value });
-    console.log(this.state.query);
   }
 
   render() {
@@ -45,6 +44,8 @@ class MyPlaylists extends Component {
               }
             })
             : null}
+          <li className="filler-block" />
+          <li className="filler-block" />
         </ul>
       </div>
     );

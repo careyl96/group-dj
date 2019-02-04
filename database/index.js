@@ -9,8 +9,8 @@ const pgPool = new Pool({
 });
 
 // const pgPool = new Pool({
-//   user: 'careylee',
-//   database: 'groupdj',
+  // user: 'careylee',
+  // database: 'groupdj',
 // });
 
 pgPool.connect((error) => {
