@@ -1005,6 +1005,10 @@ ul, li {
   margin: 0 24px 0 0;
 }
 
+.playlist-item:active {
+  outline: none;
+}
+
 #playlist-img {
   display: block;
   max-width: 100%;

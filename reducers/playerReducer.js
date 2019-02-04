@@ -1,7 +1,6 @@
 import * as types from '../actions/types';
 
 const formatPlayingContext = (response) => {
-  console.log(response);
   let formattedTrackData = null;
   if (response) {
     formattedTrackData = {

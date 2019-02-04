@@ -78,13 +78,15 @@ class NowPlayingCenter extends Component {
 
   componentWillReceiveProps(newProps) {
     const { playingContext } = this.props;
+    const newTrackName = newProps.playingContext.name;
+    const oldTrackName = playingContext.name;
     const newTrackProgress = newProps.playingContext.trackProgress;
     const oldTrackProgress = playingContext.trackProgress;
     const newSeekDistance = newProps.playingContext.seekDistance;
     const oldSeekDistance = playingContext.seekDistance;
     // console.log(`current props: ${this.props.playingContext.trackProgress}`);
     // console.log(`new props: ${newProps.playingContext.trackProgress}`);
-    if ((newTrackProgress !== oldTrackProgress) || (newSeekDistance !== oldSeekDistance)) { // the last bit is necessary to properly set state if song is started and prev song button is clicked
+    if ((newTrackName !== oldTrackName) || (newTrackProgress !== oldTrackProgress) || (newSeekDistance !== oldSeekDistance)) { // necessary to properly update seek bar location
       this.setState({ trackProgress: newTrackProgress || 0 });
     }
   }
