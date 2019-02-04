@@ -4,7 +4,6 @@ export const updateView = view => ({
   type: types.UPDATE_VIEW,
   view,
 });
-
 export const updateViewSuccess = pageHistory => ({
   type: types.UPDATE_VIEW_SUCCESS,
   pageHistory,

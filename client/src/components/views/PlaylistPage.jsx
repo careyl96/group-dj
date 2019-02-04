@@ -1,41 +1,61 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchPlaylistTracks } from '../../../../actions/viewActions';
+import { queuePlaylist } from '../../../../actions/queueActions';
+import TrackListItem from './TrackListItem';
 
 class PlaylistPage extends Component {
-  componentDidMount() {
-    if (!this.props.playlistHash[this.props.playlistId]) {
-      this.props.fetchPlaylistTracks(this.props.playlistId);
-    }
-  }
-
   render() {
-    console.log(this.props);
+    const { queuePlaylist, playlist, user } = this.props;
     return (
       <div className="playlist-tab">
-        <div className="playlist-header">
-          <img id="playlist-album-art" />
-          <div className="flex-vertical">
-            <h2 className="now-playing-home-track-name">{name}</h2>
-            {/* <button className="add-playlist-queue" onClick={currentlyPlaying ? pausePlayback : resumePlayback}>{currentlyPlaying ? 'Add to queue' : 'Added to queue'}</button> */}
-          </div>
-        </div>
+        {playlist
+          ? (
+            <div className="playlist-container-2">
+              <div className="playlist-header">
+                <img id="playlist-album-art" src={playlist.albumArt} />
+                <div className="playlist-header-info">
+                  <h1 className="playlist-header-name">{playlist.name}</h1>
+                  <div className="playlist-header-created-by">{`Created by ${playlist.owner}`}</div>
+                  <div className="add-playlist-to-queue-btn" onClick={() => queuePlaylist(playlist, user)}>
+                    <button className="btn-clear add-playlist-to-queue-icon">
+                      <i className="material-icons md-36">add</i>
+                    </button>
+                    <span>Add playlist to queue</span>
+                  </div>
+                </div>
+              </div>
+              {playlist.tracks.map(track => (
+                <TrackListItem
+                  key={track.track.uri}
+                  track={track.track}
+                />
+              ))}
+            </div>
+          ) : (
+            null
+          )
+        }
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
-  const id = state.view.pageHistory.item;
-  return {
-    playlistId: id,
-    playlistHash: state.view.playlistHash,
-    playlist: state.view.playlistHash[id],
-  };
-};
+const mapStateToProps = state => ({
+  playlistId: state.view.pageHistory.item,
+  playlist: state.view.playlistHash[state.view.pageHistory.item],
+  user: state.session.user,
+});
 
 const mapDispatchToProps = dispatch => ({
-  fetchPlaylistTracks: playlistId => dispatch(fetchPlaylistTracks(playlistId)),
+  queuePlaylist: (playlist, user) => dispatch(queuePlaylist(playlist, user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlaylistPage);
+
+
+// tracks.map(track => (
+//   <TrackListItem
+//     key={track.track.uri}
+//     track={track.track}
+//   />
+// ))

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import config from '../auth/config';
 import * as types from '../actions/types';
+import { updateView } from '../actions/viewActions';
 import { updateTokenSuccess, updateTokenFailed, loginSuccess } from '../actions/sessionActions';
 
 const updateToken = () => (dispatch) => {
@@ -30,10 +31,12 @@ const getCurrentUserInfo = () => (dispatch) => {
   };
   return axios(params)
     .then((response) => {
-      const { id } = response.data;
-      const username = response.data.display_name;
-      const avatar = response.data.images[0] ? response.data.images[0].url : 'https://cdn.drawception.com/images/panels/2017/1-2/AWGwyTG2QZ-8.png';
-      dispatch(loginSuccess(id, username, avatar));
+      const user = {
+        id: response.data.id,
+        username: response.data.display_name,
+        avatar: response.data.images[0] ? response.data.images[0].url : 'https://cdn.drawception.com/images/panels/2017/1-2/AWGwyTG2QZ-8.png',
+      };
+      dispatch(loginSuccess(user));
     })
     .catch((error) => {
       console.log(`failed to get user information ${error}`);
@@ -51,6 +54,10 @@ export default store => next => (action) => {
       break;
     case types.UPDATE_TOKEN_SUCCESS:
       store.dispatch(getCurrentUserInfo());
+      break;
+    case types.UPDATE_TOKEN_FAILED:
+      console.log('failed bro');
+      store.dispatch(updateView('home'));
       break;
     default:
       break;

@@ -5,6 +5,11 @@ export const queueTrack = (track, user) => ({
   track,
   user,
 });
+export const queuePlaylist = (playlist, user) => ({
+  type: types.QUEUE_PLAYLIST,
+  playlist,
+  user,
+});
 export const removeTrack = track => ({
   type: types.REMOVE_TRACK,
   track,

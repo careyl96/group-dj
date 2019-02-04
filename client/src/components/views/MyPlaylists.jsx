@@ -4,23 +4,46 @@ import { fetchMyPlaylists } from '../../../../actions/viewActions';
 import PlaylistItem from './PlaylistItem';
 
 class MyPlaylists extends Component {
+  constructor() {
+    super();
+    this.state = {
+      query: '',
+    };
+  }
+
   componentDidMount() {
-    if (!this.props.myPlaylists.length) this.props.fetchMyPlaylists();
+    const { myPlaylists, fetchMyPlaylists } = this.props;
+    if (!myPlaylists.length) fetchMyPlaylists();
+  }
+
+  handleSearchChange = (e) => {
+    this.setState({ query: e.target.value });
+    console.log(this.state.query);
   }
 
   render() {
     const { myPlaylists } = this.props;
+    const { query } = this.state;
     return (
       <div className="my-playlists-tab">
         <div className="view-header no-border">My Playlists</div>
+        <div className="playlist-filter-container">
+          <input type="text" placeholder="Filter" className="playlist-filter" onChange={this.handleSearchChange} />
+          <div className="playlist-filter-icon" />
+          <div className="playlist-filter-bar" />
+        </div>
         <ul className="playlist-container">
           {myPlaylists
-            ? myPlaylists.map(playlist => (
-              <PlaylistItem
-                key={playlist.id}
-                playlist={playlist}
-              />
-            ))
+            ? myPlaylists.map((playlist) => {
+              if (playlist.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 || query === '') {
+                return (
+                  <PlaylistItem
+                    key={playlist.id}
+                    playlist={playlist}
+                  />
+                );
+              }
+            })
             : null}
         </ul>
       </div>

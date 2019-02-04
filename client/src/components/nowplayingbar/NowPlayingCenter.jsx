@@ -8,6 +8,8 @@ import {
   skipTrack,
   backTrack,
 } from '../../../../actions/playerActions';
+import worker from '../../../../helpers/worker';
+import WebWorker from '../../../../helpers/WebWorker';
 
 const parseMs = (ms) => {
   let result = '';
@@ -34,6 +36,7 @@ class NowPlayingCenter extends Component {
     };
 
     this.interval = null;
+    this.worker = null;
 
     this.updateProgressBar = () => {
       const progressBarProgress = document.querySelector('.progress-bar-progress');
@@ -51,8 +54,8 @@ class NowPlayingCenter extends Component {
         if (progressPercentage < 100 && !mouseDown && !fetching) {
           progressBarProgress.style.width = (`${progressPercentage}%`);
           progressBarSlider.style.left = (`${progressPercentage}%`);
-          trackProgress = length * progressPercentage / 100;
-          this.setState({ trackProgress: trackProgress + 300 });
+          trackProgress += 300;
+          this.setState({ trackProgress });
         } else if (progressPercentage >= 100 && !mouseDown) {
           progressBarProgress.style.width = ('0%');
           progressBarSlider.style.left = ('0%');
@@ -67,70 +70,88 @@ class NowPlayingCenter extends Component {
   }
 
   componentDidMount() {
-    this.interval = setInterval(this.updateProgressBar, 300);
+    this.worker = new WebWorker(worker);
+    this.worker.addEventListener('message', this.updateProgressBar);
+    this.worker.postMessage('INITIALIZE');
     addNowPlayingCenterEventListeners(this);
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({ trackProgress: newProps.playingContext.trackProgress || 0 });
+    const { playingContext } = this.props;
+    const newTrackProgress = newProps.playingContext.trackProgress;
+    const oldTrackProgress = playingContext.trackProgress;
+    // console.log(`current props: ${this.props.playingContext.trackProgress}`);
+    // console.log(`new props: ${newProps.playingContext.trackProgress}`);
+    if (newTrackProgress !== oldTrackProgress || newTrackProgress === 0) { // the last bit is necessary to properly set state if song is started and prev song button is clicked
+      this.setState({ trackProgress: newProps.playingContext.trackProgress || 0 });
+    }
+  }
+
+  renderPlayerControls() {
+    const {
+      playingContext,
+      queue,
+      nextTrack,
+      resumePlayback,
+      pausePlayback,
+      backTrack,
+      skipTrack,
+    } = this.props;
+    if (playingContext.id) {
+      return (
+        <div className="player-controls">
+          <button className="control-btn back" onClick={backTrack}>
+            <i className="material-icons md-light md-36">skip_previous</i>
+          </button>
+
+          <button className="control-btn play" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
+            {playingContext.currentlyPlaying
+              ? <i className="material-icons md-light md-36">pause_circle_outline</i>
+              : <i className="material-icons md-light md-36">play_circle_outline</i>
+            }
+          </button>
+
+          <button className={`control-btn skip ${nextTrack || queue.length > 0 ? null : 'disabled'}`} onClick={skipTrack}>
+            <i className="material-icons md-light md-36">skip_next</i>
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="player-controls">
+        <button className="control-btn back disabled">
+          <i className="material-icons md-light md-36">skip_previous</i>
+        </button>
+
+        <button className="control-btn play disabled">
+          <i className="material-icons md-light md-36">play_circle_outline</i>
+        </button>
+
+        <button className="control-btn skip disabled">
+          <i className="material-icons md-light md-36">skip_next</i>
+        </button>
+      </div>
+    );
   }
 
   render() {
     const {
       playingContext,
-      queue,
-      nextTrack,
       fetchPlayingContext,
-      resumePlayback,
-      pausePlayback,
-      backTrack,
-      skipTrack,
+      renderPlayerControls,
     } = this.props;
 
     const { trackProgress } = this.state;
 
     return (
       <div className="now-playing-center">
-        {playingContext.id
-          ? (
-            <div className="player-controls">
-              <button className="control-btn back" onClick={backTrack}>
-                <i className="material-icons md-light md-36">skip_previous</i>
-              </button>
-
-              <button className="control-btn play" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
-                {playingContext.currentlyPlaying
-                  ? <i className="material-icons md-light md-36">pause_circle_outline</i>
-                  : <i className="material-icons md-light md-36">play_circle_outline</i>
-                }
-              </button>
-
-              <button className={`control-btn skip ${nextTrack || queue.length > 0 ? null : 'disabled'}`} onClick={skipTrack}>
-                <i className="material-icons md-light md-36">skip_next</i>
-              </button>
-            </div>
-          ) : (
-            <div className="player-controls">
-              <button className="control-btn back disabled">
-                <i className="material-icons md-light md-36">skip_previous</i>
-              </button>
-
-              <button className="control-btn play disabled">
-                <i className="material-icons md-light md-36">play_circle_outline</i>
-              </button>
-
-              <button className="control-btn skip disabled">
-                <i className="material-icons md-light md-36">skip_next</i>
-              </button>
-            </div>
-          )
-        }
+        {this.renderPlayerControls()}
         <div className="progress-bar-container">
           <button className="btn-clear md-18 resync" onClick={fetchPlayingContext}>
             <i className="material-icons md-light md-18">sync</i>
           </button>
           <div className="progress-time">{parseMs(trackProgress)}</div>
-          <div className={`progress-bar-clickable ${playingContext.id ? null : 'disabled'}`}>
+          <div className={`progress-bar-clickable ${playingContext.id ? '' : 'disabled'}`}>
             <div className="progress-bar">
               <div className="progress-bar-progress" />
               <div className="progress-bar-slider" />

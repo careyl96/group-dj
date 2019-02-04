@@ -52,6 +52,24 @@ class QueueManager {
     }
   }
 
+  queuePlaylist(playlist, user) {
+    const playlistTracks = playlist.tracks;
+    if (!this.playingContext) {
+      this.beginTrack(playlistTracks[0].track, user);
+      playlistTracks.shift();
+    }
+    playlistTracks.forEach((trackInfo) => {
+      if (!this.getQueue().find(item => item.track.id === trackInfo.track.id)) {
+        const queueItem = {
+          track: trackInfo.track,
+          user,
+        };
+        this.queue.push(queueItem);
+      }
+    });
+    this.emitQueueChanged();
+  }
+
   removeFromQueue(id) {
     const index = this.queue.findIndex(item => item.track.id === id);
     if (index !== -1) {

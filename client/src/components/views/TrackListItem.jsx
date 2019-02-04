@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { queueTrack, removeTrack } from '../../../../actions/queueActions';
 import { overridePlayingContext, pausePlayback, resumePlayback } from '../../../../actions/playerActions';
@@ -79,10 +79,7 @@ const TrackListItem = ({ track, playingContext, user, queue, overridePlayingCont
 
 const mapStateToProps = state => ({
   playingContext: state.playingContext,
-  user: {
-    username: state.session.username,
-    id: state.session.id,
-  },
+  user: state.session.user,
   queue: state.view.queue,
 });
 

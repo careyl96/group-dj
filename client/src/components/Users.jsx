@@ -28,7 +28,7 @@ class Users extends Component {
             ? users.map((user, index) => {
               const { avatar, username } = user;
               return (
-                <li key={index} className="user-list-item">
+                <li key={user.socketId} className="user-list-item">
                   <div className="user-img-container">
                     <img className="user-img" src={avatar} />
                     {playingContext.user && user.id === playingContext.user.id
@@ -38,7 +38,7 @@ class Users extends Component {
                         </div>
                       ) : null
                     }
-                    <div className={`action-overlay ${user.socketID}`} />
+                    <div className={`action-overlay ${user.socketId}`} />
                   </div>
                   <div className="username">{username}</div>
                 </li>

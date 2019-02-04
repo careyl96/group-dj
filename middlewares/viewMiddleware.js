@@ -28,13 +28,14 @@ const updateView = view => (dispatch, getState) => {
   if (view !== getState().view.pageHistory.item && view !== 'prev' && view !== 'next') {
     if (view.indexOf('playlist:') !== -1) {
       const playlistId = view.substr(9);
-      pageHistory.addNode(playlistId); // add node to history
+      pageHistory.addNode(playlistId);
     } else {
       pageHistory.addNode(view);
     }
     dispatch(updateViewSuccess(pageHistory.node));
   }
 };
+
 const fetchQueue = () => async (dispatch) => {
   try {
     const response = await axios.get('/api/queue');
@@ -76,7 +77,7 @@ const fetchMySongs = () => async (dispatch) => {
 const fetchMyPlaylists = () => async (dispatch, getState) => {
   const params = {
     method: 'GET',
-    url: `https://api.spotify.com/v1/users/${getState().session.id}/playlists`,
+    url: `https://api.spotify.com/v1/users/${getState().session.user.id}/playlists`,
     params: { limit: 50 },
     headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   };
@@ -89,21 +90,28 @@ const fetchMyPlaylists = () => async (dispatch, getState) => {
   }
 };
 
-const fetchPlaylistTracks = playlistId => async (dispatch, getState) => {
-  const params = {
-    method: 'GET',
-    url: `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-    params: { limit: 50 },
-    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
-  };
-
-  try {
-    const response = await axios(params);
-    const playlistHashCopy = { ...getState().view.playlistHash };
-    playlistHashCopy[playlistId] = response.data.items;
-    dispatch(fetchPlaylistTracksSuccess(playlistHashCopy));
-  } catch (error) {
-    console.log(error);
+const fetchPlaylistTracks = playlist => async (dispatch, getState) => {
+  if (!getState().view.playlistHash[playlist.id]) {
+    const params = {
+      method: 'GET',
+      url: `https://api.spotify.com/v1/playlists/${playlist.id}/tracks`,
+      params: { limit: 50 },
+      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+    };
+    try {
+      const response = await axios(params);
+      const playlistInfo = {
+        name: playlist.name,
+        albumArt: playlist.images[0].url,
+        owner: playlist.owner.display_name,
+        tracks: response.data.items,
+      };
+      const playlistHashCopy = { ...getState().view.playlistHash };
+      playlistHashCopy[playlist.id] = playlistInfo;
+      dispatch(fetchPlaylistTracksSuccess(playlistHashCopy));
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 

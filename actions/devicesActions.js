@@ -12,9 +12,9 @@ export const updateAvailableDevicesSuccess = devices => ({
   devices,
 });
 
-export const transferPlaybackToDevice = deviceID => ({
+export const transferPlaybackToDevice = deviceId => ({
   type: types.TRANSFER_PLAYBACK_TO_DEVICE,
-  deviceID,
+  deviceId,
 });
 export const transferPlaybackToDeviceSuccess = devices => ({
   type: types.TRANSFER_PLAYBACK_TO_DEVICE_SUCCESS,

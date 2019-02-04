@@ -20,18 +20,18 @@ const fetchAvailableDevices = () => (dispatch) => {
     .catch((error) => {
     });
 };
-const transferPlaybackToDevice = deviceID => (dispatch, getState) => {
+const transferPlaybackToDevice = deviceId => (dispatch, getState) => {
   const params = {
     method: 'PUT',
     url: 'https://api.spotify.com/v1/me/player',
     data: {
-      device_ids: [deviceID],
+      device_ids: [deviceId],
     },
     headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
   };
   return axios(params)
     .then(() => {
-      const devices = getState().devices.map(device => ((device.id === deviceID) ? { ...device, is_active: true } : { ...device, is_active: false }));
+      const devices = getState().devices.map(device => ((device.id === deviceId) ? { ...device, is_active: true } : { ...device, is_active: false }));
       dispatch(transferPlaybackToDeviceSuccess(devices));
     })
     .catch((error) => {
@@ -51,7 +51,7 @@ export default store => next => (action) => {
       }
       break;
     case types.TRANSFER_PLAYBACK_TO_DEVICE:
-      store.dispatch(transferPlaybackToDevice(action.deviceID));
+      store.dispatch(transferPlaybackToDevice(action.deviceId));
       break;
     case types.TRANSFER_PLAYBACK_TO_DEVICE_SUCCESS:
       setTimeout(() => { store.dispatch(fetchPlayingContext()); }, 1000);

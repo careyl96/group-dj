@@ -1,9 +1,11 @@
 import * as types from '../actions/types';
 
 const initState = {
-  id: null,
-  username: null,
-  avatar: null,
+  user: {
+    id: null,
+    username: null,
+    avatar: null,
+  },
   fetchingUser: true,
   fetching: true,
 };
@@ -23,9 +25,7 @@ const sessionReducer = (state = initState, action) => {
     case types.LOGIN_SUCCESS:
       return {
         ...state,
-        id: action.id,
-        username: action.username,
-        avatar: action.avatar,
+        user: action.user,
       };
     case types.UPDATE_USER_ID:
       return {

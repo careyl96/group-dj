@@ -42,7 +42,7 @@ class NowPlayingRight extends Component {
         return (
           <Device
             key={device.id}
-            deviceID={device.id}
+            deviceId={device.id}
             isActive={device.is_active}
             name={device.name}
             volume={device.volume_percent}
@@ -62,6 +62,14 @@ class NowPlayingRight extends Component {
     );
   }
 
+  renderDevicesStatusIcon() {
+    const { devices, fetching } = this.props;
+    if (devices.length || fetching) {
+      return <i className="material-icons md-light md-24 icon-devices">devices</i>;
+    }
+    return <i className="material-icons md-light md-24 icon-error">error_outline</i>;
+  }
+
   renderVolumeIcon() {
     const { volume } = this.state;
     if (volume >= 70) {
@@ -77,14 +85,12 @@ class NowPlayingRight extends Component {
   }
 
   render() {
-    const { devices, fetchAvailableDevices, fetching } = this.props;
+    const { volume } = this.state;
+    const { devices, fetchAvailableDevices, fetching, mute, unmute, muted } = this.props;
     return (
       <div className="now-playing-right">
         <button className="btn-clear btn-devices">
-          {devices.length || fetching
-            ? <i className="material-icons md-light md-24 icon-devices">devices</i>
-            : <i className="material-icons md-light md-24 icon-error">error_outline</i>
-          }
+          {this.renderDevicesStatusIcon()}
         </button>
         <div className="devices-menu" style={devices.length || fetching ? { display: 'none' } : { display: 'block' }}>
           <h3 className="devices-menu-header"> Connect to a Device </h3>
@@ -96,7 +102,7 @@ class NowPlayingRight extends Component {
           </ul>
         </div>
         <div className={`volume-container ${devices.length ? 'active' : 'disabled'}`}>
-          <button className="btn-clear btn-volume" onClick={this.props.muted ? this.props.unmute : () => this.props.mute(this.state.volume)}>
+          <button className="btn-clear btn-volume" onClick={muted ? unmute : () => mute(volume)}>
             {this.renderVolumeIcon()}
           </button>
           <div className="progress-bar-clickable volume-bar-clickable">

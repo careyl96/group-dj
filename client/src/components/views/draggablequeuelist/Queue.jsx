@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import QueueList from './QueueList';
 import { updateQueue } from '../../../../../actions/queueActions';
+import QueueList from './QueueList';
 
 class Queue extends Component {
-  onSortEnd = ({ oldIndex, newIndex }) => {
-    const queue = document.querySelectorAll('.track-container');
-    queue.forEach(queueItem => queueItem.style.removeProperty('pointer-events'));
-    if (oldIndex !== newIndex) this.props.updateQueue(oldIndex, newIndex);
-  };
-
-  onSortStart = () => {
+  onSortStart = () => { // prevent the items in the queue to activate their hover events while you're dragging and dropping.
     const queue = document.querySelectorAll('.track-container');
     queue.forEach(queueItem => queueItem.style.setProperty('pointer-events', 'none', 'important'));
   }
 
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    const queue = document.querySelectorAll('.track-container');
+    const { updateQueue } = this.props;
+    queue.forEach(queueItem => queueItem.style.removeProperty('pointer-events')); // reactivate hover events
+    if (oldIndex !== newIndex) updateQueue(oldIndex, newIndex); // update the queue in state
+  };
+
   render() {
+    const { queue } = this.props;
     return (
       <QueueList
         lockAxis="y"
@@ -24,7 +26,7 @@ class Queue extends Component {
         onSortStart={this.onSortStart}
         onSortEnd={this.onSortEnd}
         transitionDuration={0}
-        queue={this.props.queue}
+        queue={queue}
       />
     );
   }

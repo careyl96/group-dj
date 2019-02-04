@@ -5,7 +5,8 @@ import { fetchMostPlayed } from '../../../../actions/viewActions';
 
 class MostPlayed extends Component {
   componentDidMount() {
-    this.props.fetchMostPlayed();
+    const { fetchMostPlayed } = this.props;
+    fetchMostPlayed();
   }
 
   render() {

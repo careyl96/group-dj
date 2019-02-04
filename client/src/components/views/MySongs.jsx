@@ -5,7 +5,8 @@ import { fetchMySongs } from '../../../../actions/viewActions';
 
 class MySongs extends Component {
   componentDidMount() {
-    this.props.fetchMySongs();
+    const { fetchMySongs } = this.props;
+    fetchMySongs();
   }
 
   render() {

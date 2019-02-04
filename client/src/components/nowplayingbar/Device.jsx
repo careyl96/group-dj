@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { transferPlaybackToDevice } from '../../../../actions/devicesActions';
 
-const Device = ({ deviceID, isActive, name, transferPlaybackToDevice }) => {
+const Device = ({ deviceId, isActive, name, transferPlaybackToDevice }) => {
   if (isActive) {
     return (
       <li className="available-device">
@@ -18,7 +18,7 @@ const Device = ({ deviceID, isActive, name, transferPlaybackToDevice }) => {
   }
   return (
     <li className="available-device">
-      <div className="devices-container" onClick={() => transferPlaybackToDevice(deviceID)}>
+      <div className="devices-container" role="button" tabIndex={0} onClick={() => transferPlaybackToDevice(deviceId)}>
         <i className="material-icons md-light md-32 icon-devices">devices</i>
         <div className="device-info">
           <span className="device-info-line1">{name}</span>
@@ -30,7 +30,7 @@ const Device = ({ deviceID, isActive, name, transferPlaybackToDevice }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  transferPlaybackToDevice: deviceID => dispatch(transferPlaybackToDevice(deviceID)),
+  transferPlaybackToDevice: deviceId => dispatch(transferPlaybackToDevice(deviceId)),
 });
 
 export default connect(null, mapDispatchToProps)(Device);

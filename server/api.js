@@ -149,6 +149,9 @@ const userActions = (client) => {
   client.on('queue track', (track, user) => {
     queueManager.queueTrack(track, user);
   });
+  client.on('queue playlist', (playlist, user) => {
+    queueManager.queuePlaylist(playlist, user);
+  });
   client.on('remove track', (trackID) => {
     queueManager.removeFromQueue(trackID);
   });
@@ -187,7 +190,7 @@ const socketApi = (io) => {
     client.on('add user', (data) => {
       if (!users.find(user => user.id === data.id)) {
         const newUser = data;
-        newUser.socketID = client.id;
+        newUser.socketId = client.id;
         newUser.banned = false;
         console.log(`${newUser.username} has connected!`);
         users.push(newUser);
@@ -197,7 +200,7 @@ const socketApi = (io) => {
     });
 
     client.on('disconnect', () => {
-      users = users.filter(user => user.socketID !== client.id);
+      users = users.filter(user => user.socketId !== client.id);
       if (!users.length) {
         queueManager.updatePlayingContext('pause');
       }

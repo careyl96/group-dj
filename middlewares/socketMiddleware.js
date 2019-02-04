@@ -22,13 +22,8 @@ const initSocket = (store) => {
   serverDate = new ServerDate(socket);
   socket.on('connect', () => {
     // serverSynchronizer = setInterval(() => { socket.emit('time'); }, 300);
-    const newUser = {};
-    const { id, username, avatar } = store.getState().session;
-    newUser.id = id;
-    newUser.username = username;
-    newUser.avatar = avatar;
-
-    socket.emit('add user', newUser);
+    const { user } = store.getState().session;
+    socket.emit('add user', user);
     store.dispatch(fetchAvailableDevices());
     store.dispatch(fetchPlayingContext());
     store.dispatch(fetchQueue());
@@ -52,9 +47,9 @@ const initSocket = (store) => {
   socket.on('fetch queue', (queue) => {
     store.dispatch(fetchQueueSuccess(queue));
   });
-  socket.on('user action', (socketID) => {
-    if (document.querySelector(`.${socketID}`) !== null) {
-      const avatar = document.querySelector(`.${socketID}`);
+  socket.on('user action', (socketId) => {
+    if (document.querySelector(`.${socketId}`) !== null) {
+      const avatar = document.querySelector(`.${socketId}`);
       if (avatar.classList.contains('flash')) avatar.classList.remove('flash');
       avatar.classList.add('flash');
       setTimeout(() => { avatar.classList.remove('flash'); }, 500);
@@ -94,6 +89,9 @@ export default store => next => (action) => {
       break;
     case types.QUEUE_TRACK:
       socket.emit('queue track', action.track, action.user);
+      break;
+    case types.QUEUE_PLAYLIST:
+      socket.emit('queue playlist', action.playlist, action.user);
       break;
     case types.REMOVE_TRACK:
       socket.emit('remove track', action.track);

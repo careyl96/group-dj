@@ -8,12 +8,5 @@ add starred songs per user
 my songs should be all songs
   sort by recently added by default
 
-
-click bar
-set width to clicked location on client
-emit event to server indicating bar was clicked
-calculate server side track progress
-after server side track progress is calculated
-emit new playingContext with updated serversidetrackprogress
-when new playingcontext is received by client
-  restart interval
+add created by part to playlists
+implement add playlist to queue

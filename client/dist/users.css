@@ -25,6 +25,7 @@
 .online {
   padding-bottom: 1em;
   border-bottom: 1px solid hsla(0, 0%, 100%, .6);
+  margin-bottom: 0.5em;
   text-transform: uppercase;
 }
 

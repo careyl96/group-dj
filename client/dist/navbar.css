@@ -19,20 +19,13 @@
 }
 
 .navbar-item:hover {
-  transition: none 33ms cubic-bezier(.3,0,0,1);
-  transition-property: all;
-  transform: scale(1.03);
   color: #fff;
 }
 
 .navbar-item:active {
-  transition: none 33ms cubic-bezier(.3,0,0,1);
-  transition-property: all;
-  transform: scale(1.03);
   color: hsla(0, 0%, 100%, 0.6);
 }
 
 .selected {
-  transform: scale(1.03);
   color: #fff;
 }

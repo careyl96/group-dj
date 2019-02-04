@@ -6,14 +6,16 @@ import { load } from '../../../actions/sessionActions';
 
 class App extends Component {
   componentDidMount() {
-    this.props.load();
+    const { load } = this.props;
+    load();
   }
 
   renderInitView() {
-    if (!this.props.fetchingUser && localStorage.getItem('user') && localStorage.getItem('expires_in') - Date.now() > 0) {
+    const { fetchingUser } = this.props;
+    if (!fetchingUser && localStorage.getItem('user') && localStorage.getItem('expires_in') - Date.now() > 0) {
       return <Layout />;
     }
-    if (!this.props.fetchingUser && (!localStorage.getItem('user') || localStorage.getItem('expires_in') - Date.now() < 0)) {
+    if (!fetchingUser && (!localStorage.getItem('user') || localStorage.getItem('expires_in') - Date.now() < 0)) {
       return <Login />;
     }
     return null;
