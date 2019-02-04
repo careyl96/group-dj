@@ -81,9 +81,12 @@ function draggableVolume(element, context) {
   let startingWidthPercentage;
   let mousePositionStart;
   let volume;
+  let interval;
 
   function onMouseDown(e) {
     isMouseDown = true;
+    context.setState({ mouseDown: true });
+
     mousePositionStart = e.clientX;
     startingWidthPercentage = e.offsetX / volumeBar.offsetWidth * 100;
     context.setState({ volume: Math.ceil(startingWidthPercentage) });
@@ -101,12 +104,22 @@ function draggableVolume(element, context) {
     if (volume > 100) volume = 100;
     context.setState({ volume });
 
+    const volumeDispatcher = () => {
+      store.dispatch(adjustVolume(volume));
+    };
+    if (!interval) interval = setInterval(volumeDispatcher, 500);
+
     volumeBarProgress.style.width = `${volume}%`;
     volumeBarSlider.style.left = `${volume}%`;
   }
 
   function onMouseUp(e) {
     if (!isMouseDown) return;
+    context.setState({ mouseDown: false });
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
     const mousePositionCurrent = e.clientX;
 
     const deltaXPercentage = (mousePositionCurrent - mousePositionStart) / volumeBar.offsetWidth * 100;
@@ -148,4 +161,3 @@ export const addNowPlayingRightEventListeners = (context) => {
   draggableVolume(volumeBar, context);
   devicesMenuHandler();
 };
-

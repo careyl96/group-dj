@@ -10,6 +10,7 @@ class NowPlayingRight extends Component {
     super();
     this.state = {
       volume: 0,
+      mouseDown: false,
     };
   }
 
@@ -18,9 +19,10 @@ class NowPlayingRight extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    const { mouseDown } = this.state;
     const { devices } = newProps;
     const activeDevice = devices.find(device => device.is_active);
-    if (activeDevice) {
+    if (activeDevice && !mouseDown) {
       this.setState({ volume: activeDevice.volume_percent });
     }
   }
