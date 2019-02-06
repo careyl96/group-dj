@@ -94,7 +94,6 @@ class NowPlayingCenter extends Component {
   renderPlayerControls() {
     const {
       playingContext,
-      queue,
       resumePlayback,
       pausePlayback,
       backTrack,
@@ -114,7 +113,7 @@ class NowPlayingCenter extends Component {
             }
           </button>
 
-          <button className={`control-btn skip ${queue.length > 0 ? '' : 'disabled'}`} onClick={skipTrack}>
+          <button className="control-btn skip" onClick={skipTrack}>
             <i className="material-icons md-light md-36">skip_next</i>
           </button>
         </div>

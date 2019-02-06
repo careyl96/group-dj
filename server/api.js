@@ -1,8 +1,10 @@
 const express = require('express');
+const request = require('request');
 const { arrayMove } = require('react-sortable-hoc');
 const QueueManager = require('./models/queueManager');
 const QueueItem = require('./models/queueItem');
 const dbHelper = require('./helpers/dbHelper');
+const config = require('../auth/config');
 
 const { Router } = express;
 
@@ -32,6 +34,37 @@ const queueManager = new QueueManager({
       trackToPlay = queueManager.getQueue().shift();
       queueManager.beginTrack(trackToPlay.track, trackToPlay.user);
       queueManager.emitQueueChanged();
+    } else if (queueManager.spotifyAuth.access_token) {
+      let seed_tracks;
+      if (queueManager.playHistory.length < 5 && queueManager.playHistory.length > 0) {
+        seed_tracks = queueManager.playHistory.map(item => item.track.id).join(',');
+        console.log(seed_tracks);
+      } else {
+        seed_tracks = queueManager.playHistory.slice(-5).map(item => item.track.id).join(',');
+      }
+      const params = {
+        url: 'https://api.spotify.com/v1/recommendations',
+        qs: {
+          limit: 1,
+          seed_tracks,
+        },
+        headers: {
+          Authorization: `Bearer ${queueManager.spotifyAuth.access_token}`,
+        },
+        json: true,
+      };
+      request.get(params, (error, response, body) => {
+        if (error) {
+          console.log(error);
+          if (error.message === 'The access token expired') {
+            queueManager.getToken().then(queueManager.playNext);
+          }
+        }
+        const track = body.tracks[0];
+        queueManager.beginTrack(track, { username: 'Bot' });
+      });
+      queueManager.playingContext = null;
+      queueManager.emitPlayingContextChanged();
     } else {
       queueManager.playingContext = null;
       queueManager.emitPlayingContextChanged();
@@ -113,7 +146,7 @@ const queueManager = new QueueManager({
     queueManager.emitQueueChanged();
   },
 });
-queueManager.init();
+queueManager.getToken();
 
 // events that affect all connected clients
 const userActions = (client) => {

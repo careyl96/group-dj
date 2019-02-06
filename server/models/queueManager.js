@@ -46,7 +46,7 @@ class QueueManager {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  init() {
+  getToken() {
     const authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -57,18 +57,16 @@ class QueueManager {
       },
       json: true,
     };
-    request.post(authOptions, (error, response, body) => {
-      this.updateToken(body);
+    return request.post(authOptions, (error, response, body) => {
+      if (error) {
+        console.log(error);
+      } else {
+        this.spotifyAuth = {
+          access_token: body.access_token,
+          expires_in: Date.now() + body.expires_in * 1000,
+        };
+      }
     });
-  }
-
-  updateToken(body) {
-    if (body.access_token) {
-      this.spotifyAuth = {
-        access_token: body.access_token,
-        expires_in: Date.now() + body.expires_in * 1000,
-      };
-    }
   }
 
   queueUnshiftTrack(track, user) {
