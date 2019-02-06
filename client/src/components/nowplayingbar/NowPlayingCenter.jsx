@@ -98,6 +98,8 @@ class NowPlayingCenter extends Component {
       pausePlayback,
       backTrack,
       skipTrack,
+      queue,
+      recentlyPlayed,
     } = this.props;
     if (playingContext.id) {
       return (
@@ -113,7 +115,7 @@ class NowPlayingCenter extends Component {
             }
           </button>
 
-          <button className="control-btn skip" onClick={skipTrack}>
+          <button className={`control-btn skip ${recentlyPlayed.length || queue.length ? '' : 'disabled'}`} onClick={skipTrack}>
             <i className="material-icons md-light md-36">skip_next</i>
           </button>
         </div>
@@ -168,6 +170,7 @@ class NowPlayingCenter extends Component {
 const mapStateToProps = state => ({
   playingContext: state.playingContext,
   queue: state.view.queue,
+  recentlyPlayed: state.view.recentlyPlayed,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -13,8 +13,8 @@ let globalSocket = null;
 
 const queueManager = new QueueManager({
   beginTrack: (track, user) => {
-    queueManager.serverSideTrackProgress = 0;
     queueManager.updateRecentlyPlayed();
+    queueManager.serverSideTrackProgress = 0;
 
     queueManager.playingContext = new QueueItem({
       track,
@@ -24,9 +24,7 @@ const queueManager = new QueueManager({
     queueManager.emitPlayingContextChanged();
   },
   playNext: () => {
-    queueManager.serverSideTrackProgress = 0;
     queueManager.updateMostPlayed();
-    queueManager.updateRecentlyPlayed();
     queueManager.playHistory.push(queueManager.getPlayingContext());
 
     let trackToPlay;
@@ -34,13 +32,12 @@ const queueManager = new QueueManager({
       trackToPlay = queueManager.getQueue().shift();
       queueManager.beginTrack(trackToPlay.track, trackToPlay.user);
       queueManager.emitQueueChanged();
-    } else if (queueManager.spotifyAuth.access_token) {
+    } else if (queueManager.spotifyAuth.access_token && queueManager.getRecentlyPlayed().length > 0) {
       let seed_tracks;
-      if (queueManager.playHistory.length < 5 && queueManager.playHistory.length > 0) {
-        seed_tracks = queueManager.playHistory.map(item => item.track.id).join(',');
-        console.log(seed_tracks);
+      if (queueManager.getRecentlyPlayed().length < 5) {
+        seed_tracks = queueManager.getRecentlyPlayed().map(item => item.track.id).join(',');
       } else {
-        seed_tracks = queueManager.playHistory.slice(-5).map(item => item.track.id).join(',');
+        seed_tracks = queueManager.getRecentlyPlayed().slice(-5).map(item => item.track.id).join(',');
       }
       const params = {
         url: 'https://api.spotify.com/v1/recommendations',
@@ -59,9 +56,10 @@ const queueManager = new QueueManager({
           if (error.message === 'The access token expired') {
             queueManager.getToken().then(queueManager.playNext);
           }
+        } else {
+          const track = body.tracks[0];
+          queueManager.beginTrack(track, { username: 'Bot' });
         }
-        const track = body.tracks[0];
-        queueManager.beginTrack(track, { username: 'Bot' });
       });
       queueManager.playingContext = null;
       queueManager.emitPlayingContextChanged();
@@ -126,7 +124,7 @@ const queueManager = new QueueManager({
     }
   },
   updateRecentlyPlayed: () => {
-    if (!queueManager.getPlayingContext()) return;
+    if (!queueManager.getPlayingContext() || queueManager.getTotalPlayTime() < 30000) return;
     const { track } = queueManager.getPlayingContext();
     const index = queueManager.getRecentlyPlayed().findIndex(recentTrack => recentTrack.track.uri === track.uri);
     if (index !== -1) {
@@ -136,10 +134,9 @@ const queueManager = new QueueManager({
     queueManager.emitRecentlyPlayedChanged();
   },
   updateMostPlayed: () => {
-    if (queueManager.getTotalPlayTime() > 30000) {
-      dbHelper.update(queueManager.playingContext.track);
-      queueManager.emitMostPlayedChanged();
-    }
+    if (queueManager.getTotalPlayTime() < 30000) return;
+    dbHelper.update(queueManager.playingContext.track);
+    queueManager.emitMostPlayedChanged();
   },
   updateQueue: (oldIndex, newIndex) => {
     queueManager.queue = arrayMove(queueManager.queue, oldIndex, newIndex);
