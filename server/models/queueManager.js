@@ -1,9 +1,17 @@
-const DoublyLinkedList = require('../../helpers/history');
+const request = require('request');
+const config = require('../../auth/config');
 
 class QueueManager {
   constructor(options = {}) {
     this.queue = [];
+    this.playHistory = [];
     this.playingContext = null;
+
+    this.spotifyAuth = {
+      access_token: null,
+      expires_in: null,
+    };
+    this.autoplay = true;
 
     this.emitQueueChanged = options.emitQueueChanged;
     this.emitPlayingContextChanged = options.emitPlayingContextChanged;
@@ -19,10 +27,8 @@ class QueueManager {
 
     this.playNext = options.playNext;
     this.playPrev = options.playPrev;
-    this.playHistory = new DoublyLinkedList();
 
     this.recentlyPlayed = [];
-
     this.serverSideTrackProgress = 0;
 
     this.interval = setInterval(() => {
@@ -39,14 +45,49 @@ class QueueManager {
     }, 300);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  init() {
+    const authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        grant_type: 'client_credentials',
+      },
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${config.SPOTIFY_CLIENT_ID}:${config.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+      },
+      json: true,
+    };
+    request.post(authOptions, (error, response, body) => {
+      this.updateToken(body);
+    });
+  }
+
+  updateToken(body) {
+    if (body.access_token) {
+      this.spotifyAuth = {
+        access_token: body.access_token,
+        expires_in: Date.now() + body.expires_in * 1000,
+      };
+    }
+  }
+
+  queueUnshiftTrack(track, user) {
+    const queueItem = {
+      track,
+      user,
+    };
+    this.queue.unshift(queueItem);
+    this.emitQueueChanged();
+  }
+
   queueTrack(track, user) {
+    const queueItem = {
+      track,
+      user,
+    };
     if (!this.playingContext) {
       this.beginTrack(track, user);
     } else if (!this.getQueue().find(item => item.track.id === track.id)) {
-      const queueItem = {
-        track,
-        user,
-      };
       this.queue.push(queueItem);
       this.emitQueueChanged();
     }
@@ -54,20 +95,9 @@ class QueueManager {
 
   queuePlaylist(playlist, user) {
     const playlistTracks = playlist.tracks;
-    if (!this.playingContext) {
-      this.beginTrack(playlistTracks[0].track, user);
-      playlistTracks.shift();
-    }
-    playlistTracks.forEach((trackInfo) => {
-      if (!this.getQueue().find(item => item.track.id === trackInfo.track.id)) {
-        const queueItem = {
-          track: trackInfo.track,
-          user,
-        };
-        this.queue.push(queueItem);
-      }
+    playlistTracks.forEach((track) => {
+      this.queueTrack(track.track, user);
     });
-    this.emitQueueChanged();
   }
 
   removeFromQueue(id) {
@@ -99,8 +129,8 @@ class QueueManager {
 
   getPlayHistory() {
     const playHistory = {
-      prev: (this.playHistory.node.prev && this.playHistory.node.prev.item !== null),
-      next: (this.playHistory.node.next && this.playHistory.node.next.item !== null),
+      prev: this.playHistory.length > 0,
+      next: this.queue.length > 0,
     };
     return playHistory;
   }

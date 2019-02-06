@@ -20,7 +20,7 @@ const parseMs = (ms) => {
 };
 
 const QueueItem = SortableElement(({ track, name, artists, duration, removeTrack, user }) => (
-  <li className="track-container">
+  <li className="track-item-container">
     <button className="btn-tracklist-item" onClick={() => removeTrack(track.id)}>
       <i className="material-icons md-light md-36 remove-track">close</i>
     </button>

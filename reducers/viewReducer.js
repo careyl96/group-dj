@@ -6,7 +6,6 @@ const initState = {
     item: 'home',
     next: null,
   },
-  playHistory: {},
   queue: [],
   recentlyPlayed: [],
   mostPlayed: [],
@@ -51,11 +50,6 @@ const viewReducer = (state = initState, action) => {
       return {
         ...state,
         myPlaylists: action.myPlaylists,
-      };
-    case types.FETCH_PLAY_HISTORY_SUCCESS:
-      return {
-        ...state,
-        playHistory: action.playHistory,
       };
     case types.FETCH_PLAYLIST_TRACKS_SUCCESS:
       return {

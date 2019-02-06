@@ -40,7 +40,7 @@
   border-bottom: 1px solid hsla(0, 0%, 100%, .6);
 }
 
-.track-container {
+.track-item-container {
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -51,7 +51,7 @@
   border-bottom: 1px solid hsla(0, 0%, 100%, .6);
 }
 
-.track-container:hover {
+.track-item-container:hover {
   background-color: rgba(0, 0, 0, .1);
 }
 
@@ -73,7 +73,7 @@
   top: -3px;
 }
 
-.track-container:hover .btn-play{
+.track-item-container:hover .btn-play{
   visibility: visible;
 }
 

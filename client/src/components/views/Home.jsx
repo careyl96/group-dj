@@ -32,8 +32,10 @@ class Home extends Component {
             : <h2 className="now-playing-home-track-name">No songs currently playing</h2>
           }
         </div>
-        <div className="queue">Queue</div>
-        <Queue />
+        <div className="queue-container">
+          <div className="queue">Queue</div>
+          <Queue />
+        </div>
       </div>
     );
   }

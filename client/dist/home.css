@@ -75,7 +75,7 @@
   visibility: hidden;
 }
 
-.track-container:hover .remove-track {
+.track-item-container:hover .remove-track {
   visibility: visible;
 }
 
@@ -112,7 +112,7 @@
   color: hsla(0, 0%, 100%, .3) !important;
 }
 
-.track-container:hover .queued-by > *{
+.track-item-container:hover .queued-by > *{
   color: white !important;
 }
 
@@ -120,7 +120,7 @@
   color: black;
 }
 
-.track-container:hover .queued-by {
+.track-item-container:hover .queued-by {
   display: flex;
 }
 

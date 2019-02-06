@@ -1,25 +1,23 @@
 import io from 'socket.io-client';
 import * as types from '../actions/types';
 import config from '../auth/config';
-import ServerDate from '../helpers/serverDate';
 import { updateUsers } from '../actions/usersActions';
 import { fetchPlayingContext, fetchPlayingContextSuccess } from '../actions/playerActions';
 import {
   fetchQueue,
   fetchQueueSuccess,
   fetchRecentlyPlayed,
-  fetchPlayHistorySuccess,
   fetchMostPlayed,
 } from '../actions/viewActions';
 import { fetchAvailableDevices } from '../actions/devicesActions';
 
 let socket = null;
 // let serverSynchronizer = null;
-let serverDate = null;
+// let serverDate = null;
 
 const initSocket = (store) => {
   socket = io(config.HOST);
-  serverDate = new ServerDate(socket);
+  // serverDate = new ServerDate(socket);
   socket.on('connect', () => {
     // serverSynchronizer = setInterval(() => { socket.emit('time'); }, 300);
     const { user } = store.getState().session;
@@ -37,9 +35,6 @@ const initSocket = (store) => {
   });
   socket.on('fetch recently played', () => {
     store.dispatch(fetchRecentlyPlayed());
-  });
-  socket.on('fetch play history', (playHistory) => {
-    store.dispatch(fetchPlayHistorySuccess(playHistory));
   });
   socket.on('fetch most played', () => {
     store.dispatch(fetchMostPlayed());
@@ -105,4 +100,4 @@ export default store => next => (action) => {
   return result;
 };
 
-export { serverDate };
+// export { serverDate };

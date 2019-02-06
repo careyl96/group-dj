@@ -5,12 +5,12 @@ import QueueList from './QueueList';
 
 class Queue extends Component {
   onSortStart = () => { // prevent the items in the queue to activate their hover events while you're dragging and dropping.
-    const queue = document.querySelectorAll('.track-container');
+    const queue = document.querySelectorAll('.track-item-container');
     queue.forEach(queueItem => queueItem.style.setProperty('pointer-events', 'none', 'important'));
   }
 
   onSortEnd = ({ oldIndex, newIndex }) => {
-    const queue = document.querySelectorAll('.track-container');
+    const queue = document.querySelectorAll('.track-item-container');
     const { updateQueue } = this.props;
     queue.forEach(queueItem => queueItem.style.removeProperty('pointer-events')); // reactivate hover events
     if (oldIndex !== newIndex) updateQueue(oldIndex, newIndex); // update the queue in state

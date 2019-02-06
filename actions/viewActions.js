@@ -47,8 +47,3 @@ export const fetchPlaylistTracksSuccess = playlistId => ({
   type: types.FETCH_PLAYLIST_TRACKS_SUCCESS,
   playlistHash: playlistId,
 });
-
-export const fetchPlayHistorySuccess = playHistory => ({
-  type: types.FETCH_PLAY_HISTORY_SUCCESS,
-  playHistory,
-});

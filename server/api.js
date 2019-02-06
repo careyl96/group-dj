@@ -7,49 +7,43 @@ const dbHelper = require('./helpers/dbHelper');
 const { Router } = express;
 
 let users = [];
-
 let globalSocket = null;
 
 const queueManager = new QueueManager({
   beginTrack: (track, user) => {
+    queueManager.serverSideTrackProgress = 0;
     queueManager.updateRecentlyPlayed();
+
     queueManager.playingContext = new QueueItem({
       track,
       startTimestamp: Date.now(),
       user,
     });
-    queueManager.serverSideTrackProgress = 0;
     queueManager.emitPlayingContextChanged();
   },
   playNext: () => {
-    queueManager.updateMostPlayed();
     queueManager.serverSideTrackProgress = 0;
+    queueManager.updateMostPlayed();
     queueManager.updateRecentlyPlayed();
-    let nextItem = null;
-    if (queueManager.playHistory.node.next) {
-      nextItem = queueManager.playHistory.getNext().item;
-      queueManager.beginTrack(nextItem.track, nextItem.user);
-      queueManager.emitPlayHistoryChanged();
-    } else if (queueManager.queue.length > 0) {
-      nextItem = queueManager.getQueue().shift();
-      queueManager.emitQueueChanged();
-      queueManager.beginTrack(nextItem.track, nextItem.user);
+    queueManager.playHistory.push(queueManager.getPlayingContext());
 
-      queueManager.playHistory.addNode({
-        track: nextItem.track,
-        user: nextItem.user,
-      });
-      queueManager.emitPlayHistoryChanged();
+    let trackToPlay;
+    if (queueManager.queue.length > 0) {
+      trackToPlay = queueManager.getQueue().shift();
+      queueManager.beginTrack(trackToPlay.track, trackToPlay.user);
+      queueManager.emitQueueChanged();
     } else {
       queueManager.playingContext = null;
       queueManager.emitPlayingContextChanged();
     }
   },
   playPrev: () => {
-    if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.node.prev) {
-      const prevItem = queueManager.playHistory.getPrev().item;
+    if (queueManager.serverSideTrackProgress <= 5000 && queueManager.playHistory.length > 0) {
+      const prevItem = queueManager.playHistory.pop();
+      const currentItem = queueManager.getPlayingContext();
+      queueManager.queueUnshiftTrack(currentItem.track, currentItem.user);
+
       queueManager.beginTrack(prevItem.track, prevItem.user);
-      queueManager.emitPlayHistoryChanged();
     } else {
       queueManager.updatePlayingContext('seek', null, null, 0);
     }
@@ -63,10 +57,6 @@ const queueManager = new QueueManager({
     globalSocket.emit('fetch recently played', queueManager.getRecentlyPlayed());
     globalSocket.broadcast.emit('fetch recently played', queueManager.getRecentlyPlayed());
   },
-  emitPlayHistoryChanged: () => {
-    globalSocket.emit('fetch play history', queueManager.getPlayHistory());
-    globalSocket.broadcast.emit('fetch play history', queueManager.getPlayHistory());
-  },
   emitMostPlayedChanged: () => {
     globalSocket.emit('fetch most played');
     globalSocket.broadcast.emit('fetch most played');
@@ -78,12 +68,10 @@ const queueManager = new QueueManager({
 
   updatePlayingContext: (option, track, user, newTrackPosition) => {
     if (option === 'override') {
+      if (queueManager.getPlayingContext()) {
+        queueManager.playHistory.push(queueManager.getPlayingContext());
+      }
       queueManager.beginTrack(track, user);
-      queueManager.playHistory.addNode({
-        track,
-        user,
-      });
-      queueManager.emitPlayHistoryChanged();
     } else if (option === 'pause' && queueManager.getPlayingContext()) {
       queueManager.modifyPlayingContext({
         currentlyPlaying: false,
@@ -125,6 +113,7 @@ const queueManager = new QueueManager({
     queueManager.emitQueueChanged();
   },
 });
+queueManager.init();
 
 // events that affect all connected clients
 const userActions = (client) => {
@@ -186,7 +175,7 @@ const socketApi = (io) => {
         trackProgress: queueManager.serverSideTrackProgress,
       });
     });
-    
+
     client.on('add user', (data) => {
       if (!users.find(user => user.id === data.id)) {
         const newUser = data;
@@ -215,3 +204,18 @@ const socketApi = (io) => {
 };
 
 module.exports = socketApi;
+
+
+// override playing context (track, user)
+// queue = [];
+// playHistory = [];
+// user override play context
+  // if currentlyPlaying track exists, add currently playing track to playHistory
+    // play override track
+// user clicks next
+  // add currently playing track to playHistory
+  // play new track
+// user clicks back
+  // add currently playing track to playHistory
+  // queue.push(playHistory.pop())
+

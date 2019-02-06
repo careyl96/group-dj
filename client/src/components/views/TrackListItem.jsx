@@ -22,7 +22,7 @@ const parseMs = (ms) => {
 const TrackListItem = ({ track, playingContext, user, queue, overridePlayingContext, queueTrack, removeTrack, resumePlayback, pausePlayback }) => (
   track.id !== playingContext.id // if this item is not the track that is currently playing
     ? (
-      <div className="track-container" onDoubleClick={() => overridePlayingContext(track, user)}>
+      <div className="track-item-container" onDoubleClick={() => overridePlayingContext(track, user)}>
         <button className="btn-tracklist-item" onClick={() => overridePlayingContext(track, user)}>
           <i className="material-icons md-light md-36 btn-play">play_circle_outline</i>
         </button>
@@ -47,7 +47,7 @@ const TrackListItem = ({ track, playingContext, user, queue, overridePlayingCont
         </div>
       </div>
     ) : ( // if this track list item IS the currently playing track
-      <div className="track-container selected-track">
+      <div className="track-item-container selected-track">
         <button className="btn-tracklist-item" onClick={playingContext.currentlyPlaying ? pausePlayback : resumePlayback}>
           {playingContext.currentlyPlaying
             ? <i className="material-icons md-light md-36 btn-play selected-track">pause_circle_outline</i>
